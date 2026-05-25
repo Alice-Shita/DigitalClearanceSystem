@@ -1,0 +1,749 @@
+{
+    "20241317": {
+        "name": "Abel Mwale",
+        "program": "AEE",
+        "year": 3,
+        "term": 1,
+        "accommodation": "Boarding",
+        "hostel": "Imapala",
+        "room": "IMP 3",
+        "hostel_items": {
+            "mattress": "Assigned",
+            "key": "Imapala IMP 3"
+        },
+        "clearance": {
+            "hostel": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "library": {
+            "books": [
+                {
+                    "name": "Analog Electronics",
+                    "returned": false
+                }
+            ],
+            "status": "Cleared"
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "reason": "NIL"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "reason": "Nil"
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "sports": {
+            "football": [
+                "Soccer kit",
+                "1 ball",
+                {
+                    "name": "5 goal posts",
+                    "qty": 1,
+                    "returned": 1
+                }
+            ],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "accounts": {
+            "balance": 5060.0,
+            "required": 4000.0,
+            "status": "Cleared",
+            "reason": "Manually cleared by Accounts"
+        }
+    },
+    "20241357": {
+        "name": "Alice A Shita",
+        "program": "AEE",
+        "year": 3,
+        "term": 1,
+        "accommodation": "Boarding",
+        "hostel": "Katilungu",
+        "room": "K31D",
+        "hostel_items": {
+            "mattress": "Assigned",
+            "key": "Katilungu K31D"
+        },
+        "clearance": {
+            "hostel": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "library": {
+            "books": [
+                {
+                    "name": "Analog Electronics",
+                    "returned": false
+                }
+            ],
+            "status": "Cleared"
+        },
+        "profile_pic": "<!-- PROFILE CARD --> <div style=\"background:white;padding:20px;border-radius:12px;             box-shadow:0 4px 12px rgba(0,0,0,0.1);             display:flex;gap:20px;align-items:center;\">      <form method=\"POST\" enctype=\"multipart/form-data\">                  <label style=\"cursor:pointer; text-align:center;\">                          <img id=\"preview\"                  src=\"{profile_pic}\"                   style=\"width:110px;height:110px;border-radius:50%;                         border:3px solid #4f46e5;                         object-fit:cover;\">                          <br>             <small style=\"color:gray;\">Tap to upload</small>              <!-- HIDDEN FILE INPUT -->             <input type=\"file\" name=\"profile_pic\"                    accept=\"image/*\"                    style=\"display:none;\"                    onchange=\"previewImage(event)\">         </label>          <br>         <button style=\"margin-top:6px;padding:5px 10px;\">Save</button>     </form>      <div>         <h3 style=\"margin:0;\">{name}</h3>         <p><b>ID:</b> {sid}</p>         <p>{program} | Year {year} Term {term}</p>         <p><b>Funding:</b> {funding}</p>     </div> </div>  <script> function previewImage(event) {     const reader = new FileReader();     reader.onload = function(){         const output = document.getElementById('preview');         output.src = reader.result;     };     reader.readAsDataURL(event.target.files[0]); } </script>",
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "reason": "NIL"
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Cleared",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": "5\" Screw Driver"
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": [
+                "2 chess mats"
+            ]
+        },
+        "accounts": {
+            "balance": 8000.0,
+            "required": 4000.0,
+            "status": "Cleared",
+            "reason": "Manually cleared by Accounts"
+        }
+    },
+    "20241361": {
+        "name": "Doreen Banda",
+        "program": "ATC",
+        "year": 1,
+        "term": 3,
+        "accommodation": "Boarding",
+        "hostel": "Antelope",
+        "room": "ANT 15",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Antelope ANT 15"
+        },
+        "clearance": {
+            "hostel": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "library": {
+            "books": [],
+            "status": "Cleared"
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "reason": "NIL"
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "balance": 5060.0,
+            "required": 4000.0,
+            "status": "Pending",
+            "reason": "Exceeds required limit"
+        }
+    },
+    "20251526": {
+        "name": "Tapiwa Lungu",
+        "program": "ATC",
+        "year": 3,
+        "term": 1,
+        "profile_pic": "",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": [],
+            "status": "Cleared"
+        },
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "balance": 0,
+            "required": 4000,
+            "status": "Pending",
+            "reason": ""
+        }
+    },
+    "20254565": {
+        "name": "Chikondi Chisamba",
+        "program": "ICT",
+        "year": 1,
+        "term": 1,
+        "accommodation": "Boarding",
+        "hostel": "Antelope",
+        "room": "6",
+        "hostel_items": {
+            "mattress": "Assigned",
+            "key": "Antelope 6"
+        },
+        "clearance": {
+            "hostel": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "library": {
+            "books": [],
+            "status": "Cleared"
+        },
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "balance": 0,
+            "required": 4000,
+            "status": "Pending",
+            "reason": ""
+        }
+    },
+    "20265468": {
+        "name": "David A Mwale",
+        "program": "ATC",
+        "year": 2,
+        "term": 1,
+        "profile_pic": "",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": [],
+            "status": "Cleared"
+        },
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "balance": 0,
+            "required": 4000,
+            "status": "Pending",
+            "reason": ""
+        }
+    },
+    "20265686": {
+        "name": "Daniel Akalemwa",
+        "program": "AEE",
+        "year": 3,
+        "term": 1,
+        "profile_pic": "",
+        "hostel": "Pegasus",
+        "room": "PS4",
+        "hostel_items": {
+            "mattress": "Assigned",
+            "key": "Pegasus PS4"
+        },
+        "library": {
+            "books": [],
+            "status": "Cleared"
+        },
+        "accommodation": "Boarding",
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "balance": 0,
+            "required": 4000,
+            "status": "Pending",
+            "reason": ""
+        }
+    },
+    "20251528": {
+        "name": "Getrude Smith",
+        "program": "ATC",
+        "year": 1,
+        "term": 1,
+        "profile_pic": "",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": [],
+            "status": "Cleared"
+        },
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "balance": 0,
+            "required": 4000,
+            "status": "Pending",
+            "reason": ""
+        }
+    },
+    "20267887": {
+        "name": "Namate Shita",
+        "program": "ICT",
+        "year": 1,
+        "term": 1,
+        "profile_pic": "",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": [],
+            "status": "Cleared"
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "reason": "Nil"
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "balance": 0,
+            "required": 4000,
+            "status": "Pending",
+            "reason": ""
+        }
+    },
+    "20263456": {
+        "name": "Blessings Lilato",
+        "program": "BFF",
+        "year": 2,
+        "term": 1,
+        "profile_pic": "",
+        "hostel": "Antelope",
+        "room": "ANT 21",
+        "hostel_items": {
+            "mattress": "Assigned",
+            "key": "Antelope ANT 21"
+        },
+        "library": {
+            "books": [],
+            "status": "Cleared"
+        },
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accommodation": "Boarding",
+        "accounts": {
+            "balance": 0,
+            "required": 4000,
+            "status": "Pending",
+            "reason": ""
+        }
+    },
+    "20241389": {
+        "name": "Shita Shita",
+        "program": "AEE",
+        "year": 3,
+        "term": 3,
+        "profile_pic": "",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": [],
+            "status": "Cleared"
+        },
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "balance": 0,
+            "required": 4000,
+            "status": "Pending",
+            "reason": ""
+        }
+    },
+    "20263459": {
+        "name": "Gracious Tumelo",
+        "program": "ICT",
+        "year": 2,
+        "term": 1,
+        "profile_pic": "",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": [],
+            "status": "Cleared"
+        },
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "balance": 0,
+            "required": 4000,
+            "status": "Pending",
+            "reason": ""
+        }
+    },
+    "20241233": {
+        "name": "Priscilla Chinyama",
+        "program": "Food Production",
+        "year": 2,
+        "term": 1,
+        "profile_pic": "",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": [],
+            "status": "Cleared"
+        },
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "balance": 0,
+            "required": 4000,
+            "status": "Pending",
+            "reason": ""
+        }
+    },
+    "20257865": {
+        "name": "Isaac Shita",
+        "program": "ATC",
+        "year": 1,
+        "term": 1,
+        "profile_pic": "",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": [],
+            "status": "Cleared"
+        },
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "balance": 0,
+            "required": 4000,
+            "status": "Pending",
+            "reason": ""
+        }
+    }
+}

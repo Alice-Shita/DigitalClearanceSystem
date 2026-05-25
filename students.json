@@ -1,0 +1,301 @@
+{
+    "20241357": {
+        "name": "Alice Shita",
+        "program": "AEE",
+        "year": 3,
+        "term": 2,
+        "funding": "Self Sponsored",
+        "profile_pic": "/static/profile_pics/20241357_1000231427.jpg",
+        "accommodation": "Boarding",
+        "hostel": "Katilungu",
+        "room": "K26B",
+        "hostel_items": {
+            "mattress": "Returned",
+            "key": "Katilungu K26B"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "total_fee": 7860.0,
+            "paid": 7860.0,
+            "minimum_required": 4000.0,
+            "status": "Cleared",
+            "reason": "Fees fully paid",
+            "payments": [
+                {
+                    "amount": 2.0,
+                    "file": "20241357_0.jpg",
+                    "status": "Approved",
+                    "reason": ""
+                },
+                {
+                    "amount": 200.0,
+                    "file": "20241357_1.jpg",
+                    "status": "Rejected",
+                    "reason": ""
+                }
+            ],
+            "history": [
+                {
+                    "amount": 7860.0,
+                    "reason": "Manual Accounts Update",
+                    "status": "Recorded"
+                }
+            ]
+        },
+        "ame_tools": []
+    },
+    "20241317": {
+        "name": "Abel Mwale",
+        "program": "AEE",
+        "year": 3,
+        "term": 2,
+        "funding": "CDF",
+        "profile_pic": "/static/profile_pics/20241317_1000237134.jpg",
+        "accommodation": "Boarding",
+        "hostel": "Kudu",
+        "room": "K7",
+        "hostel_items": {
+            "mattress": "Returned",
+            "key": "Returned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "reason": "None"
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "total_fee": 7860.0,
+            "paid": 18620.0,
+            "minimum_required": 4000.0,
+            "status": "Cleared",
+            "reason": "Cleared by Accounts Office",
+            "payments": [
+                {
+                    "amount": 6000.0,
+                    "file": "20241317_0.jpg",
+                    "status": "Approved",
+                    "reason": ""
+                },
+                {
+                    "amount": 60.0,
+                    "file": "20241317_1.png",
+                    "status": "Approved",
+                    "reason": ""
+                },
+                {
+                    "amount": 2000.0,
+                    "file": "20241317_2.jpg",
+                    "status": "Approved",
+                    "reason": ""
+                },
+                {
+                    "amount": 6000.0,
+                    "file": "20241317_3.jpg",
+                    "status": "Approved",
+                    "reason": ""
+                },
+                {
+                    "amount": 500.0,
+                    "file": "20241317_4.jpg",
+                    "status": "Rejected",
+                    "reason": ""
+                }
+            ],
+            "history": []
+        },
+        "ame_tools": [
+            {
+                "name": "Hammer",
+                "returned": false
+            }
+        ]
+    },
+    "20241411": {
+        "name": "Gracious Tumelo",
+        "program": "ATC",
+        "year": 1,
+        "term": 1,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Boarding",
+        "hostel": "Kudu",
+        "room": "K10",
+        "hostel_items": {
+            "mattress": "Returned",
+            "key": "Kudu K10"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "total_fee": 0,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "reason": "",
+            "payments": [],
+            "history": []
+        },
+        "ame_tools": []
+    },
+    "20253357": {
+        "name": "Priscilla Chin",
+        "program": "AME",
+        "year": 2,
+        "term": 1,
+        "funding": "CDF",
+        "profile_pic": "",
+        "accommodation": "Day Scholar",
+        "hostel": "NIL",
+        "room": "NIL",
+        "hostel_items": {
+            "mattress": "NIL",
+            "key": "NIL"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "mathematics": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "training": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "ame": {
+                "status": "Pending",
+                "reason": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "reason": ""
+            }
+        },
+        "accounts": {
+            "total_fee": 0,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "reason": "",
+            "payments": [],
+            "history": []
+        },
+        "ame_tools": []
+    }
+}

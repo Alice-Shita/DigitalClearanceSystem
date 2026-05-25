@@ -1,0 +1,232 @@
+{
+    "admin1": {
+        "password": "scrypt:32768:8:1$FTYp46MvlCLNJALy$b664aa54ca83e5cf1d1de2c1730fd38cf4f05a6e204183039e4eac68efc236f03bf5f1f5280d922eb07048e758b6d61d86e528081527e2b3feed91b04307f501",
+        "role": "admin"
+    },
+    "staff_library": {
+        "password": "scrypt:32768:8:1$3OEoGMRZ6MX4vO0q$c28d5b1eb44074cc0321d068895101c87143c51cd50eaf0293c26dd6c18b7d0e8b3f00b89db6d794ebcf449192b14b66bf257b942eafdef78984c0ebf131728a",
+        "role": "staff",
+        "department": "library"
+    },
+    "staff_sports": {
+        "password": "scrypt:32768:8:1$ZiA3z2QTBLJJj2SN$33095a4248165d2537a6140f40309dd08c9d68be35c399ed89d8fb02665163b7e4ddcc7f443c24999bc7e681a9a6347255004a4e0aa8dd632842d803a6a8bc38",
+        "role": "staff",
+        "department": "sports"
+    },
+    "staff_accounts": {
+        "password": "scrypt:32768:8:1$sQszmA8K33hrUV97$1906caab4bd3e6f255b701cd928af6ccd43e3eb975f9b2134faddf5f6a2a21d9cbc0e99a69f0b5e1cc655e5b596580916565d778db158259ba7d23f2e5b677bc",
+        "role": "staff",
+        "department": "accounts"
+    },
+    "staff_stores": {
+        "password": "scrypt:32768:8:1$iOm9qVg0KDgEoX5s$fcb4aaee6a008f9dbc530a6960ef9ad2ba2df66bb8f54ff24fb1697557b9ecb5b9fe1e035a0187c2ec93b0c12698de81a533c6db2b83b8e68538635ff52ca39a",
+        "role": "staff",
+        "department": "stores"
+    },
+    "staff_tso": {
+        "password": "scrypt:32768:8:1$yxW1Ywj17RcpztAp$cd46d7ac0bb7ce6746a3053865d29f763f7592eca4cb883c9789abe7b45130a8e600a46756b855509602195c5060e791fca66a7db869af1ac3f9ac1850bfcb91",
+        "role": "staff",
+        "department": "tso"
+    },
+    "staff_hostel": {
+        "password": "scrypt:32768:8:1$PsYatv1nfxj8KeLR$a921410d387ed3872f8a7f97bbd007547717f950d70c713bdb2de6796922542457caa162e2a68eefd0f9ea8d211f60e7a9eca62b14ad1efee978c238dcbcb760",
+        "role": "staff",
+        "department": "hostel"
+    },
+    "staff_communication": {
+        "password": "scrypt:32768:8:1$oOJoWCHmAYN0RIRx$f6b082951a0c197837103f00ae70df648277da2439070d1c179c3f81684573144891dce4c68f4893da997ffbb67e3bba71fd57bdc06676a22d97aea919f55115",
+        "role": "staff",
+        "department": "communication"
+    },
+    "staff_mathematics": {
+        "password": "scrypt:32768:8:1$ruXAbxCa0c5RdWHp$283a50ad445f7ceaaaa9a8fc6f7798e76e0d0ad3c9a4fa03914e7878a3708eab66e0f8e8b78dc438b4ccba446b1b4ad48f908dcdadbf5cf68978f6dcab7479df",
+        "role": "staff",
+        "department": "mathematics"
+    },
+    "staff_hr": {
+        "password": "scrypt:32768:8:1$c6fMZBgqoDvh3dGZ$c8be7927d70434ce110d09638802f8abb558e2037fee2a5e00ff95397ee7209617b768c2324590ab37f48f18261c1f43006b66fc89959877a21ac63f0e455c4e",
+        "role": "staff",
+        "department": "hr"
+    },
+    "staff_training": {
+        "password": "scrypt:32768:8:1$YKvemXWpMONH1CzY$812cb0c496d0c8d3bd56b3e44ae5759255683964be414e66591826cb1dfe1a54fe5db377f8b5465061683892c188ba8f9e330ca6590b0b34c1d86383a8b25c33",
+        "role": "staff",
+        "department": "training"
+    },
+    "staff_ame": {
+        "password": "scrypt:32768:8:1$UmwH6NV0tlxHCUKE$1627434ac9fdf0625f47e292fe201c95d1cd008e7dcb0689e95b212ade0ba2f78af343fefac7b23f7917f4e203d93c3d6411472c0f7240052ada24449a4a4617",
+        "role": "staff",
+        "department": "ame"
+    },
+    "20241357": {
+        "password": "scrypt:32768:8:1$izHjvv3Dd0gtmEsB$9b48058cbef6917f8742c2c47c39c70623a288dcdb3edcc87f66a8513cf418e6173b55fa57c7cceaaf2d14b2f942c5d3fbae5dbd2c10768b9469ddfdd7720660",
+        "role": "student"
+    },
+    "20241358": {
+        "password": "scrypt:32768:8:1$fJ2f3dslqLeEorAf$82cd46520276b9eb2b4eead03bbeef700d80ad38794eb9cffa3f0e204fae57459936f8dd485381e46936e9d545e89501de4a2d04a70d47e60943c4732dffafb0",
+        "role": "student"
+    },
+    "20241359": {
+        "password": "scrypt:32768:8:1$TPlmIf84xbPQq0Xv$0b332cdc7372efcc1906d7c1a5a5367e72e4697ca4d6076b2a7e23cf39ad5f0c447422e2a570d384bc1e6e2bf6454e5bc2c4316120d298ea20dda48fc94198c2",
+        "role": "student"
+    },
+    "20241317": {
+        "password": "scrypt:32768:8:1$aTJz7LqlGfoOnZu0$be09f8fb2b432ef027dc59486e596b1881eb8f45e6d319ba1cc59a01baca96d10b41811093c469dcbd129081831b00a2519cc1ac5ef963d6c2583a85ff1c5575",
+        "role": "student"
+    },
+    "20251526": {
+        "password": "scrypt:32768:8:1$h6SjyZTWQwtSbTHs$03090fae2dba6cc2ceb56c51b6fd4632ef37bdba0c21ff511effaf97846d92f31261f1888d901f405e91a3213325fbe70fa1b164f143ae9988e13868d3be5810",
+        "role": "student"
+    },
+    "20241361": {
+        "password": "scrypt:32768:8:1$yb8QmLN8kQPc5IPo$665c312525f5410ffe8e17a7c26b5f70f20f331cc4040a614fec8e582849427e79d818b43043130a4af021aefe5e571036affe1b89c077817e1f3ffbbf21f6b2",
+        "role": "student"
+    },
+    "20240307": {
+        "password": "scrypt:32768:8:1$aTNWS1Lih5BOGaxH$fbb90c3ba77aef41d3350913f0d53c3260a6bcd0cf97cb874663304d297a59141abf974dbfceb3c2e1acedd3891ca597247aeb0f6517f1e7acfc68a3775fc5b3",
+        "role": "student"
+    },
+    "20261758": {
+        "password": "scrypt:32768:8:1$GHf1tnmfSeZhjBR6$1ffb33ab5aa31e2cacb0c8f7f252fb980366d6773e4250691238818d00c784a43af98fca1b2c713be9dc62027d925962e10f31aed3cc6512abbd485e7ece56d9",
+        "role": "student"
+    },
+    "2023568": {
+        "password": "scrypt:32768:8:1$jv29NkNeMUFQ5fDD$1645ea7786eba6b285c787a5e6ce6689327f9169b86d5aa4964444fa9d4d5dd8f71028c8b2519447b63ed8d409a82940cce666e51bc93800100fa10a4d3fd5a0",
+        "role": "student"
+    },
+    "20266754": {
+        "password": "scrypt:32768:8:1$mjPXekmh3hshAQwK$e37a4e6c7b95d1aeed5fe97a9e0e528c9d2b53bf6015b89f6bcc35917d1b610fd4171a02388ae58e881772f43aa189504d697fc95424d4240ece175fa55f672d",
+        "role": "student"
+    },
+    "20246678": {
+        "password": "scrypt:32768:8:1$ogmKEObZyzCh4VL0$49e905b05f065db5d12e483cc9c7db23d1d0062b74d89dd05771c2f34388a9c6db0c6636a95d9d6df861521a957024a9afbeaeaeaf4e4302d120d9b301a32b40",
+        "role": "student"
+    },
+    "20254565": {
+        "password": "scrypt:32768:8:1$k3nEfJo70Y5F8kEc$3eeaa941cbe9478af44181aa0e24153cd2c1156396968c7f6e5ea60a182e858c5974f65336b6ec6d22a42867c1698e10229647fe07a9e129b115f34c03549d23",
+        "role": "student"
+    },
+    "20265468": {
+        "password": "scrypt:32768:8:1$jLhK2IFMOb80Q1RE$439d03ac5c4e8cdb23d68bf7ca63d208a62790a6412aa86f0605f6f7eb12ea29864910637923185fda44ca8a493628bb57b695ea171af6d2e336578f05725d2f",
+        "role": "student"
+    },
+    "20265686": {
+        "password": "scrypt:32768:8:1$6MReWvKAtIhoI0yV$1db4e7b44e692c801659d6b6c4329eda26dabc2ad50324ce42b76a9ee1c117ed7975fe4d249edebbbcff27de70ea210116e70e82e176ecc1d3226c7c599ab60f",
+        "role": "student"
+    },
+    "20251528": {
+        "password": "scrypt:32768:8:1$sfUXhbbqnqAKDPiB$e44f32de740c9c4696c1e94e3bd3b5c96a6710c1eaf1de2bf859f3a2ac7c9e1d94ecadb4d7d6b1769fd0320b212e4217556a2eaf45b323eafbbf91eedea3fe3f",
+        "role": "student"
+    },
+    "20267887": {
+        "password": "scrypt:32768:8:1$nDOKYcmFpeGz5NrZ$705fd1dcb2bbf0c4848b59a5bcb1cd888deb06cb1301ea4511b514d2b43a0844631e14aee6751e4873188882aab9047cb0a620eaa33b5544ba9100c9f21dc5f7",
+        "role": "student"
+    },
+    "20263456": {
+        "password": "scrypt:32768:8:1$bVs3PQrTr4g4X5IF$762f0fc5ef1c763c5b3eeb16a6889fc56d04a47da3ddc6b9d4ab04937fa1e842267d61d56270113d1aabe56861c7b7df71154480e073d115abade2639b8e911d",
+        "role": "student"
+    },
+    "20241389": {
+        "password": "scrypt:32768:8:1$hMMlQH3uMRunxn5c$b2e4f1343a2403afadd3702c3fcd1c3a8e4a0f8cc15c97d23645586b85c6870dec410c773dadc7667bff02745f311be6c509fda00cf3fabdc60330200dfa2afe",
+        "role": "student"
+    },
+    "20263459": {
+        "password": "scrypt:32768:8:1$OEVcFPZk6tgxk2Sc$235d7f37b2767e90eb08b40ba62fcb511f8ddd4c52e14cedb9f6e6a1c8d08d8dc64af04633f5c72f4d015472731093b263a22f0350ae1331928ce207d77308a8",
+        "role": "student"
+    },
+    "20241233": {
+        "password": "scrypt:32768:8:1$E08U6FPMyArCGBCh$7f2b5d02089844e488bdc27eccd30c6de8b3e44574065c09b6a6faac7839cd04521589250737d2bfc1036bc3de3b94d10055c08e2a83b941e63e9a7a4fa774de",
+        "role": "student"
+    },
+    "20257865": {
+        "password": "scrypt:32768:8:1$HLAmyBwc3G1SISLg$2491016b4fdf74456a270225baa3acf84e989f65e6e87d32fbe4d5e36b8fc1491fc070570c241ee37f3f8e40a1bdb310a58d87e09dfb80dd6765087aecd8934f",
+        "role": "student"
+    },
+    "20267890": {
+        "password": "scrypt:32768:8:1$RP0DWdLMB8V8zqu9$277669fced225090ea0ec08b2b630930d6565807d299e1a028c47438e6c528d8ae4fd4e6deb82c5e12a25698ccf22b7540f7664ae8fa3a7d527509dd1ae6d7e6",
+        "role": "student"
+    },
+    "20275676": {
+        "password": "scrypt:32768:8:1$CzryVKPnIllXAss2$73a08ad426a875a6e29201ddb1e5f19b1857f84f950e3190c63332ae35f6fe64f97cd5c9d5c2d8fdcd1d206af93c321a3a6f1a41bb7aee33859599fec656fa46",
+        "role": "student"
+    },
+    "20274534": {
+        "password": "scrypt:32768:8:1$D5ldi6unnXCVoTkq$7c14faa968676af749431e18cd987a87d25983cd8b5e3e57b0b8da2f77ed64679d038e5f6ac3e10b55ccaee743131b39dda441e17e535d95255ba6bf49020cda",
+        "role": "student"
+    },
+    "20269087": {
+        "password": "scrypt:32768:8:1$brxABQ88c8ikX7FH$a08f8efed41f4bf5d270106c57aeb4648852b82f676da487d731defd26757fb777b9669399f1001fc1570d23f9d1a3235952a9366428547669c2a40451354910",
+        "role": "student"
+    },
+    "20268099": {
+        "password": "scrypt:32768:8:1$LxrmtmbjXt8rSyg5$149397f9f5c0a601c9cbb271b67cc09bbe9a54f12159e72e1865204976b4a6290aced0d86ea68e26b1cf571d74be554da125a2c1ac02922bae4a40c2406f02d4",
+        "role": "student"
+    },
+    "20241411": {
+        "password": "scrypt:32768:8:1$IHtGEXRuRvetQqVv$0f8a6b78a78133e6d628ebcca70193aad49f5620d0b8983bb32de100d7596c8ddb2963d249a6260b508f4a306bb865ea283a9a5468e612b9d4ed605966b9d228",
+        "role": "student"
+    },
+    "20253357": {
+        "password": "scrypt:32768:8:1$Hy6UT3UNJNc5SSoi$e71dbb8a1e502f32fe6d404dd46ac1e2c1b636b978309a98db900581db369fa3ba3a1bd708ddff20b06b36f754e50d93534c3d9ec3991d5204c39b6726b1492b",
+        "role": "student"
+    },
+    "admin": {
+        "password": "scrypt:32768:8:1$2xBfCkScVa7junXn$41be30e5fb7e2b570d784add918ad4011c478e5987f1567b1c0a633ca67580562f190e85f7400d7148bb7b7c93a06184ae98699fe697d8032578b474b22158dc",
+        "role": "admin"
+    },
+    "accounts": {
+        "password": "scrypt:32768:8:1$lySlxJrT0gWD8cbI$18f129f62e7c1b6b8433d65f5ceb922b1871cef771afd0a70bc50b48a5071f390e4a51aae030b02d6553739ba16db638783c3214c45886ad6d679f2e03ddbc58",
+        "role": "staff",
+        "department": "accounts"
+    },
+    "library": {
+        "password": "scrypt:32768:8:1$6ZYHmtZ3TbWFKovh$083b39bcf01a9ebb37afb7813eaf2dc8548a105877a03f1b7873ca2e59a66c7c07d481225d0ba7048a64f6a83db0702e2d01c4d46e7f4760c11f0f30b1058344",
+        "role": "staff",
+        "department": "library"
+    },
+    "hr": {
+        "password": "scrypt:32768:8:1$8HEgfBPxjuof5Qm3$441d0938dc67f9726e45cebf2564d3b4338d68ac1a69573239458c51c0bbc84a21b3a3d15e435796d9321c70ff14fa7c696f83b3bda4284759b69b1adb686d1f",
+        "role": "staff",
+        "department": "hr"
+    },
+    "training": {
+        "password": "scrypt:32768:8:1$RHcbYANkse8AxhoQ$2791c66dfb19d24d86f06b8026482c889e7ee84e8e1e62b6de17fa7e824ae403b7d2d0c830d82c1d4c5248b67f98365f3a45f1badcb1bbf4fe826f60dd385853",
+        "role": "staff",
+        "department": "training"
+    },
+    "communication": {
+        "password": "scrypt:32768:8:1$GGafwzB8hRNjBnIc$1eb29c803a3627d58a3bb795af13ae97687b8608f304bd13001a68474c4c2367925f94be5918a5fd0ce2cd46bf7544689ee6598f795fdeb93236be7c84800e07",
+        "role": "staff",
+        "department": "communication"
+    },
+    "mathematics": {
+        "password": "scrypt:32768:8:1$Mm6KMt5zOKcN51nm$a06188fdaee3eef6ce7ca2a22b0d1504554bc6d0214b2fc18af9243c7532ece0facf0080bb9be16551dcc692a392c4e7052b19b0fe2ff55f7566ef2b16cfb288",
+        "role": "staff",
+        "department": "mathematics"
+    },
+    "ame": {
+        "password": "scrypt:32768:8:1$9mGBbF6nuZnHma9B$fce99254eb92121d45e22149d287b2b2360e20a253359be105d5b862c8f2ef10cb09d9332faabaa69e102a801671fdbaca3a99bad4836c3663bbc4879a64184f",
+        "role": "staff",
+        "department": "ame"
+    },
+    "sports": {
+        "password": "scrypt:32768:8:1$BBFp8b0JJX0TyhRf$c821d2688b38922d260145c7059f349d07983dab996c3663371e9924ed935aff73e6d9f15985b4418132e4554011043e2cfaf59ed5ce3aa1cca4089b40557cef",
+        "role": "staff",
+        "department": "sports"
+    },
+    "stores": {
+        "password": "scrypt:32768:8:1$u6YE5a6w6yknFwB2$b2c4b716f93e38e2dca29972decbfdd80a24bb07cf2071a0dc65ae9fb93bb857ea95b66e0b52c3700962401faa7aeb7c5581cca9c0b7f0f301b5d32daf6e61a8",
+        "role": "staff",
+        "department": "stores"
+    },
+    "tso": {
+        "password": "scrypt:32768:8:1$FQyJxEMuOiqwnxvh$6affb80742b45d4cc911e624c3e414a791ac61899deb73629e8102e047edced280916f8f4eb00a6930e374092a508146d9c3c140c74da330a6389a31c8ca4e80",
+        "role": "staff",
+        "department": "tso"
+    },
+    "hostel": {
+        "password": "scrypt:32768:8:1$ARoqrw4ESX5Ta48B$d518f7681d0e879006084e171a374f66580806f92486df6c0e1b2994e9007d0690a9ff2211d0d6d518e1f66422023ba9c9ee3a9a61d781df12c472748d1b1dc5",
+        "role": "staff",
+        "department": "hostel"
+    }
+}
