@@ -1,0 +1,53 @@
+body{
+    font-family:Arial;
+    background:#f8fafc;
+    margin:0;
+    padding:0;
+}
+
+.btn{
+    display:inline-block;
+    background:#2563eb;
+    color:white;
+    padding:12px 22px;
+    border:none;
+    border-radius:10px;
+    text-decoration:none;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    border:1px solid #e2e8f0;
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+.input{
+    width:100%;
+    padding:14px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    margin-bottom:18px;
+}
+
+.table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+.table th{
+    background:#2563eb;
+    color:white;
+    padding:14px;
+    text-align:left;
+}
+
+.table td{
+    padding:14px;
+    border-bottom:1px solid #e2e8f0;
+}
+
