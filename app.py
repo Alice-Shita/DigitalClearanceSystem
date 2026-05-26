@@ -1242,7 +1242,10 @@ def admin():
             display_students[sid] = s
 
     # ---------------- DISPLAY ----------------
-    total_students = len(display_students)
+    total_students = len(students)
+    output = f"""
+	<h2>Total Students: {total_students}</h2>
+"""
     fully_cleared = 0
     pending_students = 0
     print("STUDENTS LOADED:", students)
