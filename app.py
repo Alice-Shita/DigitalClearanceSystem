@@ -3789,7 +3789,7 @@ def upload_proof():
 def student_clearance():
 
     if session.get("role") != "student":
-        return redirect("/login/student")
+        return redirect("/login")
 
     students = load_students()
 
@@ -4197,7 +4197,7 @@ def print_clearance():
     # LOGIN CHECK
     # ==================================
     if "user" not in session:
-        return redirect("/login/student")
+        return redirect("/login")
 
     students = load_students()
 
