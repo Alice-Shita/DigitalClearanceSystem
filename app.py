@@ -266,7 +266,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 def home():
 
     if "user" not in session:
-        return redirect("/login/student")
+        return redirect("/login")
 
     role = session.get("role")
 
@@ -279,7 +279,7 @@ def home():
     elif role == "admin":
         return redirect("/admin")
 
-    return redirect("/login/student")
+    return redirect("/login")
 
 # ---------------- LOAD DATA ----------------
 
@@ -4758,5 +4758,11 @@ def logout():
     return redirect("/login")
     
 # -------- RUN APP --------
+import os
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=False
+    )
