@@ -454,13 +454,30 @@ def login():
             text-align:center;
         ">
 
-            <h1 style="
+            <div style="
+    text-align:center;
+    margin-bottom:35px;
+">
+
+    <h1 style="
+        color:#1e3a8a;
+        font-size:34px;
+        margin-bottom:10px;
+        font-weight:bold;
+    ">
+        Zambia Air Services Training Institute
+    </h1>
+
+    <h1 style="
                 font-size:42px;
                 margin-bottom:25px;
                 color:#1e293b;
             ">
                 Student Digital<br>Clearance System
             </h1>
+    </div>
+
+</div>
 
             <form method="POST">
 
@@ -539,6 +556,21 @@ def login():
         </div>
 
     </div>
+    
+    <div style="
+    text-align:center;
+    margin-top:40px;
+    color:#94a3b8;
+    font-size:14px;
+">
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
+</div>
     """
 # ---------------- FORGOT PASSWORD ----------------
 @app.route("/forgot", methods=["GET", "POST"])
@@ -692,6 +724,17 @@ def forgot():
         </div>
 
     </div>
+    
+    <div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+
 
     """
     
@@ -971,6 +1014,17 @@ def reset():
         </div>
 
     </div>
+    
+    </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
 
     """
     
@@ -1084,6 +1138,17 @@ def dept_nav(title="Department"):
         }}
     }}
     </script>
+    
+    </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
 
     """
 
@@ -1243,14 +1308,12 @@ def admin():
 
     # ---------------- DISPLAY ----------------
     total_students = len(students)
-    output = f"""
-	<h2>Total Students: {total_students}</h2>
-"""
+    
     fully_cleared = 0
     pending_students = 0
     print("STUDENTS LOADED:", students)
 
-    output = dept_nav("️ Admin Dashboard") + """
+    output = dept_nav("Admin Dashboard") + f"""
 
 <p><b>Total Students:</b> {total_students}</p>
 
@@ -1385,6 +1448,17 @@ function toggleAll(source) {
     }
 }
 </script>
+
+</div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
 """
 
     return output
@@ -1445,6 +1519,17 @@ def edit_student(sid):
 
     <br>
     <a href="/admin">⬅ Back</a>
+</div>
+
+</div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
 </div>
 """      
                                        
@@ -1622,6 +1707,17 @@ def staff_library():
                 <button name="action" value="borrow">Borrow Book</button>
             </form>
         </div>
+        
+        </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
         """
 
     return output
@@ -1745,6 +1841,17 @@ def sports():
             <td>{cell("netball")}</td>
             <td>{cell("chess")}</td>
         </tr>
+        
+        </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
         """
 
     output += "</table>"
@@ -2216,6 +2323,17 @@ def accounts():
             </form>
 
         </div>
+        
+        </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
         """
 
     return output
@@ -2278,6 +2396,17 @@ def stores():
                 <button name="action" value="returned">Returned</button>
             </form>
         </div><hr>
+        
+        </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
         """
 
     return output
@@ -2382,6 +2511,17 @@ def tso():
         </table>
 
     </div>
+    
+    </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
     """
 
     return output
@@ -2541,6 +2681,17 @@ def hostel():
         </table>
 
     </div>
+    
+    </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
     """
 
     return output
@@ -2608,6 +2759,17 @@ def communication():
                 <button>Update</button>
             </form>
         </div>
+        
+        </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
         """
 
     return output
@@ -2685,6 +2847,17 @@ def mathematics():
                 <button>Update</button>
             </form>
         </div>
+        
+        </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
         """
 
     return output
@@ -2762,6 +2935,17 @@ def hr():
                 <button>Update</button>
             </form>
         </div>
+        
+        </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
         """
 
     return output
@@ -2842,6 +3026,17 @@ def training():
                 <button>Update</button>
             </form>
         </div>
+        
+        </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
         """
 
     return output
@@ -2997,6 +3192,17 @@ def ame():
         <button type="submit">Update Clearance</button>
 
     </form>
+    
+    </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
     """
 
 
@@ -3122,6 +3328,17 @@ def terms():
         </div>
 
     </div>
+    
+    </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
     """
 
 # -------- STUDENT PAGE --------
@@ -3260,7 +3477,16 @@ def student():
 
 </div>
 
-
+</div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
 """
 @app.route("/student/profile", methods=["GET", "POST"])
 def student_profile():
@@ -3385,6 +3611,17 @@ def student_profile():
     </a>
 
 </div>
+
+</div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
 """
         
 @app.route("/student/accommodation")
@@ -3412,24 +3649,36 @@ def student_accommodation():
     mattress = items.get("mattress", "Not Issued")
 
     return nav + f"""
-<div style="padding:20px; font-family:Arial;">
+<div style="
+    padding:30px;
+    font-family:Arial;
+    max-width:1400px;
+    margin:auto;
+">
 
-    <h2 style="margin-bottom:15px; font-size:58px;"> Accommodation</h2>
+    <h2 style="
+        margin-bottom:22px;
+        font-size:34px;
+        color:#1e293b;
+        font-weight:700;
+    ">
+        Accommodation
+    </h2>
 
     <div style="
-        background: white
-        border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        border: 1px solid (135deg, rgba(37,99,235,0.2), rgba(22,163,74,0.2));
+        background:white;
+        border-radius:18px;
+        padding:28px;
+        border:1px solid #e2e8f0;
+        box-shadow:0 4px 12px rgba(0,0,0,0.05);
     ">
 
-        <table width="100%" cellpadding="10" style="
-            border-collapse: collapse;
-            font-size: 45px;
-            background: white;
-            border-radius: 10px;
+        <table width="100%" style="
+            border-collapse:collapse;
+            font-size:20px;
         ">
+
+        
 
                 <tr style="background:#f1f5f9;">
                     <th align="left">Item</th>
@@ -3460,6 +3709,17 @@ def student_accommodation():
     ">
         ⬅ Back to Main Menu
     </a>
+</div>
+
+</div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
 </div>
     """
     
@@ -3629,6 +3889,17 @@ def student_accounts():
         </a>
 
     </div>
+    
+    </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
     """
     
 @app.route("/student/payment/<sid>")
@@ -3697,6 +3968,17 @@ def payment_page(sid):
     ">
         ⬅ Back to Main Menu
     </a>
+</div>
+
+</div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
 </div>
     """
 
@@ -3784,6 +4066,17 @@ def upload_proof():
     ">
         ⬅ Back to Main Menu
     </a>
+</div>
+
+</div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
 </div>
     """
 
@@ -4188,6 +4481,17 @@ def student_clearance():
         </a>
 
     </div>
+    
+    </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
     """
 
 from datetime import datetime
@@ -4733,20 +5037,54 @@ def print_clearance():
     </body>
 
     </html>
+    
+    </div><div style="
+    text-align:center;
+    margin-top:30px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#94a3b8;
+    font-size:13px;
+">
+    © 2026 ZASTI Digital Clearance System
+</div>
     """
     
 # ---------------- ERROR HANDLERS ----------------
 import logging
 
 @app.errorhandler(404)
-def page_not_found(e):
-    logging.warning(f"404 error: {request.path}")
+def not_found(e):
 
-    return NAV + f"""
-    <div style="padding:20px; font-family:Arial;">
-        <h2 style="color:red;">404 - Page Not Found</h2>
-        <p>No route exists for: <b>{request.path}</b></p>
-        <a href="/">Return Home</a>
+    return """
+    <div style="
+        font-family:Arial;
+        text-align:center;
+        margin-top:100px;
+    ">
+
+        <h1 style="color:#dc2626;">
+            404
+        </h1>
+
+        <h2>Page Not Found</h2>
+
+        <p>
+            The page you requested does not exist.
+        </p>
+
+        <a href="/" style="
+            display:inline-block;
+            margin-top:20px;
+            padding:12px 22px;
+            background:#2563eb;
+            color:white;
+            text-decoration:none;
+            border-radius:10px;
+        ">
+            Return Home
+        </a>
+
     </div>
     """, 404
 
