@@ -338,12 +338,12 @@ def ensure_departments(student):
         student["departments"] = {}
 
     default = {
-        "communication": {"status": "Pending", "reason": ""},
-        "mathematics": {"status": "Pending", "reason": ""},
-        "hr": {"status": "Pending", "reason": ""},
-        "training": {"status": "Pending", "reason": ""},
-        "ame": {"status": "Pending", "reason": ""},
-        "accounts": {"status": "Pending", "reason": ""}
+        "communication": {"status": "Pending", "Remarks": ""},
+        "mathematics": {"status": "Pending", "Remarks": ""},
+        "hr": {"status": "Pending", "Remarks": ""},
+        "training": {"status": "Pending", "Remarks": ""},
+        "ame": {"status": "Pending", "Remarks": ""},
+        "accounts": {"status": "Pending", "Remarks": ""}
     }
 
     for key in default:
@@ -381,7 +381,7 @@ def ensure_accounts(student):
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "reason": ""
+            "Remarks": ""
         }
 
 
@@ -398,9 +398,9 @@ def login():
         users = load_users()
 
         if username in users and check_password_hash(
-    users[username]["password"],
-    password
-):
+            users[username]["password"],
+            password
+        ):
 
             session["user"] = username
             session.permanent = True
@@ -412,143 +412,180 @@ def login():
             # 🔥 REDIRECT BASED ON ROLE
             if session["role"] == "admin":
                 return redirect("/admin")
+
             elif session["role"] == "student":
                 session["accepted_terms"] = False
                 return redirect("/terms")
+
             elif session["role"] == "staff":
+
                 dept = session.get("department")
+
                 if dept:
                     return redirect(f"/{dept}")
+
                 return redirect("/login")
 
         return """
-        <h3 style='color:red;text-align:center;'>Invalid login</h3>
-        <a href="/login" style="display:block;text-align:center;">Try again</a>
+        <h3 style='color:red;text-align:center;'>
+            Invalid login
+        </h3>
+
+        <a href="/login"
+           style="display:block;text-align:center;">
+
+           Try again
+
+        </a>
         """
 
-    # -------- UI --------
     return """
+<html>
+
+<head>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body style="
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    background:linear-gradient(135deg,#1e3a8a,#06b6d4);
+    font-family:Arial;
+">
+
+    <!-- CENTER AREA -->
     <div style="
-        min-height:100vh;
+        flex:1;
         display:flex;
         align-items:center;
         justify-content:center;
-        background:linear-gradient(135deg,#2563eb,#16a34a);
-        font-family:Arial;
+        padding:30px;
     ">
 
-        <div style="
-            style="
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-    border: 1px solid rgba(255,255,255,0.3);
-"
-            padding:40px;
-            border-radius:16px;
-            width:320px;
-            box-shadow:0 10px 25px rgba(0,0,0,0.2);
-            text-align:center;
-        ">
-
-            <div style="
+        <!-- LOGIN CONTAINER (FLAT STYLE) -->
+<div style="
+    width:100%;
+    max-width:500px;
+    padding:20px;
     text-align:center;
-    margin-bottom:35px;
+    background:transparent;
 ">
 
-    <h1 style="
-        color:#1e3a8a;
-        font-size:34px;
-        margin-bottom:10px;
-        font-weight:bold;
-    ">
-        Zambia Air Services Training Institute
-    </h1>
-
-    <h1 style="
-                font-size:42px;
-                margin-bottom:25px;
-                color:#1e293b;
+            <h1 style="
+                color:#1e3a8a;
+                font-size:34px;
+                margin-bottom:10px;
+                font-weight:bold;
+                line-height:1.3;
             ">
-                Student Digital<br>Clearance System
+                Zambia Air Services Training Institute
             </h1>
-    </div>
 
-</div>
+            <div style="
+                color:#475569;
+                font-size:20px;
+                margin-bottom:35px;
+            ">
+                Student Digital Clearance System
+            </div>
 
             <form method="POST">
 
-                <input name="username" placeholder="Username" required
+                <input
+                    name="username"
+                    placeholder="Username"
+                    required
+
                     style="
-                        width:80%;
-                        padding:12px;
-                        font-size: 25px;
-                        margin-bottom:15px;
-                        border-radius:10px;
-                        border:1px solid #ccc;
+                        width:100%;
+                        padding:18px;
+                        font-size:18px;
+                        margin-bottom:18px;
+                        border-radius:12px;
+                        border:1px solid #cbd5e1;
                         outline:none;
+                        box-sizing:border-box;
+                    "
+                >
+
+                <input
+                    name="password"
+                    type="password"
+                    placeholder="Password"
+                    required
+
+                    style="
+                        width:100%;
+                        padding:18px;
+                        font-size:18px;
+                        margin-bottom:22px;
+                        border-radius:12px;
+                        border:1px solid #cbd5e1;
+                        outline:none;
+                        box-sizing:border-box;
+                    "
+                >
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-bottom:25px;
+                    font-size:16px;
+                    gap:10px;
+                ">
+
+                    <label style="
+                        display:flex;
+                        align-items:center;
+                        gap:8px;
+                        color:#475569;
+                        cursor:pointer;
                     ">
 
-                <input name="password" type="password" placeholder="Password" required
-                    style="
-                        width:80%;
-                        padding:12px;
-                        font-size: 25px;
-                        margin-bottom:20px;
-                        border-radius:10px;
-                        border:1px solid #ccc;
-                        outline:none;
+                        <input
+                            type="checkbox"
+                            name="remember"
+                        >
+
+                        Remember me
+
+                    </label>
+
+                    <a href="/forgot" style="
+                        text-decoration:none;
+                        color:#2563eb;
+                        font-weight:600;
                     ">
 
-				<!-- REMEMBER + FORGOT -->
-<div style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:18px;
-    font-size:24px;
-">
+                        Forgot Password?
 
-    <!-- REMEMBER -->
-    <label style="
-        display:flex;
-        align-items:center;
-        gap:8px;
-        color:#475569;
-        cursor:pointer;
-    ">
+                    </a>
 
-        <input type="checkbox" name="remember">
-        Remember me
-
-    </label>
-
-    <!-- FORGOT -->
-    <a href="/forgot" style="
-        text-decoration:none;
-        color:#2563eb;
-        font-weight:600;
-    ">
-        Forgot Password?
-    </a>
-
-</div>
+                </div>
 
                 <button style="
-                    width:50%;
-                    padding:12px;
+                    width:100%;
+                    padding:18px;
                     background:#2563eb;
                     color:white;
-                    font-size: 25px;
+                    font-size:20px;
                     border:none;
-                    border-radius:10px;
+                    border-radius:12px;
                     font-weight:bold;
                     cursor:pointer;
                 ">
+
                     Login
+
                 </button>
 
             </form>
@@ -556,22 +593,27 @@ def login():
         </div>
 
     </div>
-    
+
     <div style="
-    text-align:center;
-    margin-top:40px;
-    color:#94a3b8;
-    font-size:14px;
-">
+        text-align:center;
+        padding:22px;
+        color:#e2e8f0;
+        font-size:16px;
+        line-height:1.7;
+    ">
 
-    © 2026 Zambia Air Services Training Institute
+        © 2026 Zambia Air Services Training Institute
 
-    <br>
+        <br>
 
-    All Rights Reserved
+        All Rights Reserved
 
-</div>
-    """
+    </div>
+
+</body>
+
+</html>
+"""
 # ---------------- FORGOT PASSWORD ----------------
 @app.route("/forgot", methods=["GET", "POST"])
 def forgot():
@@ -585,6 +627,14 @@ def forgot():
         if username in users:
 
             return f"""
+            <html>
+
+<head>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
             <div style="
                 min-height:100vh;
@@ -727,14 +777,20 @@ def forgot():
     
     <div style="
     text-align:center;
-    margin-top:30px;
-    padding-top:18px;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
     border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
 ">
-    © 2026 ZASTI Digital Clearance System
 
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
+</div>
 
     """
     
@@ -1012,18 +1068,39 @@ def reset():
             </form>
 
         </div>
+        
+        <div style="text-align:center; margin-top:30px;">
+    <a href="/student" style="
+        display:inline-block;
+        padding:12px 24px;
+        background:linear-gradient(135deg,#1e3a8a,#06b6d4);
+        color:white;
+        border-radius:12px;
+        text-decoration:none;
+        font-weight:bold;
+        box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    ">
+        ⬅ Back to Main Menu
+    </a>
+</div>
 
     </div>
     
-    </div><div style="
+    <div style="
     text-align:center;
-    margin-top:30px;
-    padding-top:18px;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
     border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
 ">
-    © 2026 ZASTI Digital Clearance System
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
 </div>
 
     """
@@ -1032,6 +1109,7 @@ def reset():
 def dept_nav(title="Department"):
 
     return f"""
+    
 
     <!-- SIDEBAR -->
     <div id="sidebar" style="
@@ -1139,17 +1217,7 @@ def dept_nav(title="Department"):
     }}
     </script>
     
-    </div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
-</div>
-
+ 
     """
 
 # ---------------- DASHBOARD REDIRECT ----------------
@@ -1254,12 +1322,12 @@ def admin():
                 },
 
                 "departments": {
-                    "communication": {"status": "Pending", "reason": ""},
-                    "mathematics": {"status": "Pending", "reason": ""},
-                    "hr": {"status": "Pending", "reason": ""},
-                    "training": {"status": "Pending", "reason": ""},
-                    "ame": {"status": "Pending", "reason": ""},
-                    "accounts": {"status": "Pending", "reason": ""}
+                    "communication": {"status": "Pending", "Remarks": ""},
+                    "mathematics": {"status": "Pending", "Remarks": ""},
+                    "hr": {"status": "Pending", "Remarks": ""},
+                    "training": {"status": "Pending", "Remarks": ""},
+                    "ame": {"status": "Pending", "Remarks": ""},
+                    "accounts": {"status": "Pending", "Remarks": ""}
                 },
 
                 # 🔥 ACCOUNTS STRUCTURE (REPLACES payment_status)
@@ -1268,7 +1336,7 @@ def admin():
                     "paid": 0,
                     "minimum_required": 4000,
                     "status": "Pending",
-                    "reason": ""
+                    "Remarks": ""
                 }
             }
 
@@ -1307,13 +1375,12 @@ def admin():
             display_students[sid] = s
 
     # ---------------- DISPLAY ----------------
-    total_students = len(students)
-    
+    total_students = len(display_students)
     fully_cleared = 0
     pending_students = 0
     print("STUDENTS LOADED:", students)
 
-    output = dept_nav("Admin Dashboard") + f"""
+    output = dept_nav("️ Admin Dashboard") + f"""
 
 <p><b>Total Students:</b> {total_students}</p>
 
@@ -1425,12 +1492,12 @@ def admin():
     <input type="hidden" name="action" value="add_student">
 
     ID:<br><input name="student_id" required><br><br>
-    Name:<br><input name="name" required><br><br>
-    Program:<br><input name="program" required><br><br>
-    Year:<br><input name="year" required><br><br>
-    Term:<br><input name="term" required><br><br>
+    NAME:<br><input name="name" required><br><br>
+    PROGRAM:<br><input name="program" required><br><br>
+    YEAR:<br><input name="year" required><br><br>
+    TERM:<br><input name="term" required><br><br>
 
-    Funding:<br>
+    FUNDING:<br>
     <select name="funding" required>
         <option value="Self Sponsored">Self Sponsored</option>
         <option value="CDF">CDF</option>
@@ -1449,15 +1516,21 @@ function toggleAll(source) {
 }
 </script>
 
-</div><div style="
+<div style="
     text-align:center;
-    margin-top:30px;
-    padding-top:18px;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
     border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
 ">
-    © 2026 ZASTI Digital Clearance System
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
 </div>
 """
 
@@ -1521,15 +1594,21 @@ def edit_student(sid):
     <a href="/admin">⬅ Back</a>
 </div>
 
-</div><div style="
+<div style="
     text-align:center;
-    margin-top:30px;
-    padding-top:18px;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
     border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
 ">
-    © 2026 ZASTI Digital Clearance System
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
 </div>
 """      
                                        
@@ -1582,15 +1661,20 @@ def staff():
 @app.route("/library", methods=["GET", "POST"])
 def staff_library():
 
-    if session.get("role") != "staff" or session.get("department") != "library":
+    if (
+        session.get("role") != "staff"
+        or session.get("department") != "library"
+    ):
         return redirect("/login")
 
     students = load_students()
+
     for sid in students:
-    	ensure_departments(students[sid])
+        ensure_departments(students[sid])
 
     # -------- HANDLE ACTIONS --------
     if request.method == "POST":
+
         sid = request.form.get("sid")
         action = request.form.get("action")
 
@@ -1598,19 +1682,37 @@ def staff_library():
 
             # 🔥 ENSURE STRUCTURE EXISTS
             if "library" not in students[sid]:
-                students[sid]["library"] = {"books": []}
 
-            books = students[sid]["library"].get("books", [])
+                students[sid]["library"] = {
+                    "books": []
+                }
+
+            books = students[sid]["library"].get(
+                "books",
+                []
+            )
 
             # -------- BORROW BOOK --------
             if action == "borrow":
-                book_name = request.form.get("book_name", "").strip()
 
-                active_books = [b for b in books if not b["returned"]]
+                book_name = request.form.get(
+                    "book_name",
+                    ""
+                ).strip()
+
+                active_books = [
+                    b for b in books
+                    if not b["returned"]
+                ]
 
                 if len(active_books) >= 2:
-                    print("❌ Cannot borrow more than 2 books")
+
+                    print(
+                        "❌ Cannot borrow more than 2 books"
+                    )
+
                 elif book_name:
+
                     books.append({
                         "name": book_name,
                         "returned": False
@@ -1618,9 +1720,11 @@ def staff_library():
 
             # -------- RETURN BOOK --------
             elif action.startswith("return_"):
+
                 index = int(action.split("_")[1])
 
                 if 0 <= index < len(books):
+
                     books[index]["returned"] = True
 
             students[sid]["library"]["books"] = books
@@ -1629,96 +1733,287 @@ def staff_library():
         save_students(students)
 
     # -------- SEARCH FILTER --------
-    search = request.args.get("search", "").strip()
+    search = request.args.get(
+        "search",
+        ""
+    ).strip()
 
     display_students = students
 
     if search:
+
         display_students = {
-            sid: s for sid, s in students.items()
+
+            sid: s
+
+            for sid, s in students.items()
+
             if search in sid
+
         }
 
     # -------- DISPLAY --------
     output = dept_nav(" Library Department") + """
-    
 
-    <form method="GET" style="margin-bottom:15px;">
-        <input name="search" placeholder="Search Student ID or Name" style="padding:5px;">
-        <button type="submit">Search</button>
-    </form>
-    <hr>
+    <div style="
+        min-height:100vh;
+        display:flex;
+        flex-direction:column;
+    ">
+
+        <div style="
+            flex:1;
+            padding:20px;
+        ">
+
+            <form method="GET" style="
+                margin-bottom:15px;
+            ">
+
+                <input
+                    name="search"
+                    placeholder="Search Student ID or Name"
+
+                    style="
+                        padding:10px;
+                        border-radius:8px;
+                        border:1px solid #ccc;
+                        width:260px;
+                    "
+                >
+
+                <button
+                    type="submit"
+
+                    style="
+                        padding:10px 14px;
+                        border:none;
+                        background:#2563eb;
+                        color:white;
+                        border-radius:8px;
+                        cursor:pointer;
+                    "
+                >
+                    Search
+                </button>
+
+            </form>
+
+            <hr>
+
+            <!-- STUDENT CARDS CONTAINER -->
+            <div>
+
     """
 
     for sid, s in display_students.items():
 
-        books = s.get("library", {}).get("books", [])
+        books = s.get(
+            "library",
+            {}
+        ).get(
+            "books",
+            []
+        )
 
-        active_books = [b for b in books if not b["returned"]]
+        active_books = [
+
+            b for b in books
+
+            if not b["returned"]
+
+        ]
 
         # -------- STATUS --------
-        status = "Cleared" if len(active_books) == 0 else "Pending"
+        status = (
+
+            "Cleared"
+
+            if len(active_books) == 0
+
+            else "Pending"
+
+        )
 
         # -------- BORROW LIMIT MESSAGE --------
         if len(active_books) >= 2:
+
             borrow_note = "❌ Max books reached"
+
         else:
+
             borrow_note = "✅ Can borrow"
 
         output += f"""
-        <div style="border:1px solid #ccc;padding:10px;margin:10px;">
-            <b>{s['name']} ({sid})</b><br>
+
+        <div style="
+            border:1px solid #e2e8f0;
+            padding:16px;
+            margin:12px 0;
+            border-radius:12px;
+            background:white;
+            box-shadow:0 2px 8px rgba(0,0,0,0.05);
+            font-size:14px;
+        ">
+
+            <b style="font-size:16px;">
+                {s['name']} ({sid})
+            </b>
+
+            <br><br>
+
             Program: {s.get('program','')} |
             Year: {s.get('year','')} |
-            Term: {s.get('term','')}<br><br>
+            Term: {s.get('term','')}
 
-            <b>Books:</b><br>
+            <br><br>
+
+            <b>Books:</b>
+
+            <br><br>
+
         """
 
         if not books:
-            output += "No books borrowed<br>"
+
+            output += """
+            No books borrowed<br>
+            """
+
         else:
+
             for i, b in enumerate(books):
+
                 mark = "✔" if b["returned"] else "✖"
 
                 output += f"""
+
                 {mark} {b['name']}
+
                 """
 
                 if not b["returned"]:
+
                     output += f"""
-                    <form method="POST" style="display:inline;">
-                        <input type="hidden" name="sid" value="{sid}">
-                        <button name="action" value="return_{i}">Return</button>
+
+                    <form
+                        method="POST"
+                        style="display:inline;"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="sid"
+                            value="{sid}"
+                        >
+
+                        <button
+                            name="action"
+                            value="return_{i}"
+
+                            style="
+                                padding:4px 10px;
+                                margin-left:8px;
+                                border:none;
+                                background:#16a34a;
+                                color:white;
+                                border-radius:6px;
+                                cursor:pointer;
+                            "
+                        >
+                            Return
+                        </button>
+
                     </form>
+
                     """
 
                 output += "<br>"
 
         output += f"""
+
             <br>
-            <b>Status:</b> {status}<br>
-            <b>{borrow_note}</b><br><br>
+
+            <b>Status:</b> {status}
+
+            <br>
+
+            <b>{borrow_note}</b>
+
+            <br><br>
 
             <!-- BORROW BOOK -->
             <form method="POST">
-                <input type="hidden" name="sid" value="{sid}">
-                <input name="book_name" placeholder="Enter book name" required>
-                <button name="action" value="borrow">Borrow Book</button>
+
+                <input
+                    type="hidden"
+                    name="sid"
+                    value="{sid}"
+                >
+
+                <input
+                    name="book_name"
+                    placeholder="Enter book name"
+                    required
+
+                    style="
+                        padding:10px;
+                        border-radius:8px;
+                        border:1px solid #ccc;
+                        width:220px;
+                    "
+                >
+
+                <button
+                    name="action"
+                    value="borrow"
+
+                    style="
+                        padding:10px 14px;
+                        border:none;
+                        background:#2563eb;
+                        color:white;
+                        border-radius:8px;
+                        cursor:pointer;
+                    "
+                >
+                    Borrow Book
+                </button>
+
             </form>
+
         </div>
-        
-        </div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
-</div>
+
         """
+
+    # CLOSE PAGE CONTENT + CARDS CONTAINER
+    output += """
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="
+            text-align:center;
+            padding:28px;
+            margin-top:40px;
+            color:#64748b;
+            font-size:14px;
+            border-top:1px solid #e2e8f0;
+        ">
+
+            © 2026 Zambia Air Services Training Institute
+
+            <br>
+
+            All Rights Reserved
+
+        </div>
+
+    </div>
+
+    """
 
     return output
 
@@ -1842,21 +2137,42 @@ def sports():
             <td>{cell("chess")}</td>
         </tr>
         
-        </div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
-</div>
+        </div>
         """
-
     output += "</table>"
+    
+    # CLOSE PAGE CONTENT + CARDS CONTAINER
+    output += """
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="
+            text-align:center;
+            padding:28px;
+            margin-top:40px;
+            color:#64748b;
+            font-size:14px;
+            border-top:1px solid #e2e8f0;
+        ">
+
+            © 2026 Zambia Air Services Training Institute
+
+            <br>
+
+            All Rights Reserved
+
+        </div>
+
+    </div>
+
+    """
 
     return output
+
+    
 
 from flask import send_from_directory
 
@@ -1884,7 +2200,7 @@ def accounts():
                 "paid": 0,
                 "minimum_required": 4000,
                 "status": "Pending",
-                "reason": "",
+                "Remarks": "",
                 "payments": [],
                 "history": []
 
@@ -1927,7 +2243,7 @@ def accounts():
 
                     "amount": payment["amount"],
 
-                    "reason": "Online Payment",
+                    "Remarks": "Online Payment",
 
                     "status": "Approved"
 
@@ -1937,7 +2253,7 @@ def accounts():
 
                 payment["status"] = "Rejected"
 
-                payment["reason"] = request.form.get("reason", "")
+                payment["Remarks"] = request.form.get("Remarks", "")
 
             save_students(students)
 
@@ -1964,7 +2280,7 @@ def accounts():
 
                         "amount": amount,
 
-                        "reason": "Manual Accounts Update",
+                        "Remarks": "Manual Accounts Update",
 
                         "status": "Recorded"
 
@@ -2000,7 +2316,7 @@ def accounts():
 
                 acc["status"] = "Cleared"
 
-                acc["reason"] = "Cleared by Accounts Office"
+                acc["Remarks"] = "Cleared by Accounts Office"
 
             else:
 
@@ -2017,19 +2333,19 @@ def accounts():
 
                     acc["status"] = "Cleared"
 
-                    acc["reason"] = "Fees fully paid"
+                    acc["Remarks"] = "Fees fully paid"
 
                 elif paid >= minimum:
 
                     acc["status"] = "Cleared"
 
-                    acc["reason"] = "Meets minimum payment requirement"
+                    acc["Remarks"] = "Meets minimum payment requirement"
 
                 else:
 
                     acc["status"] = "Pending"
 
-                    acc["reason"] = f"Outstanding balance: K{outstanding}"
+                    acc["Remarks"] = f"Outstanding balance: K{outstanding}"
 
         save_students(students)
 
@@ -2126,9 +2442,9 @@ def accounts():
 
                         <br><br>
 
-                        Reject Reason:<br>
+                        Reject Remarks:<br>
 
-                        <input name="reason">
+                        <input name="Remarks">
 
                         <br><br>
 
@@ -2167,19 +2483,19 @@ def accounts():
 
             status = "Cleared"
 
-            reason = "Fees fully paid"
+            Remarks = "Fees fully paid"
 
         elif paid >= minimum:
 
             status = "Cleared"
 
-            reason = "Meets minimum payment requirement"
+            Remarks = "Meets minimum payment requirement"
 
         else:
 
             status = "Pending"
 
-            reason = f"Outstanding balance: K{outstanding}"
+            Remarks = f"Outstanding balance: K{outstanding}"
 
         output += f"""
 
@@ -2229,7 +2545,7 @@ def accounts():
 
             <b>Status:</b> {status}<br>
 
-            <b>Note:</b> {reason}
+            <b>Note:</b> {Remarks}
 
             <br><br>
 
@@ -2250,7 +2566,7 @@ def accounts():
 
                     <th>Status</th>
 
-                    <th>Reason</th>
+                    <th>Remarks</th>
 
                 </tr>
 
@@ -2266,7 +2582,7 @@ def accounts():
 
                             <td>{p.get("status","")}</td>
 
-                            <td>{p.get("reason","")}</td>
+                            <td>{p.get("Remarks","")}</td>
 
                         </tr>
 
@@ -2324,17 +2640,36 @@ def accounts():
 
         </div>
         
-        </div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
-</div>
+        
         """
+	# CLOSE PAGE CONTENT + CARDS CONTAINER
+    output += """
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="
+            text-align:center;
+            padding:28px;
+            margin-top:40px;
+            color:#64748b;
+            font-size:14px;
+            border-top:1px solid #e2e8f0;
+        ">
+
+            © 2026 Zambia Air Services Training Institute
+
+            <br>
+
+            All Rights Reserved
+
+        </div>
+
+    </div>
+
+    """
 
     return output
 
@@ -2397,19 +2732,40 @@ def stores():
             </form>
         </div><hr>
         
-        </div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
-</div>
         """
+        
+    # CLOSE PAGE CONTENT + CARDS CONTAINER
+    output += """
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="
+            text-align:center;
+            padding:28px;
+            margin-top:40px;
+            color:#64748b;
+            font-size:14px;
+            border-top:1px solid #e2e8f0;
+        ">
+
+            © 2026 Zambia Air Services Training Institute
+
+            <br>
+
+            All Rights Reserved
+
+        </div>
+
+    </div>
+
+    """
 
     return output
+
+    
 
 # -------- TSO --------
 @app.route("/tso", methods=["GET", "POST"])
@@ -2436,8 +2792,6 @@ def tso():
     output = dept_nav("Technical Services Office") + """
 
     <div style="padding:30px;">
-
-        
 
         <br>
 
@@ -2493,38 +2847,45 @@ def tso():
 
         output += f"""
         <tr>
-
             <td>{sid}</td>
             <td>{s.get('name','')}</td>
             <td>{acc}</td>
             <td>{hostel_name}</td>
             <td>{room}</td>
-
             <td style="font-weight:bold;">
                 Physical Clearance Required
             </td>
-
         </tr>
         """
 
+    # CLOSE TABLE + PAGE CONTENT (FIXED INDENTATION)
     output += """
         </table>
 
     </div>
-    
-    </div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
-</div>
+
+    <!-- FOOTER -->
+    <div style="
+        text-align:center;
+        padding:28px;
+        margin-top:40px;
+        color:#64748b;
+        font-size:14px;
+        border-top:1px solid #e2e8f0;
+    ">
+
+        © 2026 Zambia Air Services Training Institute
+
+        <br>
+
+        All Rights Reserved
+
+    </div>
+
     """
 
     return output
+	
 
 
 # -------- HOSTEL --------
@@ -2681,20 +3042,40 @@ def hostel():
         </table>
 
     </div>
+    """
     
-    </div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
-</div>
+# CLOSE PAGE CONTENT + CARDS CONTAINER
+    output += """
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="
+            text-align:center;
+            padding:28px;
+            margin-top:40px;
+            color:#64748b;
+            font-size:14px;
+            border-top:1px solid #e2e8f0;
+        ">
+
+            © 2026 Zambia Air Services Training Institute
+
+            <br>
+
+            All Rights Reserved
+
+        </div>
+
+    </div>
+
     """
 
     return output
+
+    
     
 # -------- COMMUNICATION SKILLS --------
 @app.route("/communication", methods=["GET", "POST"])
@@ -2710,7 +3091,7 @@ def communication():
     if request.method == "POST":
         sid = request.form.get("sid")
         status = request.form.get("status")
-        reason = request.form.get("reason")
+        Remarks = request.form.get("Remarks")
 
         if sid in students:
 
@@ -2719,7 +3100,7 @@ def communication():
 
             students[sid]["departments"]["communication"] = {
                 "status": status,
-                "reason": reason
+                "Remarks": Remarks
             }
 
         save_students(students)
@@ -2741,13 +3122,13 @@ def communication():
     for sid, s in display_students.items():
         dept = s.get("departments", {}).get("communication", {})
         status = dept.get("status", "Pending")
-        reason = dept.get("reason", "")
+        Remarks = dept.get("Remarks", "")
 
         output += f"""
         <div style="border:1px solid #ccc;padding:10px;margin:10px;">
             <b>{s['name']} ({sid})</b><br>
             Status: {status}<br>
-            Reason: {reason}<br><br>
+            Remarks: {Remarks}<br><br>
 
             <form method="POST">
                 <input type="hidden" name="sid" value="{sid}">
@@ -2755,24 +3136,44 @@ def communication():
                     <option value="Cleared">Cleared</option>
                     <option value="Pending">Pending</option>
                 </select>
-                <input name="reason" placeholder="Reason">
+                <input name="Remarks" placeholder="Remarks">
                 <button>Update</button>
             </form>
         </div>
         
-        </div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
-</div>
+        
         """
+	# CLOSE PAGE CONTENT + CARDS CONTAINER
+    output += """
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="
+            text-align:center;
+            padding:28px;
+            margin-top:40px;
+            color:#64748b;
+            font-size:14px;
+            border-top:1px solid #e2e8f0;
+        ">
+
+            © 2026 Zambia Air Services Training Institute
+
+            <br>
+
+            All Rights Reserved
+
+        </div>
+
+    </div>
+
+    """
 
     return output
+    
 
 
 # -------- MATHEMATICS --------
@@ -2792,12 +3193,12 @@ def mathematics():
     if request.method == "POST":
         sid = request.form.get("sid")
         status = request.form.get("status")
-        reason = request.form.get("reason")
+        Remarks = request.form.get("Remarks")
 
         if sid in students:
             students[sid]["departments"]["mathematics"] = {
                 "status": status,
-                "reason": reason
+                "Remarks": Remarks
             }
 
             save_students(students)
@@ -2827,13 +3228,13 @@ def mathematics():
 
         dept = s.get("departments", {}).get("mathematics", {})
         status = dept.get("status", "Pending")
-        reason = dept.get("reason", "")
+        Remarks = dept.get("Remarks", "")
 
         output += f"""
         <div style="border:1px solid #ccc;padding:10px;margin:10px;">
             <b>{s.get('name','')} ({sid})</b><br>
             Status: {status}<br>
-            Reason: {reason}<br><br>
+            Remarks: {Remarks}<br><br>
 
             <form method="POST">
                 <input type="hidden" name="sid" value="{sid}">
@@ -2843,23 +3244,43 @@ def mathematics():
                     <option value="Pending" {"selected" if status=="Pending" else ""}>Pending</option>
                 </select>
 
-                <input name="reason" value="{reason}" placeholder="Reason">
+                <input name="Remarks" value="{Remarks}" placeholder="Remarks">
                 <button>Update</button>
             </form>
         </div>
         
-        </div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
-</div>
+        
         """
+	# CLOSE PAGE CONTENT + CARDS CONTAINER
+    output += """
 
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="
+            text-align:center;
+            padding:28px;
+            margin-top:40px;
+            color:#64748b;
+            font-size:14px;
+            border-top:1px solid #e2e8f0;
+        ">
+
+            © 2026 Zambia Air Services Training Institute
+
+            <br>
+
+            All Rights Reserved
+
+        </div>
+
+    </div>
+
+    """
+
+    
     return output
 
 
@@ -2880,12 +3301,12 @@ def hr():
     if request.method == "POST":
         sid = request.form.get("sid")
         status = request.form.get("status")
-        reason = request.form.get("reason")
+        Remarks = request.form.get("Remarks")
 
         if sid in students:
             students[sid]["departments"]["hr"] = {
                 "status": status,
-                "reason": reason
+                "Remarks": Remarks
             }
 
             save_students(students)
@@ -2915,13 +3336,13 @@ def hr():
 
         dept = s.get("departments", {}).get("hr", {})
         status = dept.get("status", "Pending")
-        reason = dept.get("reason", "")
+        Remarks = dept.get("Remarks", "")
 
         output += f"""
         <div style="border:1px solid #ccc;padding:10px;margin:10px;">
             <b>{s.get('name','')} ({sid})</b><br>
             Status: {status}<br>
-            Reason: {reason}<br><br>
+            Remarks: {Remarks}<br><br>
 
             <form method="POST">
                 <input type="hidden" name="sid" value="{sid}">
@@ -2931,23 +3352,43 @@ def hr():
                     <option value="Pending" {"selected" if status=="Pending" else ""}>Pending</option>
                 </select>
 
-                <input name="reason" value="{reason}" placeholder="Reason">
+                <input name="Remarks" value="{Remarks}" placeholder="Remarks">
                 <button>Update</button>
             </form>
         </div>
         
-        </div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
-</div>
+        
         """
+	# CLOSE PAGE CONTENT + CARDS CONTAINER
+    output += """
 
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="
+            text-align:center;
+            padding:28px;
+            margin-top:40px;
+            color:#64748b;
+            font-size:14px;
+            border-top:1px solid #e2e8f0;
+        ">
+
+            © 2026 Zambia Air Services Training Institute
+
+            <br>
+
+            All Rights Reserved
+
+        </div>
+
+    </div>
+
+    """
+
+    
     return output
 
 
@@ -2967,13 +3408,13 @@ def training():
     if request.method == "POST":
         sid = request.form.get("sid")
         status = request.form.get("status")
-        reason = request.form.get("reason")
+        Remarks = request.form.get("Remarks")
 
         if sid in students:
 
             students[sid]["departments"]["training"] = {
                 "status": status,
-                "reason": reason
+                "Remarks": Remarks
             }
 
         save_students(students)
@@ -3004,14 +3445,14 @@ def training():
 
         dept = s.get("departments", {}).get("training", {})
         status = dept.get("status", "Pending")
-        reason = dept.get("reason", "")
+        Remarks = dept.get("Remarks", "")
 
         output += f"""
         <div style="border:1px solid #ccc;padding:12px;margin:10px;border-radius:8px;">
             <b>{s.get('name','Unknown')} ({sid})</b><br><br>
 
             <b>Status:</b> {status}<br>
-            <b>Reason:</b> {reason}<br><br>
+            <b>Remarks:</b> {Remarks}<br><br>
 
             <form method="POST">
                 <input type="hidden" name="sid" value="{sid}">
@@ -3021,24 +3462,44 @@ def training():
                     <option value="Pending">Pending</option>
                 </select><br><br>
 
-                <input name="reason" placeholder="Reason (if pending)"><br><br>
+                <input name="Remarks" placeholder="Remarks (if pending)"><br><br>
 
                 <button>Update</button>
             </form>
         </div>
         
-        </div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
-</div>
+        
         """
+	# CLOSE PAGE CONTENT + CARDS CONTAINER
+    output += """
 
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="
+            text-align:center;
+            padding:28px;
+            margin-top:40px;
+            color:#64748b;
+            font-size:14px;
+            border-top:1px solid #e2e8f0;
+        ">
+
+            © 2026 Zambia Air Services Training Institute
+
+            <br>
+
+            All Rights Reserved
+
+        </div>
+
+    </div>
+
+    """
+
+    
     return output
 
 
@@ -3154,8 +3615,40 @@ def ame():
                 <button name="action" value="add">Add Tool</button>
             </form>
         </div>
-        """
+        
+        
 
+        """
+	# CLOSE PAGE CONTENT + CARDS CONTAINER
+    output += """
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="
+            text-align:center;
+            padding:28px;
+            margin-top:40px;
+            color:#64748b;
+            font-size:14px;
+            border-top:1px solid #e2e8f0;
+        ">
+
+            © 2026 Zambia Air Services Training Institute
+
+            <br>
+
+            All Rights Reserved
+
+        </div>
+
+    </div>
+
+    """
+
+    
     return output
     
     print("ROUTES:", app.url_map)
@@ -3193,16 +3686,7 @@ def ame():
 
     </form>
     
-    </div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
-</div>
+    
     """
 
 
@@ -3222,6 +3706,7 @@ def terms():
         return redirect("/student")
 
     return f"""
+    
 
     <div style="
         max-width:1100px;
@@ -3311,7 +3796,7 @@ def terms():
             <form method="POST">
 
                 <button style="
-                    background:linear-gradient(135deg,#2563eb,#16a34a);
+                    background:linear-gradient(135deg,#1e3a8a,#06b6d4);
                     color:white;
                     border:none;
                     padding:18px 40px;
@@ -3329,15 +3814,21 @@ def terms():
 
     </div>
     
-    </div><div style="
+    <div style="
     text-align:center;
-    margin-top:30px;
-    padding-top:18px;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
     border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
 ">
-    © 2026 ZASTI Digital Clearance System
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
 </div>
     """
 
@@ -3367,6 +3858,7 @@ def student():
 
     
     return nav + f"""
+    
 
 <div class="main-container" style="
     display:flex;
@@ -3474,20 +3966,28 @@ def student():
         CLEARANCE<br>
         SYSTEM
     </div>
-
-</div>
-
-</div><div style="
+    
+    <div style="
     text-align:center;
-    margin-top:30px;
-    padding-top:18px;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
     border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
 ">
-    © 2026 ZASTI Digital Clearance System
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
 </div>
-"""
+    
+    """
+
+
+
 @app.route("/student/profile", methods=["GET", "POST"])
 def student_profile():
 
@@ -3535,6 +4035,14 @@ def student_profile():
                 profile_pic = s["profile_pic"]
 
     return NAV + f"""
+    <html>
+
+<head>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 <div style="padding:20px; font-family:Arial;">
 
     <!-- PROFILE PICTURE -->
@@ -3544,8 +4052,8 @@ def student_profile():
 
             <img src="{profile_pic}" 
                  style="
-                    width:330px;
-                    height:330px;
+                    width:110px;
+                    height:110px;
                     border-radius:50%;
                     object-fit:cover;
                     box-shadow:0 8px 16px rgba(0,0,0,0.2);
@@ -3568,7 +4076,7 @@ def student_profile():
         background:white;
         border-radius:16px;
         line-height:2;
-        font-size:28px;
+        font-size:18px;
         box-shadow:0 16px 32px rgba(0,0,0,0.12);
     ">
 
@@ -3600,7 +4108,7 @@ def student_profile():
     <a href="/student" style="
         display:inline-block;
         padding:12px 24px;
-        background:linear-gradient(135deg,#2563eb,#16a34a);
+        background:linear-gradient(135deg,#1e3a8a,#06b6d4);
         color:white;
         border-radius:12px;
         text-decoration:none;
@@ -3612,15 +4120,21 @@ def student_profile():
 
 </div>
 
-</div><div style="
+<div style="
     text-align:center;
-    margin-top:30px;
-    padding-top:18px;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
     border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
 ">
-    © 2026 ZASTI Digital Clearance System
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
 </div>
 """
         
@@ -3637,7 +4151,7 @@ def student_accommodation():
         return "<h2>Student not found</h2>"
 
     s = students[sid]
-    nav = get_nav("student", sid)
+    
 
     # ✅ CORRECT DATA SOURCE (matches your system)
     acc = s.get("accommodation", "Not Assigned")
@@ -3648,17 +4162,26 @@ def student_accommodation():
     key = items.get("key", "Not Issued")
     mattress = items.get("mattress", "Not Issued")
 
-    return nav + f"""
-<div style="
-    padding:30px;
-    font-family:Arial;
-    max-width:1400px;
-    margin:auto;
-">
+    return f"""
+    <html>
+<head>
+<link rel="stylesheet" href="/static/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+<div class="accommodation-page">
+
+    <div style="
+        padding:20px;
+        font-family:Arial,sans-serif;
+        max-width:900px;
+        margin:auto;
+        width:100%;
+        box-sizing:border-box;
+    ">
 
     <h2 style="
         margin-bottom:22px;
-        font-size:34px;
+        font-size:28px;
         color:#1e293b;
         font-weight:700;
     ">
@@ -3668,60 +4191,105 @@ def student_accommodation():
     <div style="
         background:white;
         border-radius:18px;
-        padding:28px;
+        padding:22px;
         border:1px solid #e2e8f0;
         box-shadow:0 4px 12px rgba(0,0,0,0.05);
+        overflow-x:auto;
     ">
 
         <table width="100%" style="
-            border-collapse:collapse;
-            font-size:20px;
-        ">
+    border-collapse:collapse;
+    font-size:16px;
+    table-layout:fixed;
+    word-wrap:break-word;
+">
 
-        
+            <tr style="
+                background:#f1f5f9;
+            ">
+                <th style="
+                    text-align:left;
+                    padding:12px;
+                ">
+                    Item
+                </th>
 
-                <tr style="background:#f1f5f9;">
-                    <th align="left">Item</th>
-                    <th align="left">Details</th>
-                </tr>
+                <th style="
+                    text-align:left;
+                    padding:12px;
+                ">
+                    Details
+                </th>
+            </tr>
 
-                <tr><td><b>Type</b></td><td>{acc}</td></tr>
-                <tr><td><b>Hostel</b></td><td>{hostel}</td></tr>
-                <tr><td><b>Room</b></td><td>{room}</td></tr>
-                <tr><td><b>Key</b></td><td>{key}</td></tr>
-                <tr><td><b>Mattress</b></td><td>{mattress}</td></tr>
+            <tr>
+                <td style="padding:12px;"><b>Type</b></td>
+                <td style="padding:12px;">{acc}</td>
+            </tr>
 
-            </table>
+            <tr>
+                <td style="padding:12px;"><b>Hostel</b></td>
+                <td style="padding:12px;">{hostel}</td>
+            </tr>
 
-        </div>
+            <tr>
+                <td style="padding:12px;"><b>Room</b></td>
+                <td style="padding:12px;">{room}</td>
+            </tr>
+
+            <tr>
+                <td style="padding:12px;"><b>Key</b></td>
+                <td style="padding:12px;">{key}</td>
+            </tr>
+
+            <tr>
+                <td style="padding:12px;"><b>Mattress</b></td>
+                <td style="padding:12px;">{mattress}</td>
+            </tr>
+
+        </table>
 
     </div>
-    <div style="text-align:center; margin-top:30px;">
-    <a href="/student" style="
-        display:inline-block;
-        padding:12px 24px;
-        background:linear-gradient(135deg,#2563eb,#16a34a);
-        color:white;
-        border-radius:12px;
-        text-decoration:none;
-        font-weight:bold;
-        box-shadow:0 4px 12px rgba(0,0,0,0.2);
-    ">
-        ⬅ Back to Main Menu
-    </a>
-</div>
 
-</div><div style="
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
-">
-    © 2026 ZASTI Digital Clearance System
+    <div style="
+        text-align:center;
+        margin-top:30px;
+    ">
+
+        <a href="/student" style="
+            display:inline-block;
+            padding:12px 24px;
+            background:linear-gradient(135deg,#1e3a8a,#06b6d4);
+            color:white;
+            border-radius:12px;
+            text-decoration:none;
+            font-weight:bold;
+            box-shadow:0 4px 12px rgba(0,0,0,0.2);
+        ">
+            ⬅ Back to Main Menu
+        </a>
+
+    </div>
+
+    <div style="
+        text-align:center;
+        padding:28px;
+        margin-top:40px;
+        color:#64748b;
+        font-size:15px;
+        border-top:1px solid #e2e8f0;
+    ">
+
+        © 2026 Zambia Air Services Training Institute
+
+        <br>
+
+        All Rights Reserved
+
+    </div>
+
 </div>
-    """
+"""
     
 @app.route("/student/accounts")
 def student_accounts():
@@ -3766,17 +4334,25 @@ def student_accounts():
             </td>
 
             <td>
-                {p.get('reason', '')}
+                {p.get('Remarks', '')}
             </td>
 
         </tr>
         """
 
     return NAV + f"""
+    <html>
+
+<head>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
     <div style="
         padding:20px;
-        font-size:40px;
+        font-size:18px;
         font-family:Arial;
     ">
 
@@ -3790,7 +4366,7 @@ def student_accounts():
 
         style="
             border-collapse:collapse;
-            font-size:38px;
+            font-size:18px;
         ">
 
             <tr style="background:#ddd;">
@@ -3847,7 +4423,7 @@ def student_accounts():
 
         style="
             border-collapse:collapse;
-            font-size:38px;
+            font-size:18px;
         ">
 
             <tr style="background:#ddd;">
@@ -3856,7 +4432,7 @@ def student_accounts():
 
                 <th>Status</th>
 
-                <th>Reason</th>
+                <th>Remarks</th>
 
             </tr>
 
@@ -3876,7 +4452,7 @@ def student_accounts():
         style="
             display:inline-block;
             padding:12px 24px;
-            background:linear-gradient(135deg,#2563eb,#16a34a);
+            background:linear-gradient(135deg,#1e3a8a,#06b6d4);
             color:white;
             border-radius:12px;
             text-decoration:none;
@@ -3890,15 +4466,21 @@ def student_accounts():
 
     </div>
     
-    </div><div style="
+    <div style="
     text-align:center;
-    margin-top:30px;
-    padding-top:18px;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
     border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
 ">
-    © 2026 ZASTI Digital Clearance System
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
 </div>
     """
     
@@ -3906,15 +4488,24 @@ def student_accounts():
 def payment_page(sid):
 
     return f"""
+    
+    <html>
+
+<head>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
     {NAV}
-    <div style="padding:20px; font-family:Arial;font-size:38px;">
+    <div style="padding:20px; font-family:Arial;font-size:18px;">
 
         <h2> Upload Payment Proof</h2>
 
         <div style="
             border:1px solid #ddd;
             padding:20px;
-            font-size:38px;
+            font-size:18px;
             border-radius:10px;
             max-width:400px;
             style="
@@ -3941,9 +4532,9 @@ def payment_page(sid):
                 <button style="
                     background:#2563eb;
                     color:white;
-                    padding:10px 20px;
+                    padding:10px 18px;
                     border:none;
-                    font-size:28px;
+                    font-size:14px;
                     border-radius:6px;
                     cursor:pointer;
                     width:100%;
@@ -3959,7 +4550,7 @@ def payment_page(sid):
     <a href="/student" style="
         display:inline-block;
         padding:12px 24px;
-        background:linear-gradient(135deg,#2563eb,#16a34a);
+        background:linear-gradient(135deg,#1e3a8a,#06b6d4);
         color:white;
         border-radius:12px;
         text-decoration:none;
@@ -3970,15 +4561,21 @@ def payment_page(sid):
     </a>
 </div>
 
-</div><div style="
+<div style="
     text-align:center;
-    margin-top:30px;
-    padding-top:18px;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
     border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
 ">
-    © 2026 ZASTI Digital Clearance System
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
 </div>
     """
 
@@ -4044,7 +4641,7 @@ def upload_proof():
         "amount": amount,
         "file": filename,
         "status": "Pending",
-        "reason": ""
+        "Remarks": ""
     })
 
     save_students(students)
@@ -4057,7 +4654,7 @@ def upload_proof():
     <a href="/student" style="
         display:inline-block;
         padding:12px 24px;
-        background:linear-gradient(135deg,#2563eb,#16a34a);
+        background:linear-gradient(135deg,#1e3a8a,#06b6d4);
         color:white;
         border-radius:12px;
         text-decoration:none;
@@ -4068,15 +4665,21 @@ def upload_proof():
     </a>
 </div>
 
-</div><div style="
+<div style="
     text-align:center;
-    margin-top:30px;
-    padding-top:18px;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
     border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
 ">
-    © 2026 ZASTI Digital Clearance System
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
 </div>
     """
 
@@ -4096,16 +4699,43 @@ def student_clearance():
 
     s = students[sid]
 
+    is_day_scholar = (
+        s.get("accommodation", "") == "Day Scholar"
+    )
+
+    signature_box = """
+    <div style="
+        margin-top:18px;
+        font-weight:bold;
+    ">
+        Signature
+    </div>
+
+    <div style="
+        width:240px;
+        height:45px;
+        border:2px solid #999;
+        border-radius:8px;
+        margin-top:8px;
+    "></div>
+    """
+
     # 🔥 Hostel items
     items = s.get("hostel_items", {})
 
-    mattress = items.get("mattress", "Not Assigned")
+    mattress = items.get(
+        "mattress",
+        "Not Assigned"
+    )
 
     # 🔥 Navigation
     nav = get_nav("student", sid)
 
     # -------- LIBRARY --------
-    books = s.get("library", {}).get("books", [])
+    books = s.get(
+        "library",
+        {}
+    ).get("books", [])
 
     library_missing = [
         b["name"]
@@ -4113,9 +4743,13 @@ def student_clearance():
         if not b.get("returned", True)
     ]
 
-    library_status = "Cleared" if not library_missing else "Pending"
+    library_status = (
+        "Cleared"
+        if not library_missing
+        else "Pending"
+    )
 
-    library_reason = (
+    library_Remarks = (
         "None"
         if not library_missing
         else ", ".join(library_missing)
@@ -4124,7 +4758,10 @@ def student_clearance():
     # -------- SPORTS --------
     sports = s.get("sports", {})
 
-    sports_items = sum(len(v) for v in sports.values())
+    sports_items = sum(
+        len(v)
+        for v in sports.values()
+    )
 
     sports_status = (
         "Cleared"
@@ -4132,31 +4769,68 @@ def student_clearance():
         else "Pending"
     )
 
-    sports_reason = (
+    sports_Remarks = (
         "None"
         if sports_items == 0
         else "Unreturned sports items"
     )
 
     # -------- STORES --------
-    stores_status = "Cleared" if mattress in ["Returned", "NIL"] else "Pending"
-    stores_reason = "None" if stores_status == "Cleared" else "Mattress not returned"
+    if is_day_scholar:
 
-    # -------- TSO --------
-    tso_status = "Physical Clearance Required"
+        stores_status = "Cleared"
 
-    tso_reason = "Key and physical asset verification"
+        stores_Remarks = "Day Scholar"
 
-    # -------- HOSTEL --------
-    hostel_status = "Physical Clearance Required"
+    else:
 
-    hostel_reason = "Room inspection and hostel verification"
+        stores_status = (
+            "Cleared"
+            if mattress in ["Returned", "NIL"]
+            else "Pending"
+        )
+
+        stores_Remarks = (
+            "Mattress returned"
+            if stores_status == "Cleared"
+            else "Mattress not returned"
+        )
+
+    # -------- TSO + HOSTEL LOGIC --------
+    if is_day_scholar:
+
+        tso_status = "Cleared"
+        tso_Remarks = "Day Scholar"
+
+        hostel_status = "Cleared"
+        hostel_Remarks = "Day Scholar"
+
+    else:
+
+        tso_status = (
+            "Physical Clearance Required"
+        )
+
+        tso_Remarks = (
+            "Key and room inspection"
+        )
+
+        hostel_status = (
+            "Physical Clearance Required"
+        )
+
+        hostel_Remarks = (
+            "Room inspection and hostel verification"
+        )
 
     # -------- DEPARTMENTS --------
     departments = s.get("departments", {})
 
     # -------- AME --------
-    ame_data = departments.get("ame", {"tools": []})
+    ame_data = departments.get(
+        "ame",
+        {"tools": []}
+    )
 
     tools = ame_data.get("tools", [])
 
@@ -4172,7 +4846,7 @@ def student_clearance():
         else "Pending"
     )
 
-    ame_reason = (
+    ame_Remarks = (
         "None"
         if not pending_tools
         else ", ".join(pending_tools)
@@ -4181,7 +4855,10 @@ def student_clearance():
     # -------- ACCOUNTS --------
     acc_data = s.get("accounts", {})
 
-    total_fee = acc_data.get("total_fee", 0)
+    total_fee = acc_data.get(
+        "total_fee",
+        0
+    )
 
     paid = acc_data.get("paid", 0)
 
@@ -4196,13 +4873,15 @@ def student_clearance():
 
         accounts_status = "Cleared"
 
-        accounts_reason = "Fees fully paid"
+        accounts_Remarks = (
+            "Fees fully paid"
+        )
 
     elif paid >= minimum_required:
 
         accounts_status = "Cleared"
 
-        accounts_reason = (
+        accounts_Remarks = (
             "Meets minimum payment requirement"
         )
 
@@ -4210,21 +4889,15 @@ def student_clearance():
 
         accounts_status = "Pending"
 
-        accounts_reason = (
+        accounts_Remarks = (
             f"Outstanding balance: K{outstanding}"
         )
 
-
-
     # -------- OVERALL --------
     statuses = [
-
         library_status,
-
         sports_status,
-
         accounts_status,
-
         departments.get(
             "communication",
             {}
@@ -4245,17 +4918,21 @@ def student_clearance():
             {}
         ).get("status", "Pending"),
 
-        ame_status
-
+        ame_status,
+        tso_status,
+        hostel_status
     ]
 
     cleared = sum(
         1
-        for s in statuses
-        if s == "Cleared"
+        for st in statuses
+        if st == "Cleared"
     )
 
-    total = len(statuses)
+    if is_day_scholar:
+        total = 11
+    else:
+        total = 9
 
     overall = f"{cleared}/{total} Cleared"
 
@@ -4266,149 +4943,74 @@ def student_clearance():
     else:
 
         overall += " ⏳ PENDING"
-        generated_time = datetime.now().strftime("%d %B %Y | %I:%M %p")
-        
-        
+
+    generated_time = datetime.now().strftime(
+        "%d %B %Y | %I:%M %p"
+    )
+    
 
     # -------- OUTPUT --------
     return nav + f"""
     <div style="
-    padding:20px;
-    font-family:Arial;
-    background:white;
-    font-size:38px;
-    border-radius:12px;
-    margin:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.1);
-">
+        padding:20px;
+        font-family:Arial;
+        background:white;
+        font-size:28px;
+        border-radius:12px;
+        margin:20px;
+        box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    ">
 
         <h2> Clearance Status</h2>
-        
-        <div style="
-    margin-bottom:25px;
-    font-size:20px;
-    color:#475569;
-    font-weight:bold;
-">
-    Generated:
-    {generated_time}
-</div>
 
-        <table border="2" width="100%" cellpadding="14" style="border-collapse:collapse; font-size:38px;">
+        <div style="
+            margin-bottom:25px;
+            font-size:20px;
+            color:#475569;
+            font-weight:bold;
+        ">
+            Generated:
+            {generated_time}
+        </div>
+
+        <table border="1" width="100%" cellpadding="14" style="border-collapse:collapse; font-size:22px;">
             <tr style="background:#eee;">
                 <th>Department</th>
                 <th>Status</th>
-                <th>Reason</th>
+                <th>Remarks</th>
             </tr>
 
-            <tr><td>Library</td><td>{library_status}</td><td>{library_reason}</td></tr>
-            <tr><td>Sports</td><td>{sports_status}</td><td>{sports_reason}</td></tr>
-            <tr><td>Accounts</td><td>{accounts_status}</td><td>{accounts_reason}</td></tr>
-            
+            <tr><td>Library</td><td>{library_status}</td><td>{library_Remarks}</td></tr>
+            <tr><td>Sports</td><td>{sports_status}</td><td>{sports_Remarks}</td></tr>
+            <tr><td>Accounts</td><td>{accounts_status}</td><td>{accounts_Remarks}</td></tr>
 
-            <tr><td>Communication Skills</td><td>{departments.get("communication", {}).get("status", "Pending")}</td><td>{departments.get("communication", {}).get("reason", "")}</td></tr>
-            <tr><td>Mathematics</td><td>{departments.get("mathematics", {}).get("status", "Pending")}</td><td>{departments.get("mathematics", {}).get("reason", "")}</td></tr>
-            <tr><td>Human Resource</td><td>{departments.get("hr", {}).get("status", "Pending")}</td><td>{departments.get("hr", {}).get("reason", "")}</td></tr>
-            <tr><td>Head Of Training Section</td><td>{departments.get("training", {}).get("status", "Pending")}</td><td>{departments.get("training", {}).get("reason", "")}</td></tr>
-            <tr><td>AME Stores</td><td>{ame_status}</td><td>{ame_reason}</td></tr>
-            <tr><td>Stores</td><td>{stores_status}</td><td>{stores_reason}</td></tr>
+            <tr><td>Communication Skills</td><td>{departments.get("communication", {}).get("status", "Pending")}</td><td>{departments.get("communication", {}).get("Remarks", "")}</td></tr>
+            <tr><td>Mathematics</td><td>{departments.get("mathematics", {}).get("status", "Pending")}</td><td>{departments.get("mathematics", {}).get("Remarks", "")}</td></tr>
+            <tr><td>Human Resource</td><td>{departments.get("hr", {}).get("status", "Pending")}</td><td>{departments.get("hr", {}).get("Remarks", "")}</td></tr>
+            <tr><td>Head Of Training Section</td><td>{departments.get("training", {}).get("status", "Pending")}</td><td>{departments.get("training", {}).get("Remarks", "")}</td></tr>
+            <tr><td>AME Stores</td><td>{ame_status}</td><td>{ame_Remarks}</td></tr>
+            <tr><td>Stores</td><td>{stores_status}</td><td>{stores_Remarks}</td></tr>
+
+            <tr>
+                <td>Technical Services Office</td>
                 
+                <td>{signature_box if not is_day_scholar else "Cleared (Day Scholar)"}
+                <td>Key collected and room inspection verified</td></td>
+            </tr>
+
+            <tr>
+                <td>Hostel</td>
+                
+                <td>{signature_box if not is_day_scholar else "Cleared (Day Scholar)"}
+                <td>Room inspection and hostel verified</td></td>
+            </tr>
+
         </table>
-
-            <!-- PHYSICAL CLEARANCE -->
-
-
-    <td colspan="3" style="
-        height:50px;
-        font-weight:bold;
-        border:none;
-        background:white;
-    "></td>
-
-</tr>
-
-<tr>
-
-    <td>
-        Technical Services Office
-    </td>
-
-
-    <div>
-        Key and room inspection verification
-    </div>
-
-    <div style="
-        margin-top:18px;
-        font-weight:bold;
-    ">
-        Signature
-    </div>
-
-    <div style="
-        width:240px;
-        height:45px;
-        border:2px solid #999;
-        border-radius:8px;
-        margin-top:8px;
-    "></div>
-
-</td>
-
-<tr>
-
-    <tr>
-
-    <td colspan="3" style="
-        height:50px;
-        font-weight:bold;
-        border:none;
-        background:white;
-    "></td>
-
-</tr>
-
-<tr>
-
-    <td>
-        Hostel
-    </td>
-
-    <td style="
-        color:#ea580c;
-        font-weight:bold;
-    ">
-        
-
-    <td>
-
-        <div>
-            Room inspection and hostel verification
-        </div>
-
-        <div style="
-            margin-top:18px;
-            font-weight:bold;
-        ">
-            Signature
-        </div>
-
-        <div style="
-            width:240px;
-            height:45px;
-            border:2px solid #999;
-            border-radius:8px;
-            margin-top:8px;
-        "></div>
-
-    </td>
-
-</tr>
 
         <p style="
             margin-top:15px;
             color:#555;
-            font-size:24px;
+            font-size:20px;
         ">
 
             If any clearance status appears incorrect
@@ -4457,6 +5059,30 @@ def student_clearance():
         </a>
 
     </div>
+    
+    <div style="
+    text-align:center;
+    margin-top:25px;
+">
+
+    <a href="/clearance_history"
+
+    style="
+        display:inline-block;
+        padding:12px 24px;
+        background:##3b82f6;
+        color:black;
+        border-radius:12px;
+        text-decoration:none;
+        font-weight:bold;
+        box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    ">
+
+        View Previous Clearance Forms
+
+    </a>
+
+</div>
 
     <div style="
         text-align:center;
@@ -4468,7 +5094,7 @@ def student_clearance():
         style="
             display:inline-block;
             padding:12px 24px;
-            background:linear-gradient(135deg,#2563eb,#16a34a);
+            background:linear-gradient(135deg,#1e3a8a,#06b6d4);
             color:white;
             border-radius:12px;
             text-decoration:none;
@@ -4482,15 +5108,21 @@ def student_clearance():
 
     </div>
     
-    </div><div style="
+    <div style="
     text-align:center;
-    margin-top:30px;
-    padding-top:18px;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
     border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
 ">
-    © 2026 ZASTI Digital Clearance System
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
 </div>
     """
 
@@ -4532,10 +5164,32 @@ def print_clearance():
     )
 
     # ==================================
+    # SAVE CLEARANCE RECORD
+    # ==================================
+    if "clearance_history" not in s:
+
+        s["clearance_history"] = []
+
+    record = {
+
+        "document_id": document_id,
+
+        "generated_time": generated_time,
+
+        "status": (
+            "Official Clearance Form Generated"
+        )
+
+    }
+
+    s["clearance_history"].append(record)
+
+    save_students(students)
+
+    # ==================================
     # DEPARTMENTS
     # ==================================
     department_list = [
-
         "Library",
         "Sports",
         "Accounts",
@@ -4547,11 +5201,9 @@ def print_clearance():
         "AME Stores",
         "Technical Services Office",
         "Hostel"
-
     ]
 
     dept_keys = {
-
         "Library": "library",
         "Sports": "sports",
         "Accounts": "accounts",
@@ -4563,11 +5215,9 @@ def print_clearance():
         "AME Stores": "ame",
         "Technical Services Office": "tso",
         "Hostel": "hostel"
-
     }
 
     rows = []
-
     not_cleared = []
 
     # ==================================
@@ -4577,9 +5227,10 @@ def print_clearance():
 
         key = dept_keys.get(dept, dept.lower())
 
-        status = "Pending"
+        dept_data = student_departments.get(key, {})
 
-        reason = "Pending Clearance"
+        status = dept_data.get("status", "Pending")
+        Remarks = dept_data.get("remarks", "None")
 
         # ==================================
         # LIBRARY
@@ -4588,25 +5239,14 @@ def print_clearance():
 
             books = s.get("library", {}).get("books", [])
 
-            unreturned = [
-
-                b for b in books
-
-                if not b.get("returned", True)
-
-            ]
+            unreturned = [b for b in books if not b.get("returned", True)]
 
             if len(unreturned) == 0:
-
                 status = "Cleared"
-
-                reason = "No outstanding books"
-
+                Remarks = "No outstanding books"
             else:
-
                 status = "Pending"
-
-                reason = "Unreturned books"
+                Remarks = "Unreturned books"
 
         # ==================================
         # SPORTS
@@ -4615,22 +5255,14 @@ def print_clearance():
 
             sports = s.get("sports", {})
 
-            total_items = sum(
-                len(v)
-                for v in sports.values()
-            )
+            total_items = sum(len(v) for v in sports.values())
 
             if total_items == 0:
-
                 status = "Cleared"
-
-                reason = "No sports items pending"
-
+                Remarks = "No sports items pending"
             else:
-
                 status = "Pending"
-
-                reason = "Sports items not returned"
+                Remarks = "Sports items not returned"
 
         # ==================================
         # STORES
@@ -4638,20 +5270,14 @@ def print_clearance():
         elif dept == "Stores":
 
             items = s.get("hostel_items", {})
-
             mattress = items.get("mattress")
 
             if mattress in ["Returned", "NIL"]:
-
                 status = "Cleared"
-
-                reason = "Mattress returned"
-
+                Remarks = "Mattress returned"
             else:
-
                 status = "Pending"
-
-                reason = "Mattress not returned"
+                Remarks = "Mattress not returned"
 
         # ==================================
         # ACCOUNTS
@@ -4660,101 +5286,51 @@ def print_clearance():
 
             acc = s.get("accounts", {})
 
-            total_fee = acc.get(
-                "total_fee",
-                7860
-            )
-
+            total_fee = acc.get("total_fee", 7860)
             paid = acc.get("paid", 0)
-
-            minimum = acc.get(
-                "minimum_required",
-                4000
-            )
+            minimum = acc.get("minimum_required", 4000)
 
             outstanding = total_fee - paid
 
             if outstanding <= 0 or paid >= minimum:
-
                 status = "Cleared"
-
-                reason = "Accounts requirements met"
-
+                Remarks = "Accounts requirements met"
             else:
-
                 status = "Pending"
-
-                reason = (
-                    f"Outstanding balance: "
-                    f"K{outstanding}"
-                )
+                Remarks = f"Outstanding balance: K{outstanding}"
 
         # ==================================
         # AME
         # ==================================
         elif dept == "AME Stores":
 
-            ame_data = student_departments.get(
-                "ame",
-                {"tools": []}
-            )
-
+            ame_data = student_departments.get("ame", {"tools": []})
             tools = ame_data.get("tools", [])
 
-            pending_tools = [
-
-                t["name"]
-
-                for t in tools
-
-                if not t.get("returned", True)
-
-            ]
+            pending_tools = [t["name"] for t in tools if not t.get("returned", True)]
 
             if len(pending_tools) == 0:
-
                 status = "Cleared"
-
-                reason = "All AME tools returned"
-
+                Remarks = "All AME tools returned"
             else:
-
                 status = "Pending"
-
-                reason = ", ".join(
-                    pending_tools
-                )
+                Remarks = ", ".join(pending_tools)
 
         # ==================================
         # TECHNICAL SERVICES OFFICE
         # ==================================
         elif dept == "Technical Services Office":
 
-            status = (
-                "Physical Clearance Required"
-            )
+            status = "Physical Clearance Required"
 
-            reason = """
-            <div style="
-                font-weight:bold;
-                margin-bottom:14px;
-            ">
-                Key verification required
+            Remarks = """
+            <div style="font-weight:bold;margin-bottom:14px;">
+                Key collected and room inspection verified.
             </div>
-
-            <div style="
-                font-weight:bold;
-                margin-bottom:8px;
-            ">
+            <div style="font-weight:bold;margin-bottom:8px;">
                 Signature
             </div>
-
-            <div style="
-                width:230px;
-                height:42px;
-                border:2px solid #999;
-                border-radius:6px;
-            "></div>
+            <div style="width:230px;height:42px;border:2px solid #999;border-radius:6px;"></div>
             """
 
         # ==================================
@@ -4762,105 +5338,63 @@ def print_clearance():
         # ==================================
         elif dept == "Hostel":
 
-            status = (
-                "Physical Clearance Required"
-            )
+            status = "Physical Clearance Required"
 
-            reason = """
-            <div style="
-                font-weight:bold;
-                margin-bottom:14px;
-            ">
-                Room inspection and hostel verification
+            Remarks = """
+            <div style="font-weight:bold;margin-bottom:14px;">
+                Room inspected and hostel verified.
             </div>
-
-            <div style="
-                font-weight:bold;
-                margin-bottom:8px;
-            ">
+            <div style="font-weight:bold;margin-bottom:8px;">
                 Signature
             </div>
-
-            <div style="
-                width:230px;
-                height:42px;
-                border:2px solid #999;
-                border-radius:6px;
-            "></div>
+            <div style="width:230px;height:42px;border:2px solid #999;border-radius:6px;"></div>
             """
 
         # ==================================
-        # NORMAL DEPARTMENTS
+        # INSTITUTIONAL DEPARTMENTS
         # ==================================
-        else:
+        elif dept in [
+            "Communication Skills",
+            "Mathematics",
+            "Human Resource",
+            "Head Of Training Section"
+        ]:
 
-            dept_data = student_departments.get(
-                key,
-                {}
-            )
+            dept_data = student_departments.get(key, {})
 
-            status = dept_data.get(
-                "status",
-                "Pending"
-            )
+            status = dept_data.get("status", "Pending")
+            remarks = dept_data.get("remarks", "")
 
-            reason = dept_data.get(
-                "reason",
-                "Pending Clearance"
-            )
+            if status == "Cleared":
+                Remarks = remarks if remarks else "No Institutional property/requirement pending"
+            else:
+                Remarks = remarks if remarks else "Institutional property/requirements not completed"
 
         # ==================================
         # EXPORT CHECK
         # ==================================
-        if dept not in [
-
-            "Technical Services Office",
-            "Hostel"
-
-        ]:
-
+        if dept not in ["Technical Services Office", "Hostel"]:
             if status != "Cleared":
-
                 not_cleared.append(dept)
 
         # ==================================
         # COLOR
         # ==================================
         if status == "Cleared":
-
             color = "#16a34a"
-
         elif "Physical" in status:
-
             color = "#ea580c"
-
         else:
-
             color = "#dc2626"
 
         # ==================================
         # ROWS
         # ==================================
         rows.append(f"""
-        <tr style="
-            page-break-inside:avoid;
-        ">
-
-            <td>
-                <b>{dept}</b>
-            </td>
-
-            <td style="
-                color:{color};
-                font-weight:bold;
-            ">
-                {status}
-            </td>
-
-            <td>
-                {reason}
-            </td>
-
+        <tr style="page-break-inside:avoid;">
+            <td><b>{dept}</b></td>
+            <td style="color:{color};font-weight:bold;">{status}</td>
+            <td>{Remarks}</td>
         </tr>
         """)
 
@@ -4872,183 +5406,216 @@ def print_clearance():
         uncleared = ", ".join(not_cleared)
 
         return f"""
-        <div style="
-            font-family:Arial;
-            max-width:700px;
-            margin:80px auto;
-            background:white;
-            padding:40px;
-            border-radius:14px;
-            border:1px solid #e2e8f0;
-            box-shadow:0 4px 12px rgba(0,0,0,0.08);
-        ">
+        <html>
+        <head>
+            <link rel="stylesheet" href="/static/style.css">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
 
-            <h1 style="
-                color:#dc2626;
-            ">
-                Clearance Export Unavailable
-            </h1>
+        <body>
+            <div style="font-family:Arial;max-width:700px;margin:80px auto;background:white;padding:40px;border-radius:14px;border:1px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,0.08);">
 
-            <p style="
-                font-size:18px;
-                line-height:1.7;
-                color:#334155;
-            ">
+                <h1 style="color:#dc2626;">Clearance Export Unavailable</h1>
 
-                Your clearance process is not yet complete.
+                <p style="font-size:18px;line-height:1.7;color:#334155;">
+                    Your clearance process is not yet complete.
+                </p>
 
-                Please complete clearance with all
-                required departments before generating
-                an official clearance report.
-
-            </p>
-
-            <div style="
-                margin-top:25px;
-                padding:18px;
-                background:#f8fafc;
-                border:1px solid #cbd5e1;
-                border-radius:10px;
-            ">
-
-                <b>
-                    Pending Departments:
-                </b>
-
-                <br><br>
-
-                {uncleared}
+                <div style="margin-top:25px;padding:18px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;">
+                    <b>Pending Departments:</b><br><br>
+                    {uncleared}
+                </div>
 
             </div>
-
-        </div>
+        </body>
+        </html>
         """
 
     # ==================================
-    # FINAL HTML
+    # FINAL OUTPUT
     # ==================================
     return f"""
     <html>
-
     <head>
-
-        <title>
-            Clearance Report
-        </title>
-
+        <link rel="stylesheet" href="/static/style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Clearance Report</title>
     </head>
 
-    <body style="
-        font-family:Arial;
-        padding:40px;
-        background:white;
-    ">
+    <body style="font-family:Arial;padding:40px;background:white;">
 
-        <h1 style="
-            text-align:center;
-            color:#2563eb;
-        ">
+        <h1 style="text-align:center;color:#2563eb;">
             STUDENT CLEARANCE REPORT
         </h1>
 
-        <div style="
-            text-align:center;
-            color:#64748b;
-            margin-top:10px;
-        ">
-            Generated:
-            {generated_time}
+        <div style="text-align:center;color:#64748b;margin-top:10px;">
+            Generated: {generated_time}
         </div>
 
-        <div style="
-            text-align:center;
-            color:#dc2626;
-            margin-top:10px;
-            margin-bottom:40px;
-            font-weight:bold;
-        ">
-            Document ID:
-            {document_id}
-
-            <br><br>
-
-            This clearance form is valid
-            only on the generated date
-            and time.
+        <div style="text-align:center;color:#dc2626;margin-top:10px;margin-bottom:40px;font-weight:bold;">
+            Document ID: {document_id}
         </div>
 
-        <h2>
-            Student Name:
-            {name}
-        </h2>
+        <h2>Student Name: {name}</h2>
+        <h2>Student ID: {sid}</h2>
 
-        <h2>
-            Student ID:
-            {sid}
-        </h2>
-
-        <br>
-
-        <table border="1"
-               width="100%"
-               cellpadding="12"
-               style="
-                    border-collapse:collapse;
-                    font-size:18px;
-               ">
-
-            <tr style="
-                background:#2563eb;
-                color:white;
-            ">
-
-                <th>
-                    Department
-                </th>
-
-                <th>
-                    Status
-                </th>
-
-                <th>
-                    Remarks
-                </th>
-
+        <table border="1" width="100%" cellpadding="12" style="border-collapse:collapse;font-size:18px;">
+            <tr style="background:#2563eb;color:white;">
+                <th>Department</th>
+                <th>Status</th>
+                <th>Remarks</th>
             </tr>
 
             {''.join(rows)}
-
         </table>
-
-        <br><br>
-
-        <div style="
-            text-align:right;
-            color:#64748b;
-            font-size:15px;
-        ">
-            Generated by Student Digital Clearance System
-        </div>
 
         <script>
             window.print()
         </script>
 
     </body>
-
     </html>
     
-    </div><div style="
+    <div style="
     text-align:center;
-    margin-top:30px;
-    padding-top:18px;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
     border-top:1px solid #e2e8f0;
-    color:#94a3b8;
-    font-size:13px;
 ">
-    © 2026 ZASTI Digital Clearance System
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
 </div>
     """
+
+@app.route("/clearance_history")
+def clearance_history():
+
+    if "user" not in session:
+        return redirect("/login")
+
+    students = load_students()
+
+    sid = session.get("user")
+
+    if sid not in students:
+        return "<h2>Student not found</h2>"
+
+    s = students[sid]
+
+    history = s.get("clearance_history", [])
+
+    nav = get_nav("student", sid)
+
+    output = nav + """
+
+    <div style="
+        padding:30px;
+        font-family:Arial;
+    ">
+
+        <h2>
+            Previous Clearance Forms
+        </h2>
+
+    """
+
+    if len(history) == 0:
+
+        output += """
+
+        <div style="
+            margin-top:20px;
+            padding:20px;
+            background:#f8fafc;
+            border-radius:12px;
+            font-size:18px;
+        ">
+
+            No clearance forms generated yet.
+
+        </div>
+        """
+
+    else:
+
+        history.reverse()
+
+        for item in history:
+
+            output += f"""
+
+            <div style="
+                background:white;
+                padding:20px;
+                margin-top:18px;
+                border-radius:12px;
+                box-shadow:0 2px 10px rgba(0,0,0,0.08);
+            ">
+
+                <div style="
+                    font-size:18px;
+                    font-weight:bold;
+                    color:#2563eb;
+                ">
+
+                    {item.get("document_id")}
+
+                </div>
+
+                <div style="
+                    margin-top:10px;
+                    color:#475569;
+                ">
+
+                    Generated:
+                    {item.get("generated_time")}
+
+                </div>
+
+                <div style="
+                    margin-top:8px;
+                    color:#16a34a;
+                    font-weight:bold;
+                ">
+
+                    {item.get("status")}
+
+                </div>
+
+            </div>
+            """
+
+    output += """
+
+    </div>
+    
+    <div style="
+    text-align:center;
+    padding:28px;
+    margin-top:40px;
+    color:#64748b;
+    font-size:16px;
+    border-top:1px solid #e2e8f0;
+">
+
+    © 2026 Zambia Air Services Training Institute
+
+    <br>
+
+    All Rights Reserved
+
+</div>
+    """
+
+    return output   
+         
     
 # ---------------- ERROR HANDLERS ----------------
 import logging
