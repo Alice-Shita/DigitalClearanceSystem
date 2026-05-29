@@ -819,6 +819,8 @@ def reset():
 ):
 
             return """
+            
+           
             <h3 style='color:red;text-align:center;'>
                 Current password is incorrect
             </h3>
@@ -849,6 +851,14 @@ def reset():
         """
 
     return """
+     <html>
+
+<head>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
     <div style="
         min-height:100vh;
@@ -1067,9 +1077,13 @@ def reset():
 
             </form>
 
-        </div>
         
-        <div style="text-align:center; margin-top:30px;">
+        
+        <div style="
+    text-align:center;
+    margin-top:25px;
+">
+
     <a href="/student" style="
         display:inline-block;
         padding:12px 24px;
@@ -1080,9 +1094,14 @@ def reset():
         font-weight:bold;
         box-shadow:0 4px 12px rgba(0,0,0,0.2);
     ">
+
         ⬅ Back to Main Menu
+
     </a>
+
 </div>
+
+    </div>
 
     </div>
     
