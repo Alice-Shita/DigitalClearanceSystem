@@ -30,7 +30,15 @@ def security_headers(response):
 
     return response
 
-
+DEPARTMENTS = {
+    "Library": "Library Department",
+    "Sports": "Sports Department",
+    "Communication Skills": "Communication Skills",
+    "Mathematics": "Mathematics Department",
+    "Human Resource": "Human Resource Department",
+    "AME Stores": "AME Stores",
+    "Head Of Training Section": "Head Of Training Section"
+}
 
 
 def get_nav(role):
@@ -314,15 +322,20 @@ def calculate_hostel_status(student):
 
     items = student.get("hostel_items", {})
 
-    mattress = items.get("mattress", "Not Returned")
-    key = items.get("key", "Not Returned")
+    mattress = items.get("mattress", "Not Assigned")
+    key = items.get("key", "Not Assigned")
 
     issues = []
 
-    if mattress != "Returned":
+    # If nothing has been assigned yet → automatically clear
+    if mattress == "Not Assigned" and key == "Not Assigned":
+        return "Cleared", ["Not yet assigned to hostel clearance"]
+
+    # Only evaluate real issued items
+    if mattress not in ["Not Assigned", "Returned"]:
         issues.append("Mattress not returned")
 
-    if key != "Returned":
+    if key not in ["Not Assigned", "Returned"]:
         issues.append("Key not returned")
 
     if issues:
@@ -337,24 +350,66 @@ def ensure_departments(student):
     if "departments" not in student:
         student["departments"] = {}
 
-    default = {
-        "communication": {"status": "Pending", "Remarks": ""},
-        "mathematics": {"status": "Pending", "Remarks": ""},
-        "hr": {"status": "Pending", "Remarks": ""},
-        "training": {"status": "Pending", "Remarks": ""},
-        "ame": {"status": "Pending", "Remarks": ""},
-        "accounts": {"status": "Pending", "Remarks": ""}
+    defaults = {
+        "communication": {
+            "status": "Cleared",
+            "Remarks": "None"
+        },
+        "mathematics": {
+            "status": "Cleared",
+            "Remarks": "None"
+        },
+        "hr": {
+            "status": "Cleared",
+            "Remarks": "None"
+        },
+        "training": {
+            "status": "Cleared",
+            "Remarks": "None"
+        }
     }
 
-    for key in default:
-        if key not in student["departments"]:
-            student["departments"][key] = default[key]
+    for dept, data in defaults.items():
+        if dept not in student["departments"]:
+            student["departments"][dept] = data.copy()
 
-    # AME TOOLS (from your original version)
+    if "library" not in student:
+        student["library"] = {
+            "books": []
+        }
+
+    if "sports" not in student:
+        student["sports"] = {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        }
+
     if "ame_tools" not in student:
         student["ame_tools"] = []
 
+    if "hostel_items" not in student:
+        student["hostel_items"] = {
+            "mattress": "NIL"
+        }
 
+    if "stores" not in student:
+        student["stores"] = {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": "None"
+            },
+            "key": {
+                "status": "Not Assigned",
+                "remarks": "None"
+            },
+            "properties": [],
+            "overall_status": "Cleared",
+            "status": "Cleared",
+            "Remarks": "New student - nothing assigned yet"
+        }
 def ensure_sports(student):
 
     if "sports" not in student:
@@ -372,6 +427,19 @@ def ensure_sports(student):
         if key not in student["sports"]:
             student["sports"][key] = []
 
+def format_items(items):
+    names = [i.get("name", "").title() for i in items if i.get("name")]
+
+    if not names:
+        return "None"
+
+    if len(names) == 1:
+        return names[0]
+
+    if len(names) == 2:
+        return f"{names[0]} & {names[1]}"
+
+    return ", ".join(names[:-1]) + f" & {names[-1]}"
 
 def ensure_accounts(student):
 
@@ -1123,8 +1191,9 @@ def reset():
 </div>
 
     """
-    
-            
+
+
+                                    
 def dept_nav(title="Department"):
 
     return f"""
@@ -1279,15 +1348,16 @@ def admin():
         return redirect("/login")
 
     students = load_students()
+    users = load_users()
 
-    # 🔥 ENSURE FUNDING EXISTS
+    save_students(students)
+
+    # ---------------- ENSURE FUNDING ----------------
     for sid in students:
         if "funding" not in students[sid] or not students[sid]["funding"]:
             students[sid]["funding"] = "Self Sponsored"
 
-    users = load_users()
-
-    # ---------------- HANDLE ACTIONS ----------------
+    # ---------------- HANDLE POST ----------------
     if request.method == "POST":
 
         action = request.form.get("action")
@@ -1298,21 +1368,19 @@ def admin():
             sid = request.form.get("student_id", "").strip()
 
             if not sid.isdigit() or len(sid) != 8:
-                return NAV + "<h3 style='color:red;'>Student ID must be exactly 8 digits</h3><a href='/admin'>Back</a>"
+                return "<h3>Student ID must be 8 digits</h3><a href='/admin'>Back</a>"
 
             if sid in students:
-                return NAV + "<h3 style='color:red;'>Student ID already exists</h3><a href='/admin'>Back</a>"
+                return "<h3>Student already exists</h3><a href='/admin'>Back</a>"
 
-            # SAFE conversions
             try:
                 year = int(request.form.get("year", 1))
                 term = int(request.form.get("term", 1))
             except:
                 year, term = 1, 1
 
-            funding = request.form.get("funding") or "Self Sponsored"
+            funding = request.form.get("funding", "Self Sponsored")
 
-            # -------- CREATE STUDENT --------
             students[sid] = {
                 "name": request.form.get("name", ""),
                 "program": request.form.get("program", ""),
@@ -1320,43 +1388,23 @@ def admin():
                 "term": term,
                 "funding": funding,
 
-                "profile_pic": "",
-                "accommodation": "Not Set",  # ✅ FIXED
-                "hostel": "N/A",
-                "room": "N/A",
-
-                "hostel_items": {
-                    "mattress": "Not Assigned",
-                    "key": "Not Assigned"
+                "stores": {
+                    "mattress": {
+                        "status": "Not Assigned",
+                        "remarks": ""
+                    },
+                    "properties": []
                 },
 
                 "library": {"books": []},
-
-                "sports": {
-                    "football": [],
-                    "basketball": [],
-                    "volleyball": [],
-                    "netball": [],
-                    "chess": []
-                },
-
-                "departments": {
-                    "communication": {"status": "Pending", "Remarks": ""},
-                    "mathematics": {"status": "Pending", "Remarks": ""},
-                    "hr": {"status": "Pending", "Remarks": ""},
-                    "training": {"status": "Pending", "Remarks": ""},
-                    "ame": {"status": "Pending", "Remarks": ""},
-                    "accounts": {"status": "Pending", "Remarks": ""}
-                },
-
-                # 🔥 ACCOUNTS STRUCTURE (REPLACES payment_status)
+                "sports": {},
                 "accounts": {
                     "total_fee": 7860,
                     "paid": 0,
                     "minimum_required": 4000,
-                    "status": "Pending",
-                    "Remarks": ""
-                }
+                    "status": "Pending"
+                },
+                "departments": {}
             }
 
             users[sid] = {
@@ -1366,6 +1414,7 @@ def admin():
 
         # -------- DELETE --------
         elif action == "delete_selected":
+
             selected = request.form.getlist("selected")
 
             for sid in selected:
@@ -1377,30 +1426,28 @@ def admin():
 
         return redirect("/admin")
 
-    # -------- SEARCH + FILTER --------
+    # ---------------- SEARCH ----------------
     search = request.args.get("search", "").strip().lower()
     funding_filter = request.args.get("funding", "all")
 
     display_students = {}
 
     for sid, s in students.items():
+
         name = s.get("name", "").lower()
         funding = s.get("funding", "Self Sponsored")
 
-        matches_search = (search in sid.lower() or search in name or search == "")
-        matches_funding = (funding_filter == "all" or funding.lower() == funding_filter.lower())
+        if (search in sid.lower() or search in name or not search) and \
+           (funding_filter == "all" or funding.lower() == funding_filter.lower()):
 
-        if matches_search and matches_funding:
             display_students[sid] = s
 
     # ---------------- DISPLAY ----------------
     total_students = len(display_students)
     fully_cleared = 0
     pending_students = 0
-    print("STUDENTS LOADED:", students)
 
     output = dept_nav("️ Admin Dashboard") + f"""
-
 <p><b>Total Students:</b> {total_students}</p>
 
 <form method="GET" style="margin-bottom:10px;">
@@ -1416,15 +1463,13 @@ def admin():
     <button>Search</button>
 </form>
 <hr>
-"""
 
-    output += """
 <form method="POST">
 <input type="hidden" name="action" value="delete_selected">
 
 <table border="1" width="100%" cellpadding="8" style="border-collapse:collapse;">
 <tr style="background:#ddd;">
-    <th><input type="checkbox" onclick="toggleAll(this)"></th>
+    <th></th>
     <th>Funding</th>
     <th>ID</th>
     <th>Name</th>
@@ -1438,7 +1483,6 @@ def admin():
         departments = s.get("departments", {})
         acc = s.get("accounts", {})
 
-        # 🔥 ACCOUNT STATUS (REAL DATA)
         total_fee = acc.get("total_fee", 7860)
         paid = acc.get("paid", 0)
         minimum = acc.get("minimum_required", 4000)
@@ -1452,15 +1496,17 @@ def admin():
         else:
             acc_status = "Pending"
 
-        # 🔥 CLEARANCE COUNT
         statuses = [
-            "Cleared" if not [b for b in s.get("library", {}).get("books", []) if not b.get("returned", True)] else "Pending",
+            "Cleared" if not [
+                b for b in s.get("library", {}).get("books", [])
+                if not b.get("returned", True)
+            ] else "Pending",
+
             "Cleared" if s.get("hostel_items", {}).get("mattress") in ["Returned", "NIL"] else "Pending",
             "Cleared" if s.get("hostel_items", {}).get("key") in ["Returned", "NIL"] else "Pending",
-            "Cleared" if s.get("accommodation") == "Day Scholar" or (
-                s.get("hostel_items", {}).get("key") == "Returned" and
-                s.get("hostel_items", {}).get("mattress") == "Returned"
-            ) else "Pending",
+
+            "Cleared" if s.get("accommodation") == "Day Scholar" else "Pending",
+
             "Cleared" if sum(len(v) for v in s.get("sports", {}).values()) == 0 else "Pending",
 
             departments.get("communication", {}).get("status", "Pending"),
@@ -1468,7 +1514,8 @@ def admin():
             departments.get("hr", {}).get("status", "Pending"),
             departments.get("training", {}).get("status", "Pending"),
             departments.get("ame", {}).get("status", "Pending"),
-            acc_status,
+
+            acc_status
         ]
 
         cleared = sum(1 for st in statuses if st == "Cleared")
@@ -1478,13 +1525,13 @@ def admin():
             fully_cleared += 1
         else:
             pending_students += 1
-			
+
         output += f"""
 <tr>
     <td><input type="checkbox" name="selected" value="{sid}"></td>
     <td>{s.get("funding","")}</td>
-    <td><a href="/admin/edit/{sid}">{sid}</a></td>
-    <td>{s.get('name','')}</td>
+    <td>{sid}</td>
+    <td>{s.get("name","")}</td>
     <td>{cleared}/{total}</td>
     <td>{acc_status}</td>
 </tr>
@@ -1535,27 +1582,14 @@ function toggleAll(source) {
 }
 </script>
 
-<div style="
-    text-align:center;
-    padding:28px;
-    margin-top:40px;
-    color:#64748b;
-    font-size:16px;
-    border-top:1px solid #e2e8f0;
-">
-
+<div style="text-align:center; padding:28px; margin-top:40px; color:#64748b;">
     © 2026 Zambia Air Services Training Institute
-
     <br>
-
     All Rights Reserved
-
 </div>
 """
 
     return output
-
-
 @app.route("/admin/edit/<sid>", methods=["GET", "POST"])
 def edit_student(sid):
 
@@ -1684,6 +1718,7 @@ def staff_library():
         session.get("role") != "staff"
         or session.get("department") != "library"
     ):
+       
         return redirect("/login")
 
     students = load_students()
@@ -1699,25 +1734,14 @@ def staff_library():
 
         if sid in students:
 
-            # 🔥 ENSURE STRUCTURE EXISTS
             if "library" not in students[sid]:
+                students[sid]["library"] = {"books": []}
 
-                students[sid]["library"] = {
-                    "books": []
-                }
+            books = students[sid]["library"].get("books", [])
 
-            books = students[sid]["library"].get(
-                "books",
-                []
-            )
-
-            # -------- BORROW BOOK --------
             if action == "borrow":
 
-                book_name = request.form.get(
-                    "book_name",
-                    ""
-                ).strip()
+                book_name = request.form.get("book_name", "").strip()
 
                 active_books = [
                     b for b in books
@@ -1725,50 +1749,35 @@ def staff_library():
                 ]
 
                 if len(active_books) >= 2:
-
-                    print(
-                        "❌ Cannot borrow more than 2 books"
-                    )
+                    print("❌ Cannot borrow more than 2 books")
 
                 elif book_name:
-
                     books.append({
                         "name": book_name,
                         "returned": False
                     })
 
-            # -------- RETURN BOOK --------
             elif action.startswith("return_"):
 
                 index = int(action.split("_")[1])
 
                 if 0 <= index < len(books):
-
                     books[index]["returned"] = True
 
             students[sid]["library"]["books"] = books
 
-        # 🔥 SAVE
         save_students(students)
 
     # -------- SEARCH FILTER --------
-    search = request.args.get(
-        "search",
-        ""
-    ).strip()
+    search = request.args.get("search", "").strip()
 
     display_students = students
 
     if search:
-
         display_students = {
-
             sid: s
-
             for sid, s in students.items()
-
             if search in sid
-
         }
 
     # -------- DISPLAY --------
@@ -2036,7 +2045,6 @@ def staff_library():
 
     return output
 
-
 # -------- SPORTS --------
 @app.route("/sports", methods=["GET", "POST"])
 def sports():
@@ -2190,7 +2198,6 @@ def sports():
     """
 
     return output
-
     
 
 from flask import send_from_directory
@@ -2692,9 +2699,7 @@ def accounts():
 
     return output
 
-
-
-# -------- STORES --------
+#-----------STORES-----------
 @app.route("/stores", methods=["GET", "POST"])
 def stores():
 
@@ -2702,90 +2707,169 @@ def stores():
         return redirect("/login")
 
     students = load_students()
-    for sid in students:
-    	ensure_departments(students[sid])
 
+    # ---------------- ENSURE STRUCTURE (SAFE ONLY, NO CLEANING) ----------------
+    for sid, s in students.items():
+
+        store = s.setdefault("stores", {})
+
+        store.setdefault("mattress", {
+            "status": "Not Assigned",
+            "remarks": ""
+        })
+
+        store.setdefault("properties", [])
+
+    # ---------------- HANDLE ACTION ----------------
     if request.method == "POST":
+
         sid = request.form.get("sid")
         action = request.form.get("action")
+        item_name = request.form.get("item_name", "").strip()
 
         if sid in students:
-            items = students[sid].get("hostel_items", {})
 
-            if items.get("mattress") != "NIL":
-                if action == "assign":
-                    items["mattress"] = "Assigned"
-                elif action == "returned":
-                    items["mattress"] = "Returned"
+            store = students[sid]["stores"]
+
+            # ---------------- MATTRESS ASSIGN ----------------
+            if action == "assign_mattress":
+                store["mattress"]["status"] = "Assigned"
+                store["mattress"]["remarks"] = "Mattress assigned"
+
+            # ---------------- MATTRESS RETURN (DELETE STYLE) ----------------
+            elif action == "return_mattress":
+                store["mattress"] = {
+                    "status": "Returned",
+                    "remarks": "Matress returned"
+                }
+
+            # ---------------- ASSIGN PROPERTY ----------------
+            elif action == "assign_property" and item_name:
+
+                item_name = item_name.strip()
+
+                if item_name:
+
+                    exists = any(
+                        i["name"].lower() == item_name.lower()
+                        for i in store["properties"]
+                    )
+
+                    if not exists:
+                        store["properties"].append({
+                            "name": item_name.title(),
+                            "status": "Issued",
+                            "remarks": f"{item_name} issued"
+                        })
+
+            # ---------------- RETURN PROPERTY (REMOVE COMPLETELY) ----------------
+            elif action == "return_property" and item_name:
+
+                store["properties"] = [
+                    i for i in store["properties"]
+                    if i["name"].lower() != item_name.lower()
+                ]
+
+            students[sid]["stores"] = store
 
         save_students(students)
+        return redirect("/stores")
 
-    # -------- SEARCH --------
-    search = request.args.get("search", "").strip()
-    display_students = students
+    # ---------------- SEARCH ----------------
+    search = request.args.get("search", "").strip().lower()
 
-    if search:
-        display_students = {sid: s for sid, s in students.items() if search in sid}
+    display_students = {
+        sid: s for sid, s in students.items()
+        if search in sid.lower() or search in s.get("name", "").lower()
+    } if search else students
 
+    # ---------------- UI ----------------
     output = dept_nav("Stores Department") + """
-    
-
     <form method="GET">
         <input name="search" placeholder="Search ID or Name">
         <button>Search</button>
-    </form><hr>
+    </form>
+    <hr>
     """
 
     for sid, s in display_students.items():
-        mattress = s.get("hostel_items", {}).get("mattress", "Not Assigned")
+
+        store = s.get("stores", {})
+        mattress = store.get("mattress", {})
+        properties = store.get("properties", [])
 
         output += f"""
         <div>
-            <b>{s['name']} ({sid})</b><br>
-            Mattress: {mattress}<br>
+
+            <span style="font-weight:500;">
+                {s.get('name','')} ({sid})
+            </span>
+
+            <br><br>
+
+            <!-- MATTRESS -->
+            Mattress: {mattress.get('status')}<br>
+            Remarks: {mattress.get('remarks')}<br>
 
             <form method="POST">
                 <input type="hidden" name="sid" value="{sid}">
-                <button name="action" value="assign">Assign</button>
-                <button name="action" value="returned">Returned</button>
+                <button name="action" value="assign_mattress">Assign Mattress</button>
+                <button name="action" value="return_mattress">Return Mattress</button>
             </form>
-        </div><hr>
-        
-        """
-        
-    # CLOSE PAGE CONTENT + CARDS CONTAINER
-    output += """
-
-            </div>
-
-        </div>
-
-        <!-- FOOTER -->
-        <div style="
-            text-align:center;
-            padding:28px;
-            margin-top:40px;
-            color:#64748b;
-            font-size:14px;
-            border-top:1px solid #e2e8f0;
-        ">
-
-            © 2026 Zambia Air Services Training Institute
 
             <br>
 
-            All Rights Reserved
+            <!-- PROPERTIES -->
+            <b>Other Properties</b><br>
+        """
+
+        if not properties:
+            output += "No items assigned<br>"
+        else:
+            for item in properties:
+                output += f"""
+                <div style="margin-bottom:8px;">
+                    {item['name']} — {item['status']}<br>
+
+                    <form method="POST">
+                        <input type="hidden" name="sid" value="{sid}">
+                        <input type="hidden" name="item_name" value="{item['name']}">
+
+                        <button name="action" value="return_property">
+                            Return
+                        </button>
+                    </form>
+                </div>
+                """
+
+        # -------- INPUT --------
+        output += f"""
+        <form method="POST">
+            <input type="hidden" name="sid" value="{sid}">
+
+            <input type="text" name="item_name" placeholder="Enter item">
+
+            <button name="action" value="assign_property">
+                Assign
+            </button>
+        </form>
 
         </div>
+        <hr>
+        """
 
+    output += """
+    <div style="text-align:center; padding:28px; color:#64748b;">
+        © 2026 Zambia Air Services Training Institute
+
+        <br>
+
+        All Rights Reserved
     </div>
-
     """
 
     return output
-
     
-
 # -------- TSO --------
 @app.route("/tso", methods=["GET", "POST"])
 def tso():
@@ -3140,8 +3224,8 @@ def communication():
 
     for sid, s in display_students.items():
         dept = s.get("departments", {}).get("communication", {})
-        status = dept.get("status", "Pending")
-        Remarks = dept.get("Remarks", "")
+        status = dept.get("status", "Cleared")
+        Remarks = dept.get("Remarks", "None")
 
         output += f"""
         <div style="border:1px solid #ccc;padding:10px;margin:10px;">
@@ -3192,8 +3276,6 @@ def communication():
     """
 
     return output
-    
-
 
 # -------- MATHEMATICS --------
 @app.route("/mathematics", methods=["GET", "POST"])
@@ -3241,13 +3323,15 @@ def mathematics():
         <button>Search</button>
     </form>
     <hr>
+    
     """
 
     for sid, s in display_students.items():
 
         dept = s.get("departments", {}).get("mathematics", {})
-        status = dept.get("status", "Pending")
-        Remarks = dept.get("Remarks", "")
+        status = dept.get("status", "Cleared")
+        Remarks = dept.get("Remarks", "None")
+        
 
         output += f"""
         <div style="border:1px solid #ccc;padding:10px;margin:10px;">
@@ -3349,13 +3433,14 @@ def hr():
         <button>Search</button>
     </form>
     <hr>
+    
     """
 
     for sid, s in display_students.items():
 
         dept = s.get("departments", {}).get("hr", {})
-        status = dept.get("status", "Pending")
-        Remarks = dept.get("Remarks", "")
+        status = dept.get("status", "Cleared")
+        Remarks = dept.get("Remarks", "None")
 
         output += f"""
         <div style="border:1px solid #ccc;padding:10px;margin:10px;">
@@ -3463,8 +3548,8 @@ def training():
     for sid, s in display_students.items():
 
         dept = s.get("departments", {}).get("training", {})
-        status = dept.get("status", "Pending")
-        Remarks = dept.get("Remarks", "")
+        status = dept.get("status", "Cleared")
+        Remarks = dept.get("Remarks", "None")
 
         output += f"""
         <div style="border:1px solid #ccc;padding:12px;margin:10px;border-radius:8px;">
@@ -3522,6 +3607,7 @@ def training():
     return output
 
 
+    
 # -------- AME STORES --------
 @app.route("/ame", methods=["GET", "POST"])
 def ame():
@@ -4702,7 +4788,6 @@ def upload_proof():
 </div>
     """
 
-
 @app.route("/student/clearance")
 def student_clearance():
 
@@ -4718,18 +4803,14 @@ def student_clearance():
 
     s = students[sid]
 
-    is_day_scholar = (
-        s.get("accommodation", "") == "Day Scholar"
-    )
+    print("STORES =", s.get("stores"))
+
+    is_day_scholar = (s.get("accommodation", "") == "Day Scholar")
 
     signature_box = """
-    <div style="
-        margin-top:18px;
-        font-weight:bold;
-    ">
+    <div style="margin-top:18px;font-weight:bold;">
         Signature
     </div>
-
     <div style="
         width:240px;
         height:45px;
@@ -4739,260 +4820,145 @@ def student_clearance():
     "></div>
     """
 
-    # 🔥 Hostel items
-    items = s.get("hostel_items", {})
-
-    mattress = items.get(
-        "mattress",
-        "Not Assigned"
-    )
-
-    # 🔥 Navigation
+    # ---------------- NAVIGATION ----------------
     nav = get_nav("student", sid)
 
-    # -------- LIBRARY --------
-    books = s.get(
-        "library",
-        {}
-    ).get("books", [])
+    # ---------------- LIBRARY ----------------
+    books = s.get("library", {}).get("books", [])
 
     library_missing = [
-        b["name"]
-        for b in books
-        if not b.get("returned", True)
+        b["name"] for b in books if not b.get("returned", True)
     ]
 
-    library_status = (
-        "Cleared"
-        if not library_missing
-        else "Pending"
-    )
+    library_status = "Cleared" if not library_missing else "Pending"
+    library_Remarks = "None" if not library_missing else ", ".join(library_missing)
 
-    library_Remarks = (
-        "None"
-        if not library_missing
-        else ", ".join(library_missing)
-    )
-
-    # -------- SPORTS --------
+    # ---------------- SPORTS ----------------
     sports = s.get("sports", {})
 
-    sports_items = sum(
-        len(v)
-        for v in sports.values()
-    )
+    sports_items = sum(len(v) for v in sports.values())
 
-    sports_status = (
-        "Cleared"
-        if sports_items == 0
-        else "Pending"
-    )
+    sports_status = "Cleared" if sports_items == 0 else "Pending"
+    sports_Remarks = "None" if sports_items == 0 else "Unreturned sports items"
 
-    sports_Remarks = (
-        "None"
-        if sports_items == 0
-        else "Unreturned sports items"
-    )
+    # ---------------- STORES ----------------
+    stores = s.get("stores", {})
 
-    # -------- STORES --------
+    items = stores.get("properties", [])
+
+    mattress = stores.get("mattress", {"status": "Not Assigned", "remarks": ""})
+
+    mattress_items = []
+    if mattress.get("status") == "Issued":
+        mattress_items = [{"name": "Mattress"}]
+
+    all_store_items = mattress_items + items
+
     if is_day_scholar:
-
         stores_status = "Cleared"
-
         stores_Remarks = "Day Scholar"
 
+    elif not all_store_items:
+        stores_status = "Cleared"
+        stores_Remarks = "No items assigned"
+
     else:
+        stores_status = "Pending"
 
-        stores_status = (
-            "Cleared"
-            if mattress in ["Returned", "NIL"]
-            else "Pending"
+        stores_Remarks = ", ".join(
+            [i["name"] for i in all_store_items]
         )
 
-        stores_Remarks = (
-            "Mattress returned"
-            if stores_status == "Cleared"
-            else "Mattress not returned"
-        )
-
-    # -------- TSO + HOSTEL LOGIC --------
+    # ---------------- TSO & HOSTEL ----------------
     if is_day_scholar:
-
         tso_status = "Cleared"
         tso_Remarks = "Day Scholar"
 
         hostel_status = "Cleared"
         hostel_Remarks = "Day Scholar"
-
     else:
+        tso_status = "Physical Clearance Required"
+        tso_Remarks = "Key and room inspection"
 
-        tso_status = (
-            "Physical Clearance Required"
-        )
+        hostel_status = "Physical Clearance Required"
+        hostel_Remarks = "Room inspection and hostel verification"
 
-        tso_Remarks = (
-            "Key and room inspection"
-        )
-
-        hostel_status = (
-            "Physical Clearance Required"
-        )
-
-        hostel_Remarks = (
-            "Room inspection and hostel verification"
-        )
-
-    # -------- DEPARTMENTS --------
+    # ---------------- DEPARTMENTS ----------------
     departments = s.get("departments", {})
 
-    # -------- AME --------
-    ame_data = departments.get(
-        "ame",
-        {"tools": []}
-    )
-
-    tools = ame_data.get("tools", [])
+    # ---------------- AME ----------------
+    ame_tools = departments.get("ame", {}).get("tools", [])
 
     pending_tools = [
-        t["name"]
-        for t in tools
-        if not t.get("returned", True)
+        t["name"] for t in ame_tools if not t.get("returned", True)
     ]
 
-    ame_status = (
-        "Cleared"
-        if not pending_tools
-        else "Pending"
-    )
+    ame_status = "Cleared" if not pending_tools else "Pending"
+    ame_Remarks = "None" if not pending_tools else ", ".join(pending_tools)
 
-    ame_Remarks = (
-        "None"
-        if not pending_tools
-        else ", ".join(pending_tools)
-    )
+    # ---------------- ACCOUNTS ----------------
+    acc = s.get("accounts", {})
 
-    # -------- ACCOUNTS --------
-    acc_data = s.get("accounts", {})
-
-    total_fee = acc_data.get(
-        "total_fee",
-        0
-    )
-
-    paid = acc_data.get("paid", 0)
-
-    minimum_required = acc_data.get(
-        "minimum_required",
-        4000
-    )
+    total_fee = acc.get("total_fee", 0)
+    paid = acc.get("paid", 0)
+    minimum = acc.get("minimum_required", 4000)
 
     outstanding = total_fee - paid
 
     if outstanding <= 0:
-
         accounts_status = "Cleared"
+        accounts_Remarks = "Fees fully paid"
 
-        accounts_Remarks = (
-            "Fees fully paid"
-        )
-
-    elif paid >= minimum_required:
-
+    elif paid >= minimum:
         accounts_status = "Cleared"
-
-        accounts_Remarks = (
-            "Meets minimum payment requirement"
-        )
+        accounts_Remarks = "Meets minimum payment requirement"
 
     else:
-
         accounts_status = "Pending"
+        accounts_Remarks = f"Outstanding balance: K{outstanding}"
 
-        accounts_Remarks = (
-            f"Outstanding balance: K{outstanding}"
-        )
-
-    # -------- OVERALL --------
+    # ---------------- OVERALL ----------------
     statuses = [
         library_status,
         sports_status,
+        stores_status,
         accounts_status,
-        departments.get(
-            "communication",
-            {}
-        ).get("status", "Pending"),
-
-        departments.get(
-            "mathematics",
-            {}
-        ).get("status", "Pending"),
-
-        departments.get(
-            "hr",
-            {}
-        ).get("status", "Pending"),
-
-        departments.get(
-            "training",
-            {}
-        ).get("status", "Pending"),
-
+        departments.get("communication", {}).get("status", "Pending"),
+        departments.get("mathematics", {}).get("status", "Pending"),
+        departments.get("hr", {}).get("status", "Pending"),
+        departments.get("training", {}).get("status", "Pending"),
         ame_status,
         tso_status,
         hostel_status
     ]
 
-    cleared = sum(
-        1
-        for st in statuses
-        if st == "Cleared"
-    )
-
-    if is_day_scholar:
-        total = 11
-    else:
-        total = 9
+    cleared = sum(1 for st in statuses if st == "Cleared")
+    total = len(statuses)
 
     overall = f"{cleared}/{total} Cleared"
 
     if cleared == total:
-
         overall += " ✅ FULLY CLEARED"
-
     else:
-
         overall += " ⏳ PENDING"
 
-    generated_time = datetime.now().strftime(
-        "%d %B %Y | %I:%M %p"
-    )
-    
+    generated_time = datetime.now().strftime("%d %B %Y | %I:%M %p")
 
-    # -------- OUTPUT --------
+    # ---------------- OUTPUT ----------------
     return nav + f"""
-    <div style="
-        padding:20px;
-        font-family:Arial;
-        background:white;
-        font-size:28px;
-        border-radius:12px;
-        margin:20px;
-        box-shadow:0 2px 10px rgba(0,0,0,0.1);
-    ">
+    <div style="padding:20px;font-family:Arial;background:white;
+                font-size:28px;border-radius:12px;margin:20px;
+                box-shadow:0 2px 10px rgba(0,0,0,0.1);">
 
         <h2> Clearance Status</h2>
 
-        <div style="
-            margin-bottom:25px;
-            font-size:20px;
-            color:#475569;
-            font-weight:bold;
-        ">
-            Generated:
-            {generated_time}
+        <div style="margin-bottom:25px;font-size:20px;color:#475569;font-weight:bold;">
+            Generated: {generated_time}
         </div>
 
-        <table border="1" width="100%" cellpadding="14" style="border-collapse:collapse; font-size:22px;">
+        <table border="1" width="100%" cellpadding="14"
+               style="border-collapse:collapse;font-size:22px;">
+
             <tr style="background:#eee;">
                 <th>Department</th>
                 <th>Status</th>
@@ -5003,114 +4969,75 @@ def student_clearance():
             <tr><td>Sports</td><td>{sports_status}</td><td>{sports_Remarks}</td></tr>
             <tr><td>Accounts</td><td>{accounts_status}</td><td>{accounts_Remarks}</td></tr>
 
-            <tr><td>Communication Skills</td><td>{departments.get("communication", {}).get("status", "Pending")}</td><td>{departments.get("communication", {}).get("Remarks", "")}</td></tr>
-            <tr><td>Mathematics</td><td>{departments.get("mathematics", {}).get("status", "Pending")}</td><td>{departments.get("mathematics", {}).get("Remarks", "")}</td></tr>
-            <tr><td>Human Resource</td><td>{departments.get("hr", {}).get("status", "Pending")}</td><td>{departments.get("hr", {}).get("Remarks", "")}</td></tr>
-            <tr><td>Head Of Training Section</td><td>{departments.get("training", {}).get("status", "Pending")}</td><td>{departments.get("training", {}).get("Remarks", "")}</td></tr>
+            <tr><td>Communication</td><td>{departments.get("communication", {}).get("status","Pending")}</td><td>{departments.get("communication", {}).get("Remarks","")}</td></tr>
+            <tr><td>Mathematics</td><td>{departments.get("mathematics", {}).get("status","Pending")}</td><td>{departments.get("mathematics", {}).get("Remarks","")}</td></tr>
+            <tr><td>HR</td><td>{departments.get("hr", {}).get("status","Pending")}</td><td>{departments.get("hr", {}).get("Remarks","")}</td></tr>
+            <tr><td>Training</td><td>{departments.get("training", {}).get("status","Pending")}</td><td>{departments.get("training", {}).get("Remarks","")}</td></tr>
+
             <tr><td>AME Stores</td><td>{ame_status}</td><td>{ame_Remarks}</td></tr>
             <tr><td>Stores</td><td>{stores_status}</td><td>{stores_Remarks}</td></tr>
 
             <tr>
-                <td>Technical Services Office</td>
-                
-                <td>{signature_box if not is_day_scholar else "Cleared (Day Scholar)"}
-                <td>Key collected and room inspection verified</td></td>
-            </tr>
+            <td>Technical Services Office</td>
+            <td>{signature_box if not is_day_scholar else "Cleared (Day Scholar)"}</td>
+            <td>Key collected and room inspection verified</td>
+        </tr>
 
-            <tr>
-                <td>Hostel</td>
-                
-                <td>{signature_box if not is_day_scholar else "Cleared (Day Scholar)"}
-                <td>Room inspection and hostel verified</td></td>
-            </tr>
+        <tr>
+            <td>Hostel</td>
+            <td>{signature_box if not is_day_scholar else "Cleared (Day Scholar)"}</td>
+            <td>Room inspection and hostel verified</td>
+        </tr>
 
-        </table>
+    </table>
 
-        <p style="
-            margin-top:15px;
-            color:#555;
-            font-size:20px;
-        ">
+    <p style="margin-top:15px; color:#555; font-size:20px;">
+        If any clearance status appears incorrect or requires verification,
+        please visit the respective department.
+    </p>
 
-            If any clearance status appears incorrect
-            or requires verification,
-            please visit the respective department.
-
-        </p>
-
-        <div style="
-            text-align:center;
-            margin-top:20px;
-        ">
-
-            <h2>{overall}</h2>
-
-        </div>
-
+    <div style="text-align:center; margin-top:20px;">
+        <h2>{overall}</h2>
     </div>
-
-    <div style="
-        width:100%;
-        display:flex;
-        justify-content:flex-end;
-        margin-top:30px;
-    ">
-
-        <a href="/print_clearance"
-        target="_blank">
-
-            <button style="
-                background:#64748b;
-                color:white;
-                border:none;
-                padding:14px 30px;
-                border-radius:12px;
-                font-size:18px;
-                font-weight:bold;
-                cursor:pointer;
-                box-shadow:0 8px 20px rgba(0,0,0,0.12);
-            ">
-
-                🖨️ Export Clearance
-
-            </button>
-
-        </a>
-
-    </div>
-    
-    <div style="
-    text-align:center;
-    margin-top:25px;
-">
-
-    <a href="/clearance_history"
-
-    style="
-        display:inline-block;
-        padding:12px 24px;
-        background:##3b82f6;
-        color:black;
-        border-radius:12px;
-        text-decoration:none;
-        font-weight:bold;
-        box-shadow:0 4px 12px rgba(0,0,0,0.2);
-    ">
-
-        View Previous Clearance Forms
-
-    </a>
-
 </div>
 
-    <div style="
-        text-align:center;
-        margin-top:30px;
-    ">
+<div style="width:100%; display:flex; justify-content:flex-end; margin-top:30px;">
+    <a href="/print_clearance" target="_blank">
+        <button style="
+            background:#64748b;
+            color:white;
+            border:none;
+            padding:14px 30px;
+            border-radius:12px;
+            font-size:18px;
+            font-weight:bold;
+            cursor:pointer;
+            box-shadow:0 8px 20px rgba(0,0,0,0.12);
+        ">
+            🖨️ Export Clearance
+        </button>
+    </a>
+</div>
 
-        <a href="/student"
+<div style="text-align:center; margin-top:25px;">
+    <a href="/clearance_history"
+       style="
+            display:inline-block;
+            padding:12px 24px;
+            background:white;
+            color:black;
+            border-radius:12px;
+            text-decoration:none;
+            font-weight:bold;
+            box-shadow:0 4px 12px rgba(0,0,0,0.2);
+       ">
+        View Previous Clearance Forms
+    </a>
+</div>
 
-        style="
+<div style="text-align:center; margin-top:30px;">
+    <a href="/student"
+       style="
             display:inline-block;
             padding:12px 24px;
             background:linear-gradient(135deg,#1e3a8a,#06b6d4);
@@ -5119,15 +5046,12 @@ def student_clearance():
             text-decoration:none;
             font-weight:bold;
             box-shadow:0 4px 12px rgba(0,0,0,0.2);
-        ">
+       ">
+        ⬅ Back to Main Menu
+    </a>
+</div>
 
-            ⬅ Back to Main Menu
-
-        </a>
-
-    </div>
-    
-    <div style="
+<div style="
     text-align:center;
     padding:28px;
     margin-top:40px;
@@ -5135,15 +5059,11 @@ def student_clearance():
     font-size:16px;
     border-top:1px solid #e2e8f0;
 ">
-
     © 2026 Zambia Air Services Training Institute
-
     <br>
-
     All Rights Reserved
-
 </div>
-    """
+"""   
 
 from datetime import datetime
 from flask import session, redirect
