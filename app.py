@@ -2740,7 +2740,7 @@ def stores():
             elif action == "return_mattress":
                 store["mattress"] = {
                     "status": "Returned",
-                    "remarks": "Matress returned"
+                    "remarks": "Mattress returned"
                 }
 
             # ---------------- ASSIGN PROPERTY ----------------
@@ -2800,16 +2800,10 @@ def stores():
 
         output += f"""
         <div>
+            <b>{s.get('name','')} ({sid})</b><br>
 
-            <span style="font-weight:500;">
-                {s.get('name','')} ({sid})
-            </span>
-
-            <br><br>
-
-            <!-- MATTRESS -->
-            Mattress: {mattress.get('status')}<br>
-            Remarks: {mattress.get('remarks')}<br>
+            <b>Mattress:</b> {mattress.get('status')}<br>
+            <i>{mattress.get('remarks')}</i><br>
 
             <form method="POST">
                 <input type="hidden" name="sid" value="{sid}">
@@ -2819,7 +2813,6 @@ def stores():
 
             <br>
 
-            <!-- PROPERTIES -->
             <b>Other Properties</b><br>
         """
 
@@ -2829,7 +2822,8 @@ def stores():
             for item in properties:
                 output += f"""
                 <div style="margin-bottom:8px;">
-                    {item['name']} — {item['status']}<br>
+                    {item['name']} - {item['status']}<br>
+                    <i>{item['remarks']}</i><br>
 
                     <form method="POST">
                         <input type="hidden" name="sid" value="{sid}">
@@ -2842,17 +2836,17 @@ def stores():
                 </div>
                 """
 
-        # -------- INPUT --------
         output += f"""
-        <form method="POST">
-            <input type="hidden" name="sid" value="{sid}">
+            <form method="POST">
+                <input type="hidden" name="sid" value="{sid}">
 
-            <input type="text" name="item_name" placeholder="Enter item">
+                <input type="text" name="item_name"
+                       placeholder="Enter item">
 
-            <button name="action" value="assign_property">
-                Assign
-            </button>
-        </form>
+                <button name="action" value="assign_property">
+                    Assign
+                </button>
+            </form>
 
         </div>
         <hr>
