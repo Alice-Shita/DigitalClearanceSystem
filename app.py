@@ -1388,15 +1388,6 @@ def admin():
     "accounts": {"status": "Pending", "Remarks": ""}
 },
 
-"clearance_requests": {
-    "library": "None",
-    "communication": "None",
-    "mathematics": "None",
-    "hr": "None",
-    "training": "None",
-    "ame": "None",
-    "sports": "None"
-},
 
                 # 🔥 ACCOUNTS STRUCTURE (REPLACES payment_status)
                 "accounts": {
