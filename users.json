@@ -228,5 +228,89 @@
         "password": "scrypt:32768:8:1$ARoqrw4ESX5Ta48B$d518f7681d0e879006084e171a374f66580806f92486df6c0e1b2994e9007d0690a9ff2211d0d6d518e1f66422023ba9c9ee3a9a61d781df12c472748d1b1dc5",
         "role": "staff",
         "department": "hostel"
+    },
+    "20261000": {
+        "password": "scrypt:32768:8:1$ugaXWTE3cs27VOPy$dcbaa34950a6a0f04b0f51159f5fefdf782abe3b9d61023e1155c37e0bbab2f7b48b9988ac9905804d64b9da37601108e1c36c69717c415286c6b1ece9c9a9ca",
+        "role": "student"
+    },
+    "20261010": {
+        "password": "scrypt:32768:8:1$24GyXDfumtiUOceZ$6d5d8e14ea4ca9d0d49d9737a2faea2b519048f79a2db564d39aca85f2a4b383993fc57be306574260c266d6fcbb8affe18b1fc304332d73f2a4159e2908de83",
+        "role": "student"
+    },
+    "20261020": {
+        "password": "scrypt:32768:8:1$adzFe1b9GWMTQSHo$43800947abe91ea06c71c0ca19c7e52faa96f9a7cb95760a30e843327c60cb544fb1ad774fcc07b50051c022f3b69873470ff19d603b499e5a76d9fe5ea4cc40",
+        "role": "student"
+    },
+    "20261030": {
+        "password": "scrypt:32768:8:1$XoxoIFAk0bWBgsbj$80b1e2b2197c45d1a4cf19f65c166caae375313760cc1e5b7557a691d9ddc4984014b6e0a2af47755eb5c64b5638e19b164f52ba6555d5455de95fa1830a8ec1",
+        "role": "student"
+    },
+    "20261040": {
+        "password": "scrypt:32768:8:1$r9yYDhx9qWp8iL7h$0dbb8609641934818ae9996756a0b5600ee80d3fe7487cae3185941e52e855e88dd536ef699e4b8eb0edd8a4ee3653c7077748d9ffa039e55e9ed5d146d9d1b9",
+        "role": "student"
+    },
+    "20261050": {
+        "password": "scrypt:32768:8:1$BJAK5KppARZZkr82$863cbe55fe8a44b0d0c949973da935d0eb9edd171efe57f986a9229de1b3c8cb2ef8bc4c0efd99a9d088438bb02a4e75c387f97c06a1bd148b62d3c920a34dde",
+        "role": "student"
+    },
+    "20261060": {
+        "password": "scrypt:32768:8:1$kBJHHkNzVsPXEeOW$41eb661c7a0bf12ea4ec670d96dcc36fb253c206808ffc09aa9e8f3c15d4c0cd85860f98ceae1dcabc1b2dea5b329fd303ce1cfa73d498143b600a0578ab853c",
+        "role": "student"
+    },
+    "20261070": {
+        "password": "scrypt:32768:8:1$TtCuRiy2tUZZhex4$5c090fd19f347cf1604df27fa13b400f3bdf71cdae4acd444d52bb5bbf4b0b4774ff803f8e7bc1b3dc8be99960ddc8d880ceafd1edbc8c4185a8afcb9fe77ca2",
+        "role": "student"
+    },
+    "20261080": {
+        "password": "scrypt:32768:8:1$VDNjlXiTvNq0gAIW$dcbf62a2265d77eff59f8f8b60821eaa6064e3075768d39edcf8e9d578bc5c5ff0197978a9e67adb74e93992daa649fd9aba05b7fa70bcd47b364283a2b374e3",
+        "role": "student"
+    },
+    "20261090": {
+        "password": "scrypt:32768:8:1$8XXu5jCTTlPXTHQn$2f1b757c85845f6e7b96d258f7e93fbd8cc177f1eb6b6287e08f8bc59410d785610f132771d0543e942d48ed7103759313c1dedb119550d57198752e42390191",
+        "role": "student"
+    },
+    "20262000": {
+        "password": "scrypt:32768:8:1$iRpOpABNtFZkhUtl$baf88f66b783f970658a5bcc4a26dc54eb03912e2f95a5dfea878d2b76fb9f90dff8f8a9f26103f7acfd06a96cc50b9d45595070689bbc8516811d8279e1eda5",
+        "role": "student"
+    },
+    "20262010": {
+        "password": "scrypt:32768:8:1$dxP2CGIQsb4yNwZr$517f92637a6030b67533a3e66283844935f4acdb6e5be7cdf3e061a64626c86f7e5e46c74fa067eb7848824228c59ebd67d0ee7d693df2c5bc9aa80a6dd7dd36",
+        "role": "student"
+    },
+    "20262030": {
+        "password": "scrypt:32768:8:1$Ct8WzbafpCxsPqiq$9041a001c075323574aafcce42ae65cc35e088f77548db4c3602a440b99dc6db75ec77eb346f7d24624a9f58e94e7689400b771625eea769c4d7e615c216d9d8",
+        "role": "student"
+    },
+    "20262040": {
+        "password": "scrypt:32768:8:1$g9A07z9SNt7YFR2G$d72e971191da08dc3724013132408095fb8d4742c53ae14074a5c4840340f83a6edb98d3ee2d056a22e5118e640b275f5e58a75f08f08ac13caf65713e33c0b6",
+        "role": "student"
+    },
+    "20262050": {
+        "password": "scrypt:32768:8:1$QsbXXLmVri3h862Q$e25b82652f5f35ffd50cc6a03d4375b4448b7041aa8e223dcd31de2d651ee81b72517430462bbfbbc67c7bd862b40be9f5a458406018fdaa8c61cfe8ac45d4da",
+        "role": "student"
+    },
+    "20262060": {
+        "password": "scrypt:32768:8:1$I81ke34njAOI0Aml$18627e8a100a38b0569d0b8283308cbb63a7d9a93fca3830c88e6e202b0b9ce964e607d46b808d2c1fc4caec6e88ab301fb4f8678c847c7c61e32c17fb58ac95",
+        "role": "student"
+    },
+    "20262070": {
+        "password": "scrypt:32768:8:1$ouees1tiOHTffJWt$62da109aa7280c9cb25094461c6fbc70896e8ff73570f311034c6c0030c83417547f5218242427042f9f19850a8e69820acc057c2bdcc38718f40e5be0eb64a5",
+        "role": "student"
+    },
+    "20262080": {
+        "password": "scrypt:32768:8:1$Sng9KEZ3iP6xkJDu$4697cbb49654e6bc1ad4a3b0bff2ca9921e6a3715f17472fd620b6ca0b279302b385129396c1bf9821f0ae902bfe642cea3da8272d74236bd3d670dcf0fee74d",
+        "role": "student"
+    },
+    "20262090": {
+        "password": "scrypt:32768:8:1$22OeecdRzKhVAKl9$4fc4ce37b9f059ce5f5b9ff24db87acf3a63b9f4cdf3245badaa3d2f0baeece620aa868e18602adbff1304dc239d40a4603ecee708ebdf20e3d69b17d8b40930",
+        "role": "student"
+    },
+    "20263000": {
+        "password": "scrypt:32768:8:1$142P1cFoh2sgXdWM$88670d6ade27a9c2fdeb0ba8588fd3f4d0234d9ee8432400219c8c45c9383239e1b781c954beabbae68fd6b7e74f19421e7952d4a89db945b8fe7689a1446853",
+        "role": "student"
+    },
+    "20263010": {
+        "password": "scrypt:32768:8:1$hkE4MWdzYNeQ2JPY$643dbe16ae6bd5b28bd2aec88525a62587ac4e55aec41ad03ec6f69875730e587d4421328c0570210b738e80a29ec1e50e612f6d78f5a0f06e18564649780342",
+        "role": "student"
     }
 }

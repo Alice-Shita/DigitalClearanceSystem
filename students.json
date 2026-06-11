@@ -33,12 +33,12 @@
                 "reason": ""
             },
             "hr": {
-                "status": "Pending",
-                "reason": ""
+                "status": "Cleared",
+                "Remarks": "None"
             },
             "training": {
-                "status": "Pending",
-                "reason": ""
+                "status": "Cleared",
+                "Remarks": ""
             },
             "ame": {
                 "status": "Pending",
@@ -77,7 +77,65 @@
                 }
             ]
         },
-        "ame_tools": []
+        "ame_tools": [],
+        "clearance_requests": [
+            {
+                "department": "Library",
+                "time": "01 June 2026 | 03:42 PM",
+                "status": "Approved"
+            },
+            {
+                "department": "Library",
+                "time": "01 June 2026 | 03:57 PM",
+                "status": "Approved"
+            },
+            {
+                "department": "Library",
+                "time": "01 June 2026 | 04:11 PM",
+                "status": "Approved"
+            },
+            {
+                "department": "Library",
+                "time": "02 June 2026 | 05:10 PM",
+                "status": "Approved"
+            },
+            {
+                "department": "Mathematics",
+                "time": "02 June 2026 | 05:18 PM",
+                "status": "Pending"
+            },
+            {
+                "department": "Mathematics",
+                "time": "02 June 2026 | 05:19 PM",
+                "status": "Pending"
+            },
+            {
+                "department": "Human Resource",
+                "time": "02 June 2026 | 08:49 PM",
+                "status": "Pending"
+            }
+        ],
+        "stores": {
+            "mattress": {
+                "status": "Assigned",
+                "remarks": "Mattress assigned"
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        },
+        "clearance_history": [
+            {
+                "document_id": "CLR-20241357-20260606204251",
+                "generated_time": "06 June 2026 | 08:42 PM",
+                "status": "Official Clearance Form Generated"
+            },
+            {
+                "document_id": "CLR-20241357-20260611175511",
+                "generated_time": "11 June 2026 | 05:55 PM",
+                "status": "Official Clearance Form Generated"
+            }
+        ]
     },
     "20241317": {
         "name": "Abel Mwale",
@@ -181,7 +239,30 @@
                 "generated_time": "27 May 2026 | 08:14 PM",
                 "status": "Official Clearance Form Generated"
             }
-        ]
+        ],
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        },
+        "stores": {
+            "mattress": {
+                "status": "Assigned",
+                "remarks": "Mattress assigned"
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "other_property": {
+                "name": "Pillow",
+                "status": "Issued",
+                "remarks": "Issued"
+            },
+            "properties": []
+        }
     },
     "20241411": {
         "name": "Gracious Tumelo",
@@ -242,7 +323,25 @@
             "payments": [],
             "history": []
         },
-        "ame_tools": []
+        "ame_tools": [],
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        },
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        }
     },
     "20253357": {
         "name": "Priscilla Chin",
@@ -303,7 +402,25 @@
             "payments": [],
             "history": []
         },
-        "ame_tools": []
+        "ame_tools": [],
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        },
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        }
     },
     "20251526": {
         "name": "Doreen Banda",
@@ -362,7 +479,48 @@
             "status": "Pending",
             "reason": ""
         },
-        "ame_tools": []
+        "ame_tools": [],
+        "clearance_requests": [
+            {
+                "department": "Mathematics",
+                "time": "02 June 2026 | 05:20 PM",
+                "status": "Pending"
+            },
+            {
+                "department": "Human Resource",
+                "time": "02 June 2026 | 05:24 PM",
+                "status": "Pending"
+            },
+            {
+                "department": "Head Of Training Section",
+                "time": "02 June 2026 | 05:41 PM",
+                "status": "Pending"
+            },
+            {
+                "department": "Mathematics",
+                "time": "02 June 2026 | 05:42 PM",
+                "status": "Pending"
+            },
+            {
+                "department": "Library",
+                "time": "02 June 2026 | 09:21 PM",
+                "status": "Approved"
+            },
+            {
+                "department": "Communication Skills",
+                "time": "02 June 2026 | 09:27 PM",
+                "status": "Approved"
+            }
+        ],
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        }
     },
     "20241361": {
         "name": "David A Mwale",
@@ -421,6 +579,1724 @@
             "status": "Pending",
             "Remarks": ""
         },
-        "ame_tools": []
+        "ame_tools": [],
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        },
+        "stores": {
+            "mattress": {
+                "status": "Issued",
+                "remarks": ""
+            },
+            "status": "Pending",
+            "Remarks": "Mattress issued",
+            "properties": []
+        }
+    },
+    "20261000": {
+        "name": "Doreen Nayame",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 3,
+        "term": 2,
+        "funding": "CDF",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "Remarks": ""
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        }
+    },
+    "20261010": {
+        "name": "Andrew Mushoke",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 3,
+        "term": 2,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "Remarks": ""
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        }
+    },
+    "20261020": {
+        "name": "Herbert Kabayo",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 3,
+        "term": 2,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Boarding",
+        "hostel": "Katilungu",
+        "room": "22B",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "Remarks": ""
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Returned",
+                "remarks": "Mattress returned"
+            },
+            "status": "Cleared",
+            "Remarks": "Mattress returned",
+            "properties": []
+        }
+    },
+    "20261030": {
+        "name": "Robby Nyirongo",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 3,
+        "term": 2,
+        "funding": "CDF",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "Remarks": ""
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Returned",
+                "remarks": "Mattress returned"
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        }
+    },
+    "20261040": {
+        "name": "Mariana Mutandwa",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 3,
+        "term": 2,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "Remarks": ""
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        }
+    },
+    "20261050": {
+        "name": "John Zimba",
+        "program": "Aircraft Maintenance Engineering",
+        "year": 3,
+        "term": 2,
+        "funding": "CDF",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "Remarks": ""
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        }
+    },
+    "20261060": {
+        "name": "Emmanuel Mutambo",
+        "program": "Aircraft Maintenance Engineering",
+        "year": 3,
+        "term": 2,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "Remarks": ""
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        }
+    },
+    "20261070": {
+        "name": "Faith Chasaya",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 3,
+        "term": 2,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "hr": {
+                "status": "Pending",
+                "Remarks": ""
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": ""
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        }
+    },
+    "20261080": {
+        "name": "Abel D. Mwale",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 1,
+        "term": 1,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Pending",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
+    },
+    "20261090": {
+        "name": "Atangambuyu A. Shita",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 1,
+        "term": 1,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "stores": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
+    },
+    "20262000": {
+        "name": "Gracious Isaacs",
+        "program": "AME",
+        "year": 1,
+        "term": 1,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "stores": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "clearance_history": [
+            {
+                "document_id": "CLR-20262000-20260604154110",
+                "generated_time": "04 June 2026 | 03:41 PM",
+                "status": "Official Clearance Form Generated"
+            }
+        ],
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
+    },
+    "20262010": {
+        "name": "Blessings L. Shita",
+        "program": "Air Traffic Controller",
+        "year": 1,
+        "term": 1,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "stores": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
+    },
+    "20262030": {
+        "name": "James Chinyama",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 3,
+        "term": 2,
+        "funding": "CDF",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "stores": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "status": "Cleared",
+            "Remarks": "Not yet assigned",
+            "properties": []
+        },
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
+    },
+    "20262040": {
+        "name": "Janet Banda",
+        "program": "Air Traffic Controller",
+        "year": 1,
+        "term": 1,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "stores": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "key": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "overall_status": "Cleared",
+            "properties": []
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
+    },
+    "20262050": {
+        "name": "Alice Shitah",
+        "program": "ICT",
+        "year": 1,
+        "term": 1,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "stores": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "key": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "overall_status": "Cleared",
+            "properties": []
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
+    },
+    "20262060": {
+        "name": "Precious Mwansa",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 1,
+        "term": 2,
+        "funding": "CDF",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "stores": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "stores": {
+            "mattress": {
+                "status": "Returned",
+                "remarks": ""
+            },
+            "key": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "overall_status": "Cleared",
+            "status": "Cleared",
+            "Remarks": "Mattress returned",
+            "properties": []
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
+    },
+    "20262070": {
+        "name": "Justina Mbawo",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 1,
+        "term": 3,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "stores": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "stores": {
+            "mattress": {
+                "status": "Issued",
+                "remarks": ""
+            },
+            "key": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "overall_status": "Cleared",
+            "status": "Pending",
+            "Remarks": "Mattress issued",
+            "properties": []
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
+    },
+    "20262080": {
+        "name": "Linda Mulenga",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 1,
+        "term": 1,
+        "funding": "CDF",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "stores": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "key": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "overall_status": "Cleared",
+            "properties": []
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
+    },
+    "20262090": {
+        "name": "Joseph Mulemwa",
+        "program": "Basic Fire Fighting",
+        "year": 1,
+        "term": 1,
+        "funding": "Self Sponsored",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "stores": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "key": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "overall_status": "Cleared",
+            "properties": []
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
+    },
+    "20263000": {
+        "name": "Agness Mwila",
+        "program": "Aeronautical Electronics Engineering",
+        "year": 1,
+        "term": 1,
+        "funding": "CDF",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "stores": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "stores": {
+            "mattress": {
+                "status": "Returned",
+                "remarks": "Mattress returned"
+            },
+            "key": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "overall_status": "Cleared",
+            "properties": []
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
+    },
+    "20263010": {
+        "name": "Abigail Banda",
+        "program": "Food Production",
+        "year": 1,
+        "term": 1,
+        "funding": "CDF",
+        "profile_pic": "",
+        "accommodation": "Not Set",
+        "hostel": "N/A",
+        "room": "N/A",
+        "hostel_items": {
+            "mattress": "Not Assigned",
+            "key": "Not Assigned"
+        },
+        "library": {
+            "books": []
+        },
+        "sports": {
+            "football": [],
+            "basketball": [],
+            "volleyball": [],
+            "netball": [],
+            "chess": []
+        },
+        "departments": {
+            "communication": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "mathematics": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "hr": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "training": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "ame": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "stores": {
+                "status": "Cleared",
+                "Remarks": "None"
+            },
+            "accounts": {
+                "status": "Pending",
+                "Remarks": ""
+            }
+        },
+        "stores": {
+            "mattress": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "key": {
+                "status": "Not Assigned",
+                "remarks": ""
+            },
+            "overall_status": "Cleared",
+            "properties": []
+        },
+        "accounts": {
+            "total_fee": 7860,
+            "paid": 0,
+            "minimum_required": 4000,
+            "status": "Pending",
+            "Remarks": ""
+        },
+        "ame_tools": [],
+        "clearance_requests": {
+            "library": "None",
+            "communication": "None",
+            "mathematics": "None",
+            "hr": "None",
+            "training": "None",
+            "ame": "None",
+            "sports": "None"
+        }
     }
 }
