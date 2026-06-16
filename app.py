@@ -1724,7 +1724,6 @@ def staff_library():
         session.get("role") != "staff"
         or session.get("department") != "library"
     ):
-       
         return redirect("/login")
 
     students = load_students()
@@ -1751,16 +1750,21 @@ def staff_library():
 
                 active_books = [
                     b for b in books
-                    if not b["returned"]
+                    if not b.get("returned", False)
                 ]
 
                 if len(active_books) >= 2:
                     print("❌ Cannot borrow more than 2 books")
 
                 elif book_name:
+
                     books.append({
                         "name": book_name,
-                        "returned": False
+                        "returned": False,
+                        "borrowed_at": datetime.now().strftime(
+                            "%d %B %Y | %I:%M %p"
+                        ),
+                        "returned_at": None
                     })
 
             elif action.startswith("return_"):
@@ -1768,11 +1772,18 @@ def staff_library():
                 index = int(action.split("_")[1])
 
                 if 0 <= index < len(books):
+
                     books[index]["returned"] = True
+
+                    books[index]["returned_at"] = datetime.now().strftime(
+                        "%d %B %Y | %I:%M %p"
+                    )
 
             students[sid]["library"]["books"] = books
 
         save_students(students)
+
+        return redirect("/library")
 
     # -------- SEARCH FILTER --------
     search = request.args.get("search", "").strip()
@@ -1800,14 +1811,11 @@ def staff_library():
             padding:20px;
         ">
 
-            <form method="GET" style="
-                margin-bottom:15px;
-            ">
+            <form method="GET" style="margin-bottom:15px;">
 
                 <input
                     name="search"
                     placeholder="Search Student ID or Name"
-
                     style="
                         padding:10px;
                         border-radius:8px;
@@ -1818,7 +1826,6 @@ def staff_library():
 
                 <button
                     type="submit"
-
                     style="
                         padding:10px 14px;
                         border:none;
@@ -1835,48 +1842,31 @@ def staff_library():
 
             <hr>
 
-            <!-- STUDENT CARDS CONTAINER -->
             <div>
 
     """
 
     for sid, s in display_students.items():
 
-        books = s.get(
-            "library",
-            {}
-        ).get(
-            "books",
-            []
-        )
+        all_books = s.get("library", {}).get("books", [])
+        display_books = all_books[-2:]
 
         active_books = [
-
-            b for b in books
-
-            if not b["returned"]
-
+            b for b in all_books
+            if not b.get("returned", False)
         ]
 
-        # -------- STATUS --------
         status = (
-
             "Cleared"
-
             if len(active_books) == 0
-
             else "Pending"
-
         )
 
-        # -------- BORROW LIMIT MESSAGE --------
-        if len(active_books) >= 2:
-
-            borrow_note = "❌ Max books reached"
-
-        else:
-
-            borrow_note = "✅ Can borrow"
+        borrow_note = (
+            "❌ Max books reached"
+            if len(active_books) >= 2
+            else "✅ Can borrow"
+        )
 
         output += f"""
 
@@ -1890,7 +1880,7 @@ def staff_library():
             font-size:14px;
         ">
 
-            <b style="font-size:16px;">
+            <b style="font-size:20px;">
                 {s['name']} ({sid})
             </b>
 
@@ -1903,37 +1893,59 @@ def staff_library():
             <br><br>
 
             <b>Books:</b>
-
             <br><br>
 
         """
 
-        if not books:
+        if not display_books:
 
-            output += """
-            No books borrowed<br>
-            """
+            output += "No books borrowed<br>"
 
         else:
 
-            for i, b in enumerate(books):
+            start_index = len(all_books) - len(display_books)
 
-                mark = "✔" if b["returned"] else "✖"
+            for offset, b in enumerate(display_books):
+
+                i = start_index + offset
+
+                status_text = (
+                    "Returned"
+                    if b.get("returned")
+                    else "Borrowed"
+                )
+
+                borrowed = b.get(
+                    "borrowed_at",
+                    "Unknown"
+                )
+
+                returned = b.get(
+                    "returned_at",
+                    "Not yet returned"
+                )
 
                 output += f"""
 
-                {mark} {b['name']}
+                <b>{b.get('name','')}</b>: {status_text}
+
+                <br>
+
+                Borrowed: {borrowed}
+
+                <br>
+
+                Returned: {returned}
+
+                <br>
 
                 """
 
-                if not b["returned"]:
+                if not b.get("returned"):
 
                     output += f"""
 
-                    <form
-                        method="POST"
-                        style="display:inline;"
-                    >
+                    <form method="POST" style="display:inline;">
 
                         <input
                             type="hidden"
@@ -1976,7 +1988,6 @@ def staff_library():
 
             <br><br>
 
-            <!-- BORROW BOOK -->
             <form method="POST">
 
                 <input
@@ -2020,14 +2031,12 @@ def staff_library():
 
         """
 
-    # CLOSE PAGE CONTENT + CARDS CONTAINER
     output += """
 
             </div>
 
         </div>
 
-        <!-- FOOTER -->
         <div style="
             text-align:center;
             padding:28px;
@@ -2083,19 +2092,37 @@ def sports():
             if discipline not in students[sid]["sports"]:
                 students[sid]["sports"][discipline] = []
 
+            
             # -------- ADD ITEM --------
             if action == "add" and item:
                 students[sid]["sports"][discipline].append(item)
 
             # -------- REMOVE ITEM --------
-            elif action == "remove":
-                new_list = []
-                for i in students[sid]["sports"][discipline]:
-                    if isinstance(i, str) and i != item:
-                        new_list.append(i)
-                    elif isinstance(i, dict) and i.get("name") != item:
-                        new_list.append(i)
-                students[sid]["sports"][discipline] = new_list
+            elif action == "remove" and item:
+
+                students[sid]["sports"][discipline] = [
+
+                    i
+
+                    for i in students[sid]["sports"][discipline]
+
+                    if not (
+
+                        (
+                            isinstance(i, str)
+                            and i.lower() == item.lower()
+                        )
+
+                        or
+
+                        (
+                            isinstance(i, dict)
+                            and i.get("name", "").lower() == item.lower()
+                        )
+
+                    )
+
+                ]
 
         save_students(students)
         return redirect("/sports")
@@ -3971,14 +3998,7 @@ def terms():
         return redirect("/student")
 
     return f"""
-    <html>
-
-<head>
-
-<link rel="stylesheet" href="/static/style.css">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+    
 
     <div style="
         max-width:1100px;
@@ -4130,13 +4150,13 @@ def student():
 
     
     return nav + f"""
-    
+
 
 <div class="main-container" style="
     display:flex;
     justify-content:flex-end;
     align-items:flex-start;
-    padding:40px;
+    padding:20px;
 ">
 
     <!-- RIGHT SIDE -->
@@ -5030,21 +5050,32 @@ def student_clearance():
     # -------- SPORTS --------
     sports = s.get("sports", {})
 
-    sports_items = sum(
-        len(v)
-        for v in sports.values()
-    )
+    unreturned_items = []
+
+    for discipline_items in sports.values():
+
+        for item in discipline_items:
+
+            if isinstance(item, str):
+
+                unreturned_items.append(item)
+
+            elif isinstance(item, dict):
+
+                unreturned_items.append(
+                    item.get("name", "")
+                )
 
     sports_status = (
         "Cleared"
-        if sports_items == 0
+        if not unreturned_items
         else "Pending"
     )
 
     sports_Remarks = (
         "None"
-        if sports_items == 0
-        else "Unreturned sports items"
+        if not unreturned_items
+        else ", ".join(unreturned_items)
     )
 
     # ---------------- STORES ----------------
@@ -5117,18 +5148,14 @@ def student_clearance():
     # -------- DEPARTMENTS --------
     departments = s.get("departments", {})
 
+    
     # -------- AME --------
-    ame_data = departments.get(
-        "ame",
-        {"tools": []}
-    )
-
-    tools = ame_data.get("tools", [])
+    tools = s.get("ame_tools", [])
 
     pending_tools = [
         t["name"]
         for t in tools
-        if not t.get("returned", True)
+        if not t.get("returned", False)
     ]
 
     ame_status = (
@@ -5151,7 +5178,10 @@ def student_clearance():
         0
     )
 
-    paid = acc_data.get("paid", 0)
+    paid = acc_data.get(
+        "paid",
+        0
+    )
 
     minimum_required = acc_data.get(
         "minimum_required",
@@ -5160,12 +5190,22 @@ def student_clearance():
 
     outstanding = total_fee - paid
 
-    if outstanding <= 0:
+    if outstanding < 0:
+
+        accounts_status = "Cleared"
+
+        credit = abs(outstanding)
+
+        accounts_Remarks = (
+            f"Fees fully paid. Credit Balance: K{credit}"
+        )
+
+    elif outstanding == 0:
 
         accounts_status = "Cleared"
 
         accounts_Remarks = (
-            "Fees fully paid"
+            "Fees fully paid. Balance: K0"
         )
 
     elif paid >= minimum_required:
@@ -5173,7 +5213,7 @@ def student_clearance():
         accounts_status = "Cleared"
 
         accounts_Remarks = (
-            "Meets minimum payment requirement"
+            f"Meets minimum payment requirement. Outstanding Balance: K{outstanding}"
         )
 
     else:
@@ -5181,9 +5221,8 @@ def student_clearance():
         accounts_status = "Pending"
 
         accounts_Remarks = (
-            f"Outstanding balance: K{outstanding}"
+            f"Outstanding Balance: K{outstanding}"
         )
-
     # -------- OVERALL --------
     statuses = [
         library_status,
@@ -5210,6 +5249,7 @@ def student_clearance():
         ).get("status", "Pending"),
 
         ame_status,
+        stores_status,
         tso_status,
         hostel_status
     ]
@@ -5238,7 +5278,6 @@ def student_clearance():
     generated_time = datetime.now().strftime(
         "%d %B %Y | %I:%M %p"
     )
-    
 
     # -------- OUTPUT --------
     return nav + f"""
@@ -5283,20 +5322,25 @@ def student_clearance():
             <tr><td>Stores</td><td>{stores_status}</td><td>{stores_Remarks}</td></tr>
 
             <tr>
-                <td>Technical Services Office</td>
-                
-                <td>{signature_box if not is_day_scholar else "Cleared (Day Scholar)"}
-                <td>Key collected and room inspection verified</td></td>
-            </tr>
+    <td>Technical Services Office</td>
 
-            <tr>
-                <td>Hostel</td>
-                
-                <td>{signature_box if not is_day_scholar else "Cleared (Day Scholar)"}
-                <td>Room inspection and hostel verified</td></td>
-            </tr>
+    <td>
+        {signature_box if not is_day_scholar else "Cleared (Day Scholar)"}
+    </td>
 
-        </table>
+    <td>{tso_Remarks}</td>
+</tr>
+
+<tr>
+    <td>Hostel</td>
+
+    <td>
+        {signature_box if not is_day_scholar else "Cleared (Day Scholar)"}
+    </td>
+
+    <td>{hostel_Remarks}</td>
+</tr>
+</table>
 
         <p style="
             margin-top:15px;
