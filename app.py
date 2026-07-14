@@ -16,6 +16,10 @@ from datetime import timedelta
 
 app.permanent_session_lifetime = timedelta(minutes=30)
 
+from database import init_db
+
+init_db()
+
 # 🔥 REQUIRED FOR LOGIN SESSIONS
 app.secret_key = secrets.token_hex(32)
 
@@ -46,7 +50,7 @@ def get_nav(role):
     if role == "admin":
         links = """
         <a href="/admin">Dashboard</a>
-        <a href="/report">Reports</a>
+        <a href="/report">Announcements</a>
         <a href="/logout">Logout</a>
         """
 
@@ -91,176 +95,589 @@ function closeNav() {{
 def get_nav(role, sid=""):
 
     return f"""
+    <!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+<title>ZASTI Digital Clearance System</title>
+
 <style>
+
 body {{
     margin:0;
     font-family:Arial,sans-serif;
     background:linear-gradient(135deg,#f8fbff,#eef7ff,#f7fcff);
     overflow-x:hidden;
 }}
-	
-.main-container {{
-    padding:30px;
-}}
-
-.panel {{
-
-    background:white;
-
-    border:1px solid #e2e8f0;
-
-    border-radius:12px;
-
-    box-shadow:0 2px 8px rgba(0,0,0,0.05);
 
 
-    
-}}
+.menu-item {{
 
-.quick-card {{
-    background:white;
-    border-radius:24px;
-    padding:35px 25px;
-    text-align:center;
-    transition:0.3s;
-    box-shadow:0 4px 15px rgba(0,0,0,0.05);
-}}
-
-.quick-card:hover {{
-    transform:translateY(-6px);
-}}
-
-.quick-card h3 {{
-    margin-top:18px;
-    font-size:28px;
-}}
-
-.quick-card p {{
-    color:#64748b;
-    line-height:1.7;
-    font-size:17px;
-}}
-
-/* MENU LINKS */
-
-#sideMenu a {{
+    display:block;
     text-decoration:none;
-    color:#0f172a;
-    font-size:30px;
+    color:#1F2937;
+    font-size:18px;
     font-weight:600;
+    padding:15px 18px;
+    margin:8px 0;
+    border-radius:12px;
+    transition:.25s;
+
 }}
 
-#sideMenu a:hover {{
-    color:#2563eb;
+
+.menu-item:hover {{
+
+    background:#E8F5E9;
+    color:#2E7D32;
+    padding-left:26px;
+
 }}
+
+
+.menu-divider {{
+
+    border:none;
+    border-top:1px solid #e5e7eb;
+    margin:25px 0;
+
+}}
+
+
+.logout {{
+
+    color:#dc2626;
+
+}}
+
+
+.logout:hover {{
+
+    background:#FEE2E2;
+    color:#dc2626;
+
+}}
+
+
 </style>
 
-<!-- HAMBURGER BUTTON -->
+</head>
+
+
+<body>
+
+
+<!-- MENU BUTTON -->
+
 <div style="
-    position:fixed;
-    top:18px;
-    left:18px;
-    z-index:1000;
+position:fixed;
+top:18px;
+left:18px;
+z-index:1001;
 ">
-    <span onclick="openMenu()" style="
-        font-size:34px;
-        cursor:pointer;
-        background:rgba(255,255,255,0.7);
-        backdrop-filter:blur(10px);
-        padding:10px 16px;
-        border-radius:14px;
-        box-shadow:0 4px 15px rgba(0,0,0,0.1);
-    ">
-        ☰
-    </span>
+
+<span
+id="menuBtn"
+onclick="toggleMenu()"
+style="
+font-size:25px;
+cursor:pointer;
+background:rgba(255,255,255,.8);
+padding:10px 16px;
+border-radius:14px;
+box-shadow:0 4px 15px rgba(0,0,0,.1);
+">
+
+☰
+
+</span>
+
 </div>
 
+
+
 <!-- OVERLAY -->
-<div id="overlay" onclick="closeMenu()" style="
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.25);
-    z-index:998;
-"></div>
+
+<div
+id="overlay"
+onclick="closeMenu()"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.3);
+z-index:998;
+">
+
+</div>
+
+
 
 <!-- SIDE MENU -->
-<div id="sideMenu" style="
-    position:fixed;
-    top:0;
-    left:0;
-    width:260px;
-    font-size:38px;
-    height:55%;
-    background:rgba(255,255,255,0.75);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(20px);
-    box-shadow:0 8px 32px rgba(0,0,0,0.08);
-    padding:30px 25px;
-    transform:translateX(-100%);
-    transition:0.3s ease;
-    z-index:999;
+
+<div
+id="sideMenu"
+style="
+position:fixed;
+top:0;
+left:-320px;
+width:85vw;
+max-width:320px;
+height:100vh;
+overflow-y:auto;
+padding:25px;
+box-sizing:border-box;
+background:white;
+box-shadow:0 8px 25px rgba(0,0,0,.12);
+transition:left .3s ease;
+z-index:999;
 ">
 
-    <h2 style="
-        color:#2563eb;
-        margin-bottom:30px;
-        font-size:38px;
-    ">
-        Menu
-    </h2>
 
-    <a href="/student">🏠 Home</a><br><br>
 
-    <a href="/student/profile">👤 Profile</a><br><br>
+<div style="
+text-align:center;
+margin-bottom:30px;
+padding-bottom:20px;
+border-bottom:1px solid #e5e7eb;
+">
 
-    <a href="/student/accommodation">🏠 Accommodation</a><br><br>
 
-    <a href="/student/accounts">💰 Accounts</a><br><br>
+<div style="
+width:70px;
+height:70px;
+margin:auto;
+border-radius:50%;
+background:#2E7D32;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:bold;
+margin-bottom:15px;
+">
 
-    <a href="/student/payment/{sid}">📄 Payment Proof</a><br><br>
+Z
 
-    <a href="/student/clearance">📋 Clearance Status</a><br><br>
+</div>
 
-    <hr style="margin:25px 0;">
+
+<div style="
+font-size:24px;
+font-weight:700;
+color:#2E7D32;
+">
+
+ZASTI
+
+</div>
+
+
+<div style="
+color:#475569;
+font-size:16px;
+margin-top:6px;
+">
+
+Digital Clearance System
+
+</div>
+
+
+<div style="
+color:#94a3b8;
+font-size:14px;
+margin-top:4px;
+">
+
+Student Portal
+
+</div>
+
+
+</div>
     
-    <a href="/reset" style="
-    display:block;
-    padding:18px 30px;
-    text-decoration:none;
-    color:#0f172a;
-    font-size:23px;
-    font-weight:600;
-">
-    🔐 Reset Password
-</a>
+<a class="menu-item" href="/student">
+            Home
+        </a>
 
-    <a href="/logout" style="color:#dc2626;">
+        <a class="menu-item" href="/student/profile">
+            Profile
+        </a>
+
+        <a class="menu-item" href="/student/accommodation">
+            Accommodation
+        </a>
+
+        <a class="menu-item" href="/student/accounts">
+            Accounts
+        </a>
+
+        <a class="menu-item" href="/student/clearance">
+            Clearance Status
+        </a>
+        <hr class="menu-divider">
+
+    <a class="menu-item" href="/reset">
+        Reset Password
+    </a>
+
+    <a class="menu-item logout" href="/logout">
         Logout
     </a>
 
 </div>
 
+
+
 <script>
+
 function openMenu() {{
-    document.getElementById("sideMenu").style.transform = "translateX(0)";
-    document.getElementById("overlay").style.display = "block";
+
+document.getElementById("sideMenu").style.left="0px";
+
+document.getElementById("overlay").style.display="block";
+
+document.getElementById("menuBtn").innerHTML="✕";
+
 }}
+
+
 
 function closeMenu() {{
-    document.getElementById("sideMenu").style.transform = "translateX(-100%)";
-    document.getElementById("overlay").style.display = "none";
+
+document.getElementById("sideMenu").style.left="-320px";
+
+document.getElementById("overlay").style.display="none";
+
+document.getElementById("menuBtn").innerHTML="☰";
+
 }}
+
+
+
+function toggleMenu() {{
+
+let menu=document.getElementById("sideMenu");
+
+
+if(menu.style.left=="0px") {{
+
+closeMenu();
+
+}}
+
+else {{
+
+openMenu();
+
+}}
+
+}}
+
 </script>
+
 """
+def admin_nav():
+	return f"""
+    <!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+<title>ZASTI Digital Clearance System</title>
+
+<style>
+
+body {{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#f8fbff,#eef7ff,#f7fcff);
+    overflow-x:hidden;
+}}
+
+
+.menu-item {{
+
+    display:block;
+    text-decoration:none;
+    color:#1F2937;
+    font-size:18px;
+    font-weight:600;
+    padding:15px 18px;
+    margin:8px 0;
+    border-radius:12px;
+    transition:.25s;
+
+}}
+
+
+.menu-item:hover {{
+
+    background:#E8F5E9;
+    color:#2E7D32;
+    padding-left:26px;
+
+}}
+
+
+.menu-divider {{
+
+    border:none;
+    border-top:1px solid #e5e7eb;
+    margin:25px 0;
+
+}}
+
+
+.logout {{
+
+    color:#dc2626;
+
+}}
+
+
+.logout:hover {{
+
+    background:#FEE2E2;
+    color:#dc2626;
+
+}}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- MENU BUTTON -->
+
+<div style="
+position:fixed;
+top:18px;
+left:18px;
+z-index:1001;
+">
+
+<span
+id="menuBtn"
+onclick="toggleMenu()"
+style="
+font-size:25px;
+cursor:pointer;
+background:rgba(255,255,255,.8);
+padding:10px 16px;
+border-radius:14px;
+box-shadow:0 4px 15px rgba(0,0,0,.1);
+">
+
+☰
+
+</span>
+
+</div>
 
 
 
+<!-- OVERLAY -->
+
+<div
+id="overlay"
+onclick="closeMenu()"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.3);
+z-index:998;
+">
+
+</div>
 
 
+
+<!-- SIDE MENU -->
+
+<div
+id="sideMenu"
+style="
+position:fixed;
+top:0;
+left:-320px;
+width:85vw;
+max-width:320px;
+height:100vh;
+overflow-y:auto;
+padding:25px;
+box-sizing:border-box;
+background:white;
+box-shadow:0 8px 25px rgba(0,0,0,.12);
+transition:left .3s ease;
+z-index:999;
+">
+
+
+
+<div style="
+text-align:center;
+margin-bottom:30px;
+padding-bottom:20px;
+border-bottom:1px solid #e5e7eb;
+">
+
+
+<div style="
+width:70px;
+height:70px;
+margin:auto;
+border-radius:50%;
+background:#2E7D32;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:bold;
+margin-bottom:15px;
+">
+
+Z
+
+</div>
+
+
+<div style="
+font-size:24px;
+font-weight:700;
+color:#2E7D32;
+">
+
+ZASTI
+
+</div>
+
+
+<div style="
+color:#475569;
+font-size:16px;
+margin-top:6px;
+">
+
+Digital Clearance System
+
+</div>
+
+
+<div style="
+color:#94a3b8;
+font-size:14px;
+margin-top:4px;
+">
+
+Student Portal
+
+</div>
+
+
+</div>
+    
+<a class="menu-item" href="/admin">
+            Dashboard
+        </a>
+        <a class="menu-item" href="/announcemnets">
+            Announcements
+        </a>
+
+        
+        <hr class="menu-divider">
+
+    <a class="menu-item" href="/reset">
+        Reset Password
+    </a>
+
+    <a class="menu-item logout" href="/logout">
+        Logout
+    </a>
+
+</div>
+
+
+
+<script>
+
+function openMenu() {{
+
+document.getElementById("sideMenu").style.left="0px";
+
+document.getElementById("overlay").style.display="block";
+
+document.getElementById("menuBtn").innerHTML="✕";
+
+}}
+
+
+
+function closeMenu() {{
+
+document.getElementById("sideMenu").style.left="-320px";
+
+document.getElementById("overlay").style.display="none";
+
+document.getElementById("menuBtn").innerHTML="☰";
+
+}}
+
+
+
+function toggleMenu() {{
+
+let menu=document.getElementById("sideMenu");
+
+
+if(menu.style.left=="0px") {{
+
+closeMenu();
+
+}}
+
+else {{
+
+openMenu();
+
+}}
+
+}}
+
+</script>
+
+"""
+		
+    
 # ---------------- DEBUG ----------------
 
 print("🚨 RUNNING FROM:", os.getcwd())
@@ -291,30 +708,86 @@ def home():
 
 # ---------------- LOAD DATA ----------------
 
+import json
+from database import get_db
+
+
+# ---------- STUDENTS ----------
 def load_students():
-    try:
-        with open(os.path.join(BASE_DIR, "students.json"), "r") as f:
-            return json.load(f)
-    except:
-        return {}
+
+    conn = get_db()
+
+    rows = conn.execute(
+        "SELECT sid, data FROM students"
+    ).fetchall()
+
+    conn.close()
+
+    students = {}
+
+    for row in rows:
+        students[row["sid"]] = json.loads(row["data"])
+
+    return students
 
 
-def save_students(data):
-    with open(os.path.join(BASE_DIR, "students.json"), "w") as f:
-        json.dump(data, f, indent=4)
+def save_students(students):
+
+    conn = get_db()
+
+    conn.execute("DELETE FROM students")
+
+    for sid, data in students.items():
+
+        conn.execute(
+            "INSERT INTO students (sid, data) VALUES (?, ?)",
+            (
+                sid,
+                json.dumps(data)
+            )
+        )
+
+    conn.commit()
+    conn.close()
 
 
+# ---------- USERS ----------
 def load_users():
-    try:
-        with open(os.path.join(BASE_DIR, "users.json"), "r") as f:
-            return json.load(f)
-    except:
-        return {}
+
+    conn = get_db()
+
+    rows = conn.execute(
+        "SELECT username, data FROM users"
+    ).fetchall()
+
+    conn.close()
+
+    users = {}
+
+    for row in rows:
+        users[row["username"]] = json.loads(row["data"])
+
+    return users
 
 
-def save_users(data):
-    with open(os.path.join(BASE_DIR, "users.json"), "w") as f:
-        json.dump(data, f, indent=4)
+def save_users(users):
+
+    conn = get_db()
+
+    conn.execute("DELETE FROM users")
+
+    for username, data in users.items():
+
+        conn.execute(
+            "INSERT INTO users (username, data) VALUES (?, ?)",
+            (
+                username,
+                json.dumps(data)
+            )
+        )
+
+    conn.commit()
+    conn.close()
 
 # ---------- HOSTEL CLEARANCE CALCULATOR ----------
 
@@ -406,6 +879,59 @@ def ensure_accounts(student):
             "Remarks": ""
         }
 
+def clearance_card(title, status, remarks):
+    return f"""
+    <details style="
+background:white;
+margin-top:15px;
+margin-bottom:15px;
+border:1px solid #dfe6e9;
+border-radius:16px;
+overflow:hidden;
+box-shadow:0 4px 12px rgba(0,0,0,.06);
+">
+
+        <summary style="
+            cursor:pointer;
+            padding:18px;
+            font-size:20px;
+            font-weight:bold;
+            list-style:none;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        ">
+
+            <span>{title}</span>
+
+            <span>{status}</span>
+
+        </summary>
+
+        <div style="
+            padding:18px;
+            border-top:1px solid #eee;
+            background:#fafafa;
+        ">
+
+            <b>Status</b>
+
+            <br>
+
+            {status}
+
+            <br><br>
+
+            <b>Remarks</b>
+
+            <br>
+
+            {remarks}
+
+        </div>
+
+    </details>
+    """
 
 print("🔥 REACHED ROUTE SECTION")  
 #---------LOGIN ROUTE--------
@@ -1411,7 +1937,7 @@ def admin():
             for sid in selected:
                 students.pop(sid, None)
                 users.pop(sid, None)
-
+                
         save_students(students)
         save_users(users)
 
@@ -1440,6 +1966,19 @@ def admin():
     print("STUDENTS LOADED:", students)
 
     output = dept_nav("️ Admin Dashboard") + f"""
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
 
 <p><b>Total Students:</b> {total_students}</p>
 
@@ -1518,7 +2057,7 @@ def admin():
             fully_cleared += 1
         else:
             pending_students += 1
-			
+            
         output += f"""
 <tr>
     <td><input type="checkbox" name="selected" value="{sid}"></td>
@@ -1595,6 +2134,105 @@ function toggleAll(source) {
 
     return output
 
+@app.route("/admin/announcements", methods=["GET","POST"])
+def admin_announcements():
+
+    if session.get("role") != "admin":
+        return redirect("/login")
+
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+
+    if request.method == "POST":
+
+        message = request.form["message"]
+
+        audience = request.form["audience"]
+
+
+        cursor.execute("""
+        INSERT INTO announcements
+        (message, audience)
+
+        VALUES (?,?)
+        """,
+        (message, audience))
+
+
+        conn.commit()
+
+
+
+    cursor.execute("""
+    SELECT id,message,audience,created_at
+    FROM announcements
+    ORDER BY id DESC
+    """)
+
+
+    announcements = cursor.fetchall()
+
+
+    conn.close()
+
+
+    return f"""
+
+    <h1>
+    Announcements
+    </h1>
+
+
+    <form method="POST">
+
+
+    <textarea
+    name="message"
+    placeholder="Write announcement..."
+    required>
+    </textarea>
+
+
+    <br><br>
+
+
+    <select name="audience">
+
+        <option value="student">
+            Students
+        </option>
+
+
+        <option value="staff">
+            Staff
+        </option>
+
+
+    </select>
+
+
+    <br><br>
+
+
+    <button>
+    Publish Announcement
+    </button>
+
+
+    </form>
+
+
+    <hr>
+
+
+    <h2>
+    Previous Announcements
+    </h2>
+
+
+    """
 
 @app.route("/admin/edit/<sid>", methods=["GET", "POST"])
 def edit_student(sid):
@@ -1621,6 +2259,19 @@ def edit_student(sid):
         return redirect("/admin")
 
     return NAV + f"""
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
 <div style="padding:20px;font-family:Arial;">
     <h2>Edit Student ({sid})</h2>
 
@@ -1799,6 +2450,19 @@ def staff_library():
 
     # -------- DISPLAY --------
     output = dept_nav(" Library Department") + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
 
     <div style="
         min-height:100vh;
@@ -2147,6 +2811,19 @@ def sports():
 
     # -------- UI --------
     output = dept_nav("Sports Department") + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
     
 
     <form method="GET">
@@ -2424,6 +3101,19 @@ def accounts():
 
     # -------- OUTPUT --------
     output = dept_nav("Accounts Department") + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
 
     
 
@@ -2867,6 +3557,19 @@ def stores():
     # ---------------- UI ----------------
 
     output = dept_nav("Stores Department") + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
 
     <form method="GET">
 
@@ -3081,6 +3784,19 @@ def tso():
 
     # -------- DISPLAY --------
     output = dept_nav("Technical Services Office") + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
 
     <div style="padding:30px;">
 
@@ -3234,6 +3950,19 @@ def hostel():
 
     # -------- DISPLAY --------
     output = dept_nav("Hostel Department") + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
 
     <div style="padding:30px;">
 
@@ -3402,6 +4131,19 @@ def communication():
     }
 
     output = dept_nav(" Communication Skills  Department") + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
     
 
     <form method="GET">
@@ -3504,6 +4246,19 @@ def mathematics():
 
     # -------- OUTPUT --------
     output = dept_nav(" Mathematics Department") + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
     
 
     <form method="GET" style="margin-bottom:10px;">
@@ -3613,6 +4368,19 @@ def hr():
 
     # -------- OUTPUT --------
     output = dept_nav("Human Resource Department") + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
     
 
     <form method="GET" style="margin-bottom:10px;">
@@ -3724,6 +4492,19 @@ def training():
 
     # -------- UI --------
     output = dept_nav("Head Of Training Section ") + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
     
     <form method="GET">
         <input name="search" placeholder="Search ID or Name">
@@ -3853,6 +4634,19 @@ def ame():
 
     # -------- UI --------
     output = dept_nav("AME Stores") + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
     
 
     <form method="GET">
@@ -3998,6 +4792,18 @@ def terms():
         return redirect("/student")
 
     return f"""
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
     
 
     <div style="
@@ -4091,9 +4897,9 @@ def terms():
                     background:linear-gradient(135deg,#1e3a8a,#06b6d4);
                     color:white;
                     border:none;
-                    padding:18px 40px;
+                    padding:15px 30px;
                     border-radius:14px;
-                    font-size:22px;
+                    font-size:20px;
                     font-weight:bold;
                     cursor:pointer;
                 ">
@@ -4141,18 +4947,317 @@ def student():
         return "<h3>Student not found</h3>"
 
     s = students[sid]
+    is_day_scholar = (
+        s.get("accommodation", "") == "Day Scholar"
+    )
+
+    signature_box = """
+    <div style="
+        margin-top:18px;
+        font-weight:bold;
+    ">
+        Signature
+    </div>
+
+    <div style="
+        width:240px;
+        height:45px;
+        border:2px solid #999;
+        border-radius:8px;
+        margin-top:8px;
+    "></div>
+    """
+
+    # 🔥 Hostel items
+    items = s.get("hostel_items", {})
+
+    mattress = items.get(
+        "mattress",
+        "Not Assigned"
+    )
 
     name = s.get("name", "Student")
 
     profile_pic = s.get("profile_pic") or "https://via.placeholder.com/120"
     
-    nav = get_nav("student", sid)
+    nav = get_nav("student")
 
+    from datetime import datetime
+
+    hour = datetime.now().hour
+
+    if hour < 12:
+        greeting = "Good Morning"
+
+    elif hour < 17:
+        greeting = "Good Afternoon"
+
+    else:
+        greeting = "Good Evening"
+
+    today = datetime.now().strftime("%A, %d %B %Y")
+
+    # -------------------------
+    # CLEARANCE SUMMARY
+    # -------------------------
+
+    departments = s.get("departments", {})
+
+    books = s.get("library", {}).get("books", [])
+
+    library_status = (
+        "Cleared"
+        if not any(not b.get("returned", True) for b in books)
+        else "Pending"
+    )
+
+    sports = s.get("sports", {})
+
+    sports_pending = any(len(items) > 0 for items in sports.values())
+
+    sports_status = (
+        "Pending"
+        if sports_pending
+        else "Cleared"
+    )
+
+    ame_status = (
+        "Pending"
+        if any(not t.get("returned", False) for t in s.get("ame_tools", []))
+        else "Cleared"
+    )
+    
+    # ---------------- STORES ----------------
+
+    stores = s.get("stores", {})
+
+    properties = stores.get("properties", [])
+
+    hostel_items = s.get("hostel_items", {})
+
+    mattress = hostel_items.get(
+        "mattress",
+        "Not Assigned"
+    )
+
+    mattress_items = []
+
+    # If the mattress has been assigned and not yet returned,
+    # include it in the clearance requirements.
+    if mattress == "Assigned":
+
+        mattress_items.append({
+            "name": "Mattress"
+        })
+
+    all_store_items = mattress_items + properties
+
+    if is_day_scholar:
+
+        stores_status = "Cleared"
+        stores_Remarks = "Day Scholar"
+
+    elif not all_store_items:
+
+        stores_status = "Cleared"
+        stores_Remarks = "No items assigned"
+
+    else:
+
+        stores_status = "Pending"
+        stores_Remarks = format_items(all_store_items)
+
+    # -------- TSO + HOSTEL LOGIC --------
+    if is_day_scholar:
+
+        tso_status = "Cleared"
+        tso_Remarks = "Day Scholar"
+
+        hostel_status = "Cleared"
+        hostel_Remarks = "Day Scholar"
+
+    else:
+
+        tso_status = (
+            "Physical Clearance Required"
+        )
+
+        tso_Remarks = (
+            "Key and room inspection"
+        )
+
+        hostel_status = (
+            "Physical Clearance Required"
+        )
+
+        hostel_Remarks = (
+            "Room inspection and hostel verification"
+        )
+
+
+    acc = s.get("accounts", {})
+
+    paid = acc.get("paid", 0)
+
+    minimum = acc.get("minimum_required", 4000)
+
+    total_fee = acc.get("total_fee", 0)
+
+    outstanding = total_fee - paid
+
+    accounts_status = (
+        "Cleared"
+        if (outstanding <= 0 or paid >= minimum)
+        else "Pending"
+    )
+
+        # Departments counted on the dashboard
+    statuses = [
+        library_status,
+        sports_status,
+        accounts_status,
+        stores_status,
+        departments.get("communication", {}).get("status", "Pending"),
+        departments.get("mathematics", {}).get("status", "Pending"),
+        departments.get("hr", {}).get("status", "Pending"),
+        departments.get("training", {}).get("status", "Pending"),
+        ame_status
+    ]
+
+        # Day scholars don't clear Stores
+    if is_day_scholar:
+        statuses.remove(stores_status)
+
+    cleared = sum(
+        1 for status in statuses
+        if status == "Cleared"
+    )
+
+    total = len(statuses)
+
+    percentage = int((cleared / total) * 100) if total else 0
+
+    pending = total - cleared
+
+    pending_departments = []
+
+    if library_status != "Cleared":
+        pending_departments.append("Library")
+
+    if sports_status != "Cleared":
+        pending_departments.append("Sports")
+
+    if accounts_status != "Cleared":
+        pending_departments.append("Accounts")
+
+    if departments.get("communication", {}).get("status", "Pending") != "Cleared":
+        pending_departments.append("Communication Skills")
+
+    if departments.get("mathematics", {}).get("status", "Pending") != "Cleared":
+        pending_departments.append("Mathematics")
+
+    if departments.get("hr", {}).get("status", "Pending") != "Cleared":
+        pending_departments.append("Human Resource")
+
+    if departments.get("training", {}).get("status", "Pending") != "Cleared":
+        pending_departments.append("Head of Training Section")
+
+    if ame_status != "Cleared":
+        pending_departments.append("AME Stores")
+
+    if pending_departments:
+
+        pending_html = "<br>".join(
+            f"• {dept}" for dept in pending_departments
+        )
+
+    else:
+
+        pending_html = """
+        <span style="color:#2E7D32;font-weight:bold;">
+        All departments cleared 🎉
+        </span>
+        """
+
+    physical_html = ""
+
+    if not is_day_scholar:
+
+        physical_html = """
+        <div style="
+        max-width:700px;
+        margin:25px auto;
+        background:#E3F2FD;
+        border-left:6px solid #1565C0;
+        border-radius:20px;
+        padding:25px;
+        box-shadow:0 8px 20px rgba(0,0,0,.08);
+        ">
+
+        <div style="
+        font-size:24px;
+        font-weight:700;
+        color:#1565C0;
+        margin-bottom:15px;
+        ">
+
+        Physical Clearance Required
+
+        </div>
+
+        <div style="
+        color:#374151;
+        font-size:18px;
+        line-height:1.8;
+        ">
+
+        • Technical Services Office (TSO)
+
+        <br>
+
+        • Hostel Office
+
+        <br><br>
+
+        Visit these offices for room inspection,
+        key verification and physical signatures.
+
+        </div>
+
+        </div>
+        """
+
+    if percentage == 100:
+
+        digital_message = """
+        <div style="
+        margin-top:18px;
+        color:#2E7D32;
+        font-weight:bold;
+        font-size:18px;
+        ">
+        🎉 Congratulations!
+
+You have completed all digital
+clearance requirements.
+        </div>
+        """
+
+    else:
+
+        digital_message = ""
     
     return nav + f"""
+<html>
 
+<head>
 
-<div class="main-container" style="
+<link rel="stylesheet" href="/static/style.css">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+	<div class="main-container" style="
     display:flex;
     justify-content:flex-end;
     align-items:flex-start;
@@ -4179,24 +5284,24 @@ def student():
         ">
 
             <img src="{profile_pic}" style="
-                width:58px;
-                height:58px;
+                width:53px;
+                height:53px;
                 border-radius:50%;
                 object-fit:cover;
-                border:3px solid #2563eb;
+                border:3px solid white;
             ">
 
             <div>
 
                 <div style="
-                    font-size:24px;
+                    font-size:16px;
                     color:#64748b;
                 ">
                     Welcome,
                 </div>
 
                 <div style="
-                    font-size:28px;
+                    font-size:20px;
                     font-weight:800;
                     color:#0f172a;
                 ">
@@ -4214,50 +5319,229 @@ def student():
 <div style="
     text-align:center;
     width:100%;
-    margin-top:300px;
+    margin-top:100px;
     font-family:Arial,sans-serif;
 ">
 
-    <!-- SMALL TITLE -->
-    <div style="
-        font-size:100px;          
-        font-weight:780;
-        margin-bottom:32px;
+    <!-- GREETING SECTION -->
 
-        background:linear-gradient(135deg,#2563eb,#0ea5e9);
-        background-size:100%;
+<div style="
+margin-top:60px;
+text-align:center;
+">
 
-        -webkit-background-clip:text;
-        -webkit-text-fill-color:transparent;
 
-        background-clip:text;
-        color:transparent;
 
-        letter-spacing:2px;     
-    ">
-        STUDENT DIGITAL
-    </div>
+<div style="
+font-size:20px;
+color:#64748b;
+font-weight:600;
+">
+{greeting}
+</div>
 
-    <!-- HUGE TITLE -->
-    <div style="
-        font-size:150px;        
-        font-weight:940;
-        line-height:0.9;        
+<div style="
+font-size:16px;
+color:#94a3b8;
+margin-top:6px;
+">
+{today}
+</div>
 
-        background:linear-gradient(135deg,#2563eb,#0ea5e9);
-        background-size:100%;
 
-        -webkit-background-clip:text;
-        -webkit-text-fill-color:transparent;
 
-        background-clip:text;
-        color:transparent;
+</div>
 
-        letter-spacing:-5px;    
-    ">
-        CLEARANCE<br>
-        SYSTEM
-    </div>
+<div style="
+font-size:42px;
+font-weight:800;
+color:#14532d;
+margin-top:8px;
+">
+
+{name}
+
+</div>
+
+<div style="
+font-size:18px;
+color:#64748b;
+margin-top:10px;
+">
+
+Welcome to the ZASTI Digital Clearance Portal
+
+</div>
+
+</div>
+
+
+<!-- QUICK STATUS CARD -->
+
+<div style="
+max-width:700px;
+margin:45px auto;
+background:white;
+border-radius:22px;
+padding:28px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+text-align:left;
+">
+
+<div style="
+font-size:24px;
+font-weight:700;
+color:#14532d;
+margin-bottom:18px;
+">
+
+Overall Clearance
+
+</div>
+
+<div style="
+height:12px;
+background:#E5E7EB;
+border-radius:30px;
+overflow:hidden;
+">
+
+<div style="
+width:{percentage}%;
+height:100%;
+background:linear-gradient(
+90deg,
+#1565C0,
+#2E7D32,
+#43A047
+);
+">
+
+</div>
+
+</div>
+
+<div style="
+margin-top:18px;
+font-size:18px;
+color:#475569;
+line-height:1.8;
+">
+
+<b style="
+font-size:22px;
+color:#2E7D32;
+">
+Digital Clearance: {percentage}%
+</b>
+{digital_message}
+
+<br>
+
+{cleared} of {total} digital departments cleared.
+
+</div>
+
+<div style="
+max-width:700px;
+margin:25px auto;
+background:white;
+border-left:6px solid #1565C0;
+border-radius:20px;
+padding:25px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+">
+
+<div style="
+font-size:24px;
+font-weight:700;
+color:#1565C0;
+margin-bottom:15px;
+">
+
+Pending Departments
+
+</div>
+
+<div style="
+font-size:18px;
+color:#374151;
+line-height:1.8;
+">
+
+{pending_html}
+{physical_html}
+
+</div>
+
+</div>
+
+
+    
+Visit your clearance page to view departmental status.
+
+</div>
+
+<div style="
+margin-top:25px;
+margin-bottom:50px;
+text-align:center;
+">
+<a href="/student/clearance"
+style="
+display:inline-block;
+margin-top:22px;
+padding:14px 28px;
+background:#2E7D32;
+color:white;
+text-decoration:none;
+border-radius:12px;
+font-weight:bold;
+">
+
+  View Full Clearance Report
+
+</a>
+
+</div>
+
+
+<!-- ANNOUNCEMENTS -->
+
+<div style="
+max-width:700px;
+margin:auto;
+background:white;
+padding:28px;
+border-radius:22px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+text-align:left;
+">
+
+<div style="
+font-size:24px;
+font-weight:700;
+color:#14532d;
+margin-bottom:15px;
+">
+
+Announcements
+
+</div>
+
+<div style="
+color:#64748b;
+font-size:17px;
+">
+
+There are currently no active
+announcements.
+
+Enjoy your day!
+
+</div>
+
+</div>
     
     <div style="
     text-align:center;
@@ -4277,8 +5561,6 @@ def student():
 </div>
     
     """
-
-
 
 @app.route("/student/profile", methods=["GET", "POST"])
 def student_profile():
@@ -4328,13 +5610,18 @@ def student_profile():
 
     return NAV + f"""
     <html>
-
 <head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="/static/style.css">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+</head>
+
 <div style="padding:20px; font-family:Arial;">
 
     <!-- PROFILE PICTURE -->
@@ -4457,8 +5744,17 @@ def student_accommodation():
     return f"""
     <html>
 <head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
 <link rel="stylesheet" href="/static/style.css">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
     
 <div class="accommodation-page">
 
@@ -4634,13 +5930,18 @@ def student_accounts():
 
     return NAV + f"""
     <html>
-
 <head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="/static/style.css">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+</head>
+
 
     <div style="
         padding:20px;
@@ -4782,13 +6083,18 @@ def payment_page(sid):
     return f"""
     
     <html>
-
 <head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="/static/style.css">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+</head>
+
     {NAV}
     <div style="padding:20px; font-family:Arial;font-size:18px;">
 
@@ -4939,6 +6245,19 @@ def upload_proof():
     save_students(students)
 
     return get_nav("student", student_id) + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
     <h3 style='color:green;'>✅ Payment uploaded. Awaiting approval.</h3>
     <a href='/student'>Back</a>
     
@@ -5274,6 +6593,8 @@ def student_clearance():
     else:
 
         overall += " ⏳ PENDING"
+        
+        
 
     generated_time = datetime.now().strftime(
         "%d %B %Y | %I:%M %p"
@@ -5281,7 +6602,21 @@ def student_clearance():
 
     # -------- OUTPUT --------
     return nav + f"""
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
     <div style="
+    
         padding:20px;
         font-family:Arial;
         background:white;
@@ -5303,44 +6638,59 @@ def student_clearance():
             {generated_time}
         </div>
 
-        <table border="1" width="100%" cellpadding="14" style="border-collapse:collapse; font-size:22px;">
-            <tr style="background:#eee;">
-                <th>Department</th>
-                <th>Status</th>
-                <th>Remarks</th>
-            </tr>
+{clearance_card("Library", library_status, library_Remarks)}
 
-            <tr><td>Library</td><td>{library_status}</td><td>{library_Remarks}</td></tr>
-            <tr><td>Sports</td><td>{sports_status}</td><td>{sports_Remarks}</td></tr>
-            <tr><td>Accounts</td><td>{accounts_status}</td><td>{accounts_Remarks}</td></tr>
+{clearance_card("Sports", sports_status, sports_Remarks)}
 
-            <tr><td>Communication Skills</td><td>{departments.get("communication", {}).get("status", "Pending")}</td><td>{departments.get("communication", {}).get("Remarks", "")}</td></tr>
-            <tr><td>Mathematics</td><td>{departments.get("mathematics", {}).get("status", "Pending")}</td><td>{departments.get("mathematics", {}).get("Remarks", "")}</td></tr>
-            <tr><td>Human Resource</td><td>{departments.get("hr", {}).get("status", "Pending")}</td><td>{departments.get("hr", {}).get("Remarks", "")}</td></tr>
-            <tr><td>Head Of Training Section</td><td>{departments.get("training", {}).get("status", "Pending")}</td><td>{departments.get("training", {}).get("Remarks", "")}</td></tr>
-            <tr><td>AME Stores</td><td>{ame_status}</td><td>{ame_Remarks}</td></tr>
-            <tr><td>Stores</td><td>{stores_status}</td><td>{stores_Remarks}</td></tr>
+{clearance_card("Accounts", accounts_status, accounts_Remarks)}
 
-            <tr>
-    <td>Technical Services Office</td>
+{clearance_card(
+"Communication Skills",
+departments.get("communication", {}).get("status","Pending"),
+departments.get("communication", {}).get("Remarks","")
+)}
 
-    <td>
-        {signature_box if not is_day_scholar else "Cleared (Day Scholar)"}
-    </td>
+{clearance_card(
+"Mathematics",
+departments.get("mathematics", {}).get("status","Pending"),
+departments.get("mathematics", {}).get("Remarks","")
+)}
 
-    <td>{tso_Remarks}</td>
-</tr>
+{clearance_card(
+"Human Resource",
+departments.get("hr", {}).get("status","Pending"),
+departments.get("hr", {}).get("Remarks","")
+)}
 
-<tr>
-    <td>Hostel</td>
+{clearance_card(
+"Head Of Training Section",
+departments.get("training", {}).get("status","Pending"),
+departments.get("training", {}).get("Remarks","")
+)}
 
-    <td>
-        {signature_box if not is_day_scholar else "Cleared (Day Scholar)"}
-    </td>
+{clearance_card("AME Stores", ame_status, ame_Remarks)}
 
-    <td>{hostel_Remarks}</td>
-</tr>
-</table>
+{clearance_card("Stores", stores_status, stores_Remarks)}
+
+<h3 style="margin-top:30px;color:#1565C0;">
+Physical Clearance
+</h3>
+
+{clearance_card(
+"Technical Services Office",
+"Physical Clearance Required" if not is_day_scholar else "Cleared",
+tso_Remarks
+)}
+
+<div style="margin-top:18px;">
+
+{clearance_card(
+"Hostel",
+"Physical Clearance Required" if not is_day_scholar else "Cleared",
+hostel_Remarks
+)}
+
+</div>
 
         <p style="
             margin-top:15px;
@@ -5364,62 +6714,64 @@ def student_clearance():
         </div>
 
     </div>
-
     <div style="
-        width:100%;
-        display:flex;
-        justify-content:flex-end;
-        margin-top:30px;
-    ">
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-top:35px;
+    margin-bottom:20px;
+">
 
-        <a href="/print_clearance"
-        target="_blank">
+    <a href="/print_clearance" target="_blank" style="text-decoration:none;">
 
-            <button style="
-                background:#64748b;
-                color:white;
-                border:none;
-                padding:14px 30px;
-                border-radius:12px;
-                font-size:18px;
-                font-weight:bold;
-                cursor:pointer;
-                box-shadow:0 8px 20px rgba(0,0,0,0.12);
-            ">
+<button style="
+background:linear-gradient(135deg,#1565C0,#2E7D32);
+color:white;
+border:none;
+padding:16px 34px;
+border-radius:14px;
+font-size:18px;
+font-weight:700;
+cursor:pointer;
+transition:.3s;
+box-shadow:0 10px 25px rgba(21,101,192,.25);
+">
 
-                🖨️ Export Clearance
+🖨 Export Clearance Report
 
-            </button>
+</button>
 
+</a>
         </a>
 
     </div>
-    
     <div style="
-    text-align:center;
-    margin-top:25px;
+text-align:center;
+margin-top:25px;
+margin-bottom:35px;
 ">
-
-    
 
 <a href="/clearance_history"
 
-    style="
-        display:inline-block;
-        padding:12px 24px;
-        background:;
-        color:black;
-        border-radius:12px;
-        text-decoration:none;
-        font-weight:bold;
-        box-shadow:0 4px 12px rgba(0,0,0,0.2);
-    ">
+style="
+display:inline-block;
+padding:16px 34px;
+background:white;
+border:2px solid #2E7D32;
+color:#2E7D32;
+border-radius:14px;
+text-decoration:none;
+font-weight:700;
+font-size:18px;
+box-shadow:0 8px 18px rgba(0,0,0,.08);
+">
 
-    View Previous Clearance Forms
+ Previous Clearance Forms
 
 </a>
 
-<div>
+</div>
 
     <div style="
         text-align:center;
@@ -5744,10 +7096,18 @@ def print_clearance():
 
         return f"""
         <html>
-        <head>
-            <link rel="stylesheet" href="/static/style.css">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        </head>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
 
         <body>
             <div style="font-family:Arial;max-width:700px;margin:80px auto;background:white;padding:40px;border-radius:14px;border:1px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,0.08);">
@@ -5773,9 +7133,18 @@ def print_clearance():
     # ==================================
     return f"""
     <html>
-    <head>
-        <link rel="stylesheet" href="/static/style.css">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
         <title>Clearance Report</title>
     </head>
 
@@ -5851,6 +7220,19 @@ def clearance_history():
     nav = get_nav("student", sid)
 
     output = nav + """
+    <html>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
 
     <div style="
         padding:30px;

@@ -1,7 +1,7 @@
 {
     "20241357": {
         "name": "Alice Shita",
-        "program": "AEE",
+        "program": "Aeronautical Electronics Engineering",
         "year": 3,
         "term": 2,
         "funding": "Self Sponsored",
@@ -14,7 +14,40 @@
             "key": "Katilungu K26B"
         },
         "library": {
-            "books": []
+            "books": [
+                {
+                    "name": "Analog Electronics",
+                    "returned": true,
+                    "returned_at": "16 June 2026 | 06:23 PM"
+                },
+                {
+                    "name": "Digital signals",
+                    "returned": true,
+                    "returned_at": "16 June 2026 | 06:23 PM"
+                },
+                {
+                    "name": "Instrumentation",
+                    "returned": true
+                },
+                {
+                    "name": "Analog Electronics",
+                    "returned": true,
+                    "borrowed_at": "15 June 2026 | 10:26 PM",
+                    "returned_at": "15 June 2026 | 10:26 PM"
+                },
+                {
+                    "name": "Digital signals",
+                    "returned": true,
+                    "borrowed_at": "15 June 2026 | 10:27 PM",
+                    "returned_at": "16 June 2026 | 06:30 PM"
+                },
+                {
+                    "name": "Analog Electronics",
+                    "returned": true,
+                    "borrowed_at": "16 June 2026 | 06:22 PM",
+                    "returned_at": "16 June 2026 | 06:30 PM"
+                }
+            ]
         },
         "sports": {
             "football": [],
@@ -26,7 +59,7 @@
         "departments": {
             "communication": {
                 "status": "Cleared",
-                "reason": ""
+                "Remarks": "None"
             },
             "mathematics": {
                 "status": "Cleared",
@@ -51,9 +84,9 @@
         },
         "accounts": {
             "total_fee": 7860.0,
-            "paid": 7860.0,
+            "paid": 5500.0,
             "minimum_required": 4000.0,
-            "status": "Cleared",
+            "status": "Pending",
             "reason": "Fees fully paid",
             "payments": [
                 {
@@ -67,6 +100,12 @@
                     "file": "20241357_1.jpg",
                     "status": "Rejected",
                     "reason": ""
+                },
+                {
+                    "amount": 2500.0,
+                    "file": "20241357_2.jpg",
+                    "status": "Approved",
+                    "Remarks": ""
                 }
             ],
             "history": [
@@ -74,10 +113,30 @@
                     "amount": 7860.0,
                     "reason": "Manual Accounts Update",
                     "status": "Recorded"
+                },
+                {
+                    "amount": 3000.0,
+                    "Remarks": "Manual Accounts Update",
+                    "status": "Recorded"
+                },
+                {
+                    "amount": 2500.0,
+                    "Remarks": "Online Payment",
+                    "status": "Approved"
                 }
-            ]
+            ],
+            "Remarks": "Outstanding balance: K4860.0"
         },
-        "ame_tools": [],
+        "ame_tools": [
+            {
+                "name": "Hammer",
+                "returned": true
+            },
+            {
+                "name": "Screw driver",
+                "returned": true
+            }
+        ],
         "clearance_requests": [
             {
                 "department": "Library",
@@ -133,6 +192,11 @@
             {
                 "document_id": "CLR-20241357-20260611175511",
                 "generated_time": "11 June 2026 | 05:55 PM",
+                "status": "Official Clearance Form Generated"
+            },
+            {
+                "document_id": "CLR-20241357-20260616193556",
+                "generated_time": "16 June 2026 | 07:35 PM",
                 "status": "Official Clearance Form Generated"
             }
         ]
@@ -230,7 +294,7 @@
         "ame_tools": [
             {
                 "name": "Hammer",
-                "returned": false
+                "returned": true
             }
         ],
         "clearance_history": [
@@ -477,7 +541,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "reason": ""
+            "reason": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "clearance_requests": [
@@ -577,7 +643,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "clearance_requests": {
@@ -663,7 +731,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "stores": {
@@ -740,7 +810,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "stores": {
@@ -817,7 +889,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "stores": {
@@ -894,7 +968,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "stores": {
@@ -971,7 +1047,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "stores": {
@@ -1048,7 +1126,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "stores": {
@@ -1125,7 +1205,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "stores": {
@@ -1202,7 +1284,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "stores": {
@@ -1270,7 +1354,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "stores": {
@@ -1351,7 +1437,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "stores": {
@@ -1432,7 +1520,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "clearance_history": [
             {
@@ -1520,7 +1610,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "stores": {
@@ -1601,7 +1693,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "stores": {
@@ -1694,7 +1788,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "clearance_requests": {
@@ -1778,7 +1874,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "clearance_requests": {
@@ -1864,7 +1962,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "clearance_requests": {
@@ -1950,7 +2050,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "clearance_requests": {
@@ -2034,7 +2136,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "clearance_requests": {
@@ -2118,7 +2222,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "clearance_requests": {
@@ -2202,7 +2308,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "clearance_requests": {
@@ -2286,7 +2394,9 @@
             "paid": 0,
             "minimum_required": 4000,
             "status": "Pending",
-            "Remarks": ""
+            "Remarks": "",
+            "payments": [],
+            "history": []
         },
         "ame_tools": [],
         "clearance_requests": {
