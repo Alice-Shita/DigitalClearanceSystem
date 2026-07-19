@@ -324,6 +324,11 @@ Student Portal
         <a class="menu-item" href="/student/accounts">
             Accounts
         </a>
+        <a class="menu-item" href="/student/upload payment proof">
+            Upload Payment Proof
+        </a>
+        
+        
 
         <a class="menu-item" href="/student/clearance">
             Clearance Status
@@ -403,6 +408,8 @@ def admin_nav():
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <title>ZASTI Digital Clearance System</title>
 
@@ -410,7 +417,7 @@ def admin_nav():
 
 body {{
     margin:0;
-    font-family:Arial,sans-serif;
+    font-family: Arial, sans-serif;
     background:linear-gradient(135deg,#f8fbff,#eef7ff,#f7fcff);
     overflow-x:hidden;
 }}
@@ -607,22 +614,26 @@ Student Portal
 </div>
     
 <a class="menu-item" href="/admin">
-            Dashboard
-        </a>
-        <a class="menu-item" href="/announcemnets">
-            Announcements
-        </a>
+    Dashboard
+</a>
 
-        
-        <hr class="menu-divider">
+<a class="menu-item" href="/announcements">
+    Announcements
+</a>
 
-    <a class="menu-item" href="/reset">
-        Reset Password
-    </a>
+<a class="menu-item" href="/admin/students">
+    Students
+</a>
 
-    <a class="menu-item logout" href="/logout">
-        Logout
-    </a>
+<hr class="menu-divider">
+
+<a class="menu-item" href="/reset">
+    Reset Password
+</a>
+
+<a class="menu-item logout" href="/logout">
+    Logout
+</a>
 
 </div>
 
@@ -789,6 +800,40 @@ def save_users(users):
     conn.commit()
     conn.close()
 
+import json
+import os
+
+
+ANNOUNCEMENTS_FILE = "announcements.json"
+
+
+def load_announcements():
+
+    if not os.path.exists(ANNOUNCEMENTS_FILE):
+        return []
+
+    with open(ANNOUNCEMENTS_FILE, "r") as f:
+        data = json.load(f)
+
+    changed = False
+
+    for index, a in enumerate(data, start=1):
+
+        if "id" not in a:
+            a["id"] = index
+            changed = True
+
+    if changed:
+        save_announcements(data)
+
+    return data
+
+
+def save_announcements(data):
+
+    with open(ANNOUNCEMENTS_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+
 # ---------- HOSTEL CLEARANCE CALCULATOR ----------
 
 def calculate_hostel_status(student):
@@ -867,6 +912,45 @@ def format_items(items):
 
     return ", ".join(names[:-1]) + f" & {names[-1]}"
 
+from datetime import datetime
+
+
+def create_item_request(student, department, item, assigned_by):
+
+    student.setdefault(
+        "item_requests",
+        []
+    )
+
+
+    # Prevent duplicate pending requests
+    for req in student["item_requests"]:
+
+        if (
+            req.get("item") == item
+            and req.get("status") == "Pending"
+        ):
+            return False
+
+
+    student["item_requests"].append({
+
+        "department": department,
+
+        "item": item,
+
+        "status": "Pending",
+
+        "assigned_by": assigned_by,
+
+        "date": datetime.now().strftime(
+            "%d/%m/%Y %H:%M"
+        )
+
+    })
+
+
+    return True
 
 def ensure_accounts(student):
 
@@ -1842,6 +1926,7 @@ def admin():
                 "ame": "None",
                 "sports": "None"
             }
+            
 
     save_students(students)
 
@@ -1889,6 +1974,7 @@ def admin():
                 "accommodation": "Not Set",  # ✅ FIXED
                 "hostel": "N/A",
                 "room": "N/A",
+                "assignment_requests": [],
 
                 "hostel_items": {
                     "mattress": "Not Assigned",
@@ -1904,6 +1990,7 @@ def admin():
                     "netball": [],
                     "chess": []
                 },
+                
 
                 "departments": {
     "communication": {"status": "Pending", "Remarks": ""},
@@ -1929,6 +2016,7 @@ def admin():
                 "password": generate_password_hash("1234"),
                 "role": "student"
             }
+            
 
         # -------- DELETE --------
         elif action == "delete_selected":
@@ -1938,181 +2026,510 @@ def admin():
                 students.pop(sid, None)
                 users.pop(sid, None)
                 
+                   
         save_students(students)
         save_users(users)
 
         return redirect("/admin")
 
-    # -------- SEARCH + FILTER --------
+        # -------- SEARCH + FILTER --------
     search = request.args.get("search", "").strip().lower()
     funding_filter = request.args.get("funding", "all")
 
     display_students = {}
 
-    for sid, s in students.items():
-        name = s.get("name", "").lower()
-        funding = s.get("funding", "Self Sponsored")
-
-        matches_search = (search in sid.lower() or search in name or search == "")
-        matches_funding = (funding_filter == "all" or funding.lower() == funding_filter.lower())
-
-        if matches_search and matches_funding:
-            display_students[sid] = s
-
-    # ---------------- DISPLAY ----------------
-    total_students = len(display_students)
     fully_cleared = 0
     pending_students = 0
-    print("STUDENTS LOADED:", students)
+    awaiting_physical = 0
 
-    output = dept_nav("️ Admin Dashboard") + f"""
-    <html>
-<head>
+    for sid, s in students.items():
 
-<meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
-
-<link rel="stylesheet" href="/static/style.css">
-
-</head>
-
-
-<p><b>Total Students:</b> {total_students}</p>
-
-<form method="GET" style="margin-bottom:10px;">
-    <input name="search" placeholder="Search ID or Name">
-
-    <select name="funding">
-        <option value="all">All Funding Types</option>
-        <option value="Self Sponsored">Self Sponsored</option>
-        <option value="CDF">CDF</option>
-        <option value="Other">Other</option>
-    </select>
-
-    <button>Search</button>
-</form>
-<hr>
-"""
-
-    output += """
-<form method="POST">
-<input type="hidden" name="action" value="delete_selected">
-
-<table border="1" width="100%" cellpadding="8" style="border-collapse:collapse;">
-<tr style="background:#ddd;">
-    <th><input type="checkbox" onclick="toggleAll(this)"></th>
-    <th>Funding</th>
-    <th>ID</th>
-    <th>Name</th>
-    <th>Progress</th>
-    <th>Accounts</th>
-</tr>
-"""
-
-    for sid, s in display_students.items():
-
+        name = s.get("name", "").lower()
+        funding = s.get("funding", "Self Sponsored")
         departments = s.get("departments", {})
+
+        is_day_scholar = (
+            s.get("accommodation", "").lower() == "day scholar"
+        )
+
+        # ---------- Library ----------
+        books = s.get("library", {}).get("books", [])
+
+        library_status = (
+            "Cleared"
+            if not any(not b.get("returned", True) for b in books)
+            else "Pending"
+        )
+
+        # ---------- Sports ----------
+        sports_status = (
+            "Pending"
+            if any(len(items) > 0 for items in s.get("sports", {}).values())
+            else "Cleared"
+        )
+
+        # ---------- AME ----------
+        ame_status = (
+            "Pending"
+            if any(not t.get("returned", False)
+                   for t in s.get("ame_tools", []))
+            else "Cleared"
+        )
+
+        # ---------- Stores ----------
+        stores = s.get("stores", {})
+        properties = stores.get("properties", [])
+
+        hostel_items = s.get("hostel_items", {})
+
+        mattress = hostel_items.get("mattress", "Not Assigned")
+
+        mattress_items = []
+
+        if mattress == "Assigned":
+            mattress_items.append({"name": "Mattress"})
+
+        all_store_items = mattress_items + properties
+
+        if is_day_scholar:
+            stores_status = "Cleared"
+        elif not all_store_items:
+            stores_status = "Cleared"
+        else:
+            stores_status = "Pending"
+
+        # ---------- Accounts ----------
         acc = s.get("accounts", {})
 
-        # 🔥 ACCOUNT STATUS (REAL DATA)
-        total_fee = acc.get("total_fee", 7860)
         paid = acc.get("paid", 0)
         minimum = acc.get("minimum_required", 4000)
+        total_fee = acc.get("total_fee", 0)
 
         outstanding = total_fee - paid
 
-        if outstanding <= 0:
-            acc_status = "Cleared"
-        elif paid >= minimum:
-            acc_status = "Cleared"
-        else:
-            acc_status = "Pending"
+        accounts_status = (
+            "Cleared"
+            if (outstanding <= 0 or paid >= minimum)
+            else "Pending"
+        )
 
-        # 🔥 CLEARANCE COUNT
+        # ---------- Digital Departments ----------
         statuses = [
-            "Cleared" if not [b for b in s.get("library", {}).get("books", []) if not b.get("returned", True)] else "Pending",
-            "Cleared" if s.get("hostel_items", {}).get("mattress") in ["Returned", "NIL"] else "Pending",
-            "Cleared" if s.get("hostel_items", {}).get("key") in ["Returned", "NIL"] else "Pending",
-            "Cleared" if s.get("accommodation") == "Day Scholar" or (
-                s.get("hostel_items", {}).get("key") == "Returned" and
-                s.get("hostel_items", {}).get("mattress") == "Returned"
-            ) else "Pending",
-            "Cleared" if sum(len(v) for v in s.get("sports", {}).values()) == 0 else "Pending",
+
+            library_status,
+
+            sports_status,
+
+            stores_status,
+
+            accounts_status,
 
             departments.get("communication", {}).get("status", "Pending"),
+
             departments.get("mathematics", {}).get("status", "Pending"),
+
             departments.get("hr", {}).get("status", "Pending"),
+
             departments.get("training", {}).get("status", "Pending"),
-            departments.get("ame", {}).get("status", "Pending"),
-            acc_status,
+
+            ame_status
+
         ]
 
-        cleared = sum(1 for st in statuses if st == "Cleared")
-        total = len(statuses)
+        cleared = sum(
+            1
+            for x in statuses
+            if x == "Cleared"
+        )
 
+        total = 9
+
+        if is_day_scholar:
+
+            total = 8
+
+            if stores_status == "Cleared":
+                cleared -= 1
+
+        percentage = int((cleared / total) * 100) if total else 0
+
+        # Dashboard Statistics
         if cleared == total:
-            fully_cleared += 1
+
+            if is_day_scholar:
+
+                fully_cleared += 1
+
+            else:
+
+                hostel_signed = (
+                    hostel_items.get("mattress") == "Returned"
+                    and hostel_items.get("key") == "Returned"
+                )
+
+                tso_signed = (
+                    departments.get("tso", {}).get("status")
+                    == "Cleared"
+                )
+
+                if hostel_signed and tso_signed:
+
+                    fully_cleared += 1
+
+                else:
+
+                    awaiting_physical += 1
+
         else:
+
             pending_students += 1
-            
-        output += f"""
-<tr>
-    <td><input type="checkbox" name="selected" value="{sid}"></td>
-    <td>{s.get("funding","")}</td>
-    <td><a href="/admin/edit/{sid}">{sid}</a></td>
-    <td>{s.get('name','')}</td>
-    <td>{cleared}/{total}</td>
-    <td>{acc_status}</td>
-</tr>
-"""
 
-    output += """
-</table><br>
-<button type="submit">Delete Selected</button>
-</form>
-"""
+        matches_search = (
+            search in sid.lower()
+            or search in name
+            or search == ""
+        )
 
-    output += f"""
-<hr>
-<h3>System Summary</h3>
-<p>Fully Cleared: {fully_cleared}</p>
-<p>Pending: {pending_students}</p>
-"""
+        matches_funding = (
+            funding_filter == "all"
+            or funding.lower() == funding_filter.lower()
+        )
 
-    output += """
-<hr>
-<h3>Add Student</h3>
+        if matches_search and matches_funding:
 
-<form method="POST">
-    <input type="hidden" name="action" value="add_student">
+            display_students[sid] = {
+                "student": s,
+                "cleared": cleared,
+                "total": total,
+                "percentage": percentage
+            }
+            fully_cleared = 0
+            pending_students = 0
 
-    ID:<br><input name="student_id" required><br><br>
-    NAME:<br><input name="name" required><br><br>
-    PROGRAM:<br><input name="program" required><br><br>
-    YEAR:<br><input name="year" required><br><br>
-    TERM:<br><input name="term" required><br><br>
+    for info in display_students.values():
 
-    FUNDING:<br>
-    <select name="funding" required>
-        <option value="Self Sponsored">Self Sponsored</option>
-        <option value="CDF">CDF</option>
-        <option value="Other">Other</option>
-    </select>
+        if info["cleared"] == info["total"]:
 
-    <button>Add Student</button>
-</form>
+            fully_cleared += 1
 
-<script>
-function toggleAll(source) {
-    let checkboxes = document.getElementsByName('selected');
-    for (let i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].checked = source.checked;
-    }
-}
-</script>
+        else:
+
+            pending_students += 1
+
+    
+
+    total_students = len(display_students)
+
+    print("STUDENTS LOADED:", students)
+    
+    output = admin_nav() + f"""
+
+<div style="
+max-width:1200px;
+margin:30px auto;
+padding:20px;
+font-family:Arial,sans-serif;
+">
+
+<h1 style="
+font-size:40px;
+font-weight:800;
+color:#14532d;
+margin-bottom:5px;
+">
+Admin Dashboard
+</h1>
+
+<p style="
+font-size:18px;
+color:#64748b;
+margin-bottom:35px;
+">
+Welcome back, Administrator.
+Monitor the entire clearance system from here.
+</p>
+
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-bottom:35px;
+">
+
+<div style="
+background:white;
+padding:22px;
+border-radius:18px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+">
+<div style="color:#64748b;">Total Students</div>
+<div style="
+font-size:42px;
+font-weight:bold;
+color:#2563eb;
+margin-top:10px;
+">
+{total_students}
+</div>
+</div>
+
+
+<div style="
+background:white;
+padding:22px;
+border-radius:18px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+">
+<div style="color:#64748b;">Fully Cleared</div>
+<div style="
+font-size:42px;
+font-weight:bold;
+color:#16a34a;
+margin-top:10px;
+">
+{fully_cleared}
+</div>
+</div>
+
+
+<div style="
+background:white;
+padding:22px;
+border-radius:18px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+">
+<div style="color:#64748b;">Pending</div>
+<div style="
+font-size:42px;
+font-weight:bold;
+color:#dc2626;
+margin-top:10px;
+">
+{pending_students}
+</div>
+</div>
+
+
+<div style="
+background:white;
+padding:22px;
+border-radius:18px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+">
+<div style="color:#64748b;">Overall Clearance</div>
+<div style="
+font-size:42px;
+font-weight:bold;
+color:#0ea5e9;
+margin-top:10px;
+">
+{int((fully_cleared/total_students)*100) if total_students else 0}%
+</div>
+</div>
+
+</div>
+
+
+<div style="
+background:white;
+border-radius:20px;
+padding:25px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+margin-bottom:30px;
+">
+
+<h2 style="
+color:#2E7D32;
+margin-top:0;
+">
+Quick Actions
+</h2>
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:22px;
+margin-top:20px;
+">
+
+<a href="/admin/students" style="
+text-decoration:none;
+background:#eff6ff;
+padding:24px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 6px 18px rgba(37,99,235,.12);
+transition:.25s;
+display:block;
+">
+
+<i class="bi bi-people-fill" style="
+font-size:42px;
+color:#2563eb;
+"></i>
+
+<div style="
+margin-top:15px;
+font-size:20px;
+font-weight:700;
+color:#2563eb;
+">
+Manage Students
+</div>
+
+</a>
+
+
+<a href="/admin/reports" style="
+text-decoration:none;
+background:#f0fdf4;
+padding:24px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 6px 18px rgba(34,197,94,.12);
+transition:.25s;
+display:block;
+">
+
+<i class="bi bi-bar-chart-fill" style="
+font-size:42px;
+color:#16a34a;
+"></i>
+
+<div style="
+margin-top:15px;
+font-size:20px;
+font-weight:700;
+color:#16a34a;
+">
+Clearance Reports
+</div>
+
+</a>
+
+
+<a href="/announcements" style="
+text-decoration:none;
+background:#eff6ff;
+padding:24px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 6px 18px rgba(37,99,235,.12);
+transition:.25s;
+display:block;
+">
+
+<i class="bi bi-megaphone-fill" style="
+font-size:42px;
+color:#2563eb;
+"></i>
+
+<div style="
+margin-top:15px;
+font-size:20px;
+font-weight:700;
+color:#2563eb;
+">
+Announcements
+</div>
+
+</a>
+
+
+<a href="/admin/export" style="
+text-decoration:none;
+background:#f0fdf4;
+padding:24px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 6px 18px rgba(34,197,94,.12);
+transition:.25s;
+display:block;
+">
+
+<i class="bi bi-download" style="
+font-size:42px;
+color:#16a34a;
+"></i>
+
+<div style="
+margin-top:15px;
+font-size:20px;
+font-weight:700;
+color:#16a34a;
+">
+Export Data
+</div>
+
+</a>
+
+</div>
+
+</div>
+
+<div style="
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:25px;
+">
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+">
+
+<h2 style="color:#2563eb;">
+System Overview
+</h2>
+
+<p><b>Total Students:</b> {total_students}</p>
+
+<p><b>Fully Cleared:</b> {fully_cleared}</p>
+
+<p><b>Pending Students:</b> {pending_students}</p>
+
+<p><b>Overall Clearance:</b>
+{int((fully_cleared/total_students)*100) if total_students else 0}%
+</p>
+
+</div>
+
+
+<div style="
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+">
+
+<h2 style="color:#2E7D32;">
+Latest Announcements
+</h2>
+
+<p style="color:#64748b;">
+No announcements available.
+</p>
+
+<a href="/announcements"
+style="
+display:inline-block;
+margin-top:15px;
+padding:12px 22px;
+background:linear-gradient(135deg,#2563eb,#2E7D32);
+color:white;
+border-radius:12px;
+text-decoration:none;
+font-weight:bold;
+">
+Manage Announcements
+</a>
+
+</div>
+
+</div>
 
 <div style="
     text-align:center;
@@ -2130,109 +2547,925 @@ function toggleAll(source) {
     All Rights Reserved
 
 </div>
-"""
-
+    
+    """
     return output
 
-@app.route("/admin/announcements", methods=["GET","POST"])
-def admin_announcements():
+@app.route("/admin/students")
+def admin_students():
 
     if session.get("role") != "admin":
         return redirect("/login")
 
+    students = load_students()
 
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
+    output = admin_nav() + f"""
+
+<div style="
+max-width:1200px;
+margin:30px auto;
+padding:20px;
+font-family:Arial,sans-serif;
+">
+
+<h1 style="
+color:#14532d;
+font-size:42px;
+font-weight:800;
+margin-bottom:5px;
+">
+
+Student Management
+
+</h1>
+
+<p style="
+color:#64748b;
+font-size:18px;
+margin-bottom:30px;
+">
+
+Manage students, edit records and monitor clearance progress.
+
+</p>
+
+<div style="
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+margin-bottom:30px;
+">
+
+<input
+placeholder="Search Student..."
+style="
+flex:1;
+min-width:250px;
+padding:14px;
+border:1px solid #cbd5e1;
+border-radius:12px;
+font-size:16px;
+">
+
+<select style="
+padding:14px;
+border-radius:12px;
+border:1px solid #cbd5e1;
+">
+
+<option>All Funding</option>
+<option>CDF</option>
+<option>Self Sponsored</option>
+<option>Other</option>
+
+</select>
+
+<a href="/admin/add">
+
+<button style="
+background:#2E7D32;
+color:white;
+border:none;
+padding:14px 22px;
+border-radius:12px;
+font-size:16px;
+cursor:pointer;
+">
+
+Add New Student
+
+</button>
+
+</a>
+
+</div>
+
+"""
+
+    for sid, s in students.items():
+
+        funding = s.get("funding", "Self Sponsored")
+
+        profile = s.get(
+            "profile_pic",
+            "https://via.placeholder.com/80"
+        )
+        departments = s.get("departments", {})
+
+        is_day_scholar = (
+            s.get("accommodation", "").lower() == "day scholar"
+        )
+
+        # ---------- Library ----------
+        books = s.get("library", {}).get("books", [])
+
+        library_status = (
+            "Cleared"
+            if not any(
+                not b.get("returned", True)
+                for b in books
+            )
+            else "Pending"
+        )
+
+        # ---------- Sports ----------
+        sports_pending = any(
+            len(items) > 0
+            for items in s.get("sports", {}).values()
+        )
+
+        sports_status = (
+            "Pending"
+            if sports_pending
+            else "Cleared"
+        )
+
+        # ---------- AME ----------
+        ame_status = (
+            "Pending"
+            if any(
+                not tool.get("returned", False)
+                for tool in s.get("ame_tools", [])
+            )
+            else "Cleared"
+        )
+
+        # ---------- Stores ----------
+        stores = s.get("stores", {})
+
+        properties = stores.get("properties", [])
+
+        hostel_items = s.get("hostel_items", {})
+
+        mattress = hostel_items.get(
+            "mattress",
+            "Not Assigned"
+        )
+
+        mattress_items = []
+
+        if mattress == "Assigned":
+
+            mattress_items.append({
+                "name": "Mattress"
+            })
+
+        all_store_items = mattress_items + properties
+
+        if is_day_scholar:
+
+            stores_status = "Cleared"
+
+        elif not all_store_items:
+
+            stores_status = "Cleared"
+
+        else:
+
+            stores_status = "Pending"
+
+        # ---------- Accounts ----------
+        acc = s.get("accounts", {})
+
+        paid = acc.get("paid", 0)
+
+        minimum = acc.get(
+            "minimum_required",
+            4000
+        )
+
+        total_fee = acc.get(
+            "total_fee",
+            0
+        )
+
+        outstanding = total_fee - paid
+
+        accounts_status = (
+            "Cleared"
+            if (
+                outstanding <= 0
+                or paid >= minimum
+            )
+            else "Pending"
+        )
+
+        # ---------- Digital Clearance ----------
+        statuses = [
+
+            library_status,
+
+            sports_status,
+
+            stores_status,
+
+            accounts_status,
+
+            departments.get(
+                "communication",
+                {}
+            ).get("status", "Pending"),
+
+            departments.get(
+                "mathematics",
+                {}
+            ).get("status", "Pending"),
+
+            departments.get(
+                "hr",
+                {}
+            ).get("status", "Pending"),
+
+            departments.get(
+                "training",
+                {}
+            ).get("status", "Pending"),
+
+            ame_status
+
+        ]
+
+        cleared = sum(
+            1
+            for status in statuses
+            if status == "Cleared"
+        )
+
+        total = len(statuses)
+
+        # Day scholars don't digitally clear Stores
+        if is_day_scholar:
+
+            total = 8
+
+            if stores_status == "Cleared":
+
+                cleared -= 1
+
+        percentage = (
+            int((cleared / total) * 100)
+            if total else 0
+        )
+
+        output += f"""
+
+<div style="
+background:white;
+border-radius:20px;
+padding:22px;
+margin-bottom:22px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+">
+
+<div style="
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:20px;
+flex-wrap:wrap;
+">
+
+<div style="
+display:flex;
+align-items:center;
+gap:18px;
+">
+
+<img
+src="{profile}"
+style="
+width:80px;
+height:80px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid transparent;
+">
+
+<div>
+
+<h2 style="
+margin:0;
+color:black;
+font-size:24px;
+">
+
+{s.get("name","Student")}
+
+</h2>
+
+<div style="
+color:#64748b;
+margin-top:6px;
+">
+
+Student ID: {sid}
+
+</div>
+
+<div style="
+margin-top:6px;
+color:#475569;
+">
+
+Funding: <b>{funding}</b>
+
+</div>
+
+</div>
+
+</div>
+
+<div>
+
+<a href="/admin/edit/{sid}"
+style="
+background:#2563eb;
+color:white;
+padding:12px 22px;
+border-radius:12px;
+text-decoration:none;
+font-weight:bold;
+">
+
+Edit Student
+
+</a>
+
+</div>
+
+</div>
+
+<hr style="
+margin:20px 0;
+border:none;
+border-top:1px solid #e5e7eb;
+">
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:18px;
+">
+
+<div>
+
+<div style="color:#64748b;font-size:14px;">
+Programme
+</div>
+
+<div style="font-weight:bold;">
+{s.get("program","Not Set")}
+</div>
+
+</div>
+
+<div>
+
+<div style="color:#64748b;font-size:14px;">
+Year
+</div>
+
+<div style="font-weight:bold;">
+{s.get("year","-")}
+</div>
+
+</div>
+
+<div>
+
+<div style="color:#64748b;font-size:14px;">
+Term
+</div>
+
+<div style="font-weight:bold;">
+{s.get("term","-")}
+</div>
+
+</div>
+
+<div>
+
+<div style="color:#64748b;font-size:14px;">
+Accommodation
+</div>
+
+<div style="font-weight:bold;">
+{s.get("accommodation","Not Set")}
+</div>
+
+</div>
+
+</div>
+
+<hr style="
+margin:22px 0;
+border:none;
+border-top:1px solid #e5e7eb;
+">
+
+<div style="
+margin-bottom:12px;
+font-weight:bold;
+color:#2E7D32;
+">
+
+Clearance Progress
+
+</div>
+
+<div style="
+height:12px;
+background:#dbeafe;
+border-radius:20px;
+overflow:hidden;
+">
+
+<div style="
+width:{percentage}%;
+height:100%;
+background:linear-gradient(90deg,#2E7D32,#2563eb);
+border-radius:20px;
+">
+
+</div>
+
+</div>
+
+<div style="
+display:flex;
+justify-content:space-between;
+margin-top:10px;
+font-size:15px;
+color:#64748b;
+">
+
+<span>
+
+{cleared} of {total} departments cleared
+
+</span>
+
+<span style="
+font-weight:bold;
+color:#2563eb;
+">
+
+{percentage}%
+
+</span>
+
+</div>
+
+</div>
+
+"""
+
+    output += """
+
+<div style="
+text-align:center;
+padding:28px;
+margin-top:40px;
+color:#64748b;
+font-size:16px;
+border-top:1px solid #e2e8f0;
+">
+
+© 2026 Zambia Air Services Training Institute
+
+<br>
+
+All Rights Reserved
+
+</div>
+
+"""
+
+    return output
+
+@app.route("/admin/reports")
+def admin_reports():
+
+    if session.get("role") != "admin":
+        return redirect("/login")
+
+    students = load_students()
+
+    total_students = len(students)
+
+    fully_cleared = 0
+    pending = 0
+    day_scholars = 0
+    boarders = 0
+
+    for sid, s in students.items():
+
+        if s.get("accommodation", "").lower() == "day scholar":
+            day_scholars += 1
+        else:
+            boarders += 1
+
+        departments = s.get("departments", {})
+
+        library = (
+            not any(
+                not b.get("returned", True)
+                for b in s.get("library", {}).get("books", [])
+            )
+        )
+
+        sports = (
+            sum(len(v) for v in s.get("sports", {}).values()) == 0
+        )
+
+        communication = departments.get(
+            "communication", {}
+        ).get("status") == "Cleared"
+
+        mathematics = departments.get(
+            "mathematics", {}
+        ).get("status") == "Cleared"
+
+        hr = departments.get(
+            "hr", {}
+        ).get("status") == "Cleared"
+
+        training = departments.get(
+            "training", {}
+        ).get("status") == "Cleared"
+
+        ame = departments.get(
+            "ame", {}
+        ).get("status") == "Cleared"
+
+        accounts = departments.get(
+            "accounts", {}
+        ).get("status") == "Cleared"
+
+        if all([
+            library,
+            sports,
+            communication,
+            mathematics,
+            hr,
+            training,
+            ame,
+            accounts
+        ]):
+            fully_cleared += 1
+        else:
+            pending += 1
+
+    output = admin_nav() + f"""
+
+<div style="
+max-width:900px;
+margin:35px auto;
+padding:25px;
+font-family:Arial;
+">
+
+<h1 style="color:#14532d;">
+Clearance Reports
+</h1>
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-top:30px;
+">
+
+<div style="background:white;padding:25px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.08);">
+<h3>Total Students</h3>
+<h1 style="color:#2563eb;">{total_students}</h1>
+</div>
+
+<div style="background:white;padding:25px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.08);">
+<h3>Fully Cleared</h3>
+<h1 style="color:#16a34a;">{fully_cleared}</h1>
+</div>
+
+<div style="background:white;padding:25px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.08);">
+<h3>Pending</h3>
+<h1 style="color:#dc2626;">{pending}</h1>
+</div>
+
+<div style="background:white;padding:25px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.08);">
+<h3>Overall Clearance</h3>
+<h1 style="color:#0ea5e9;">
+{round((fully_cleared/total_students)*100,1) if total_students else 0}%
+</h1>
+</div>
+
+<div style="background:white;padding:25px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.08);">
+<h3>Boarders</h3>
+<h1>{boarders}</h1>
+</div>
+
+<div style="background:white;padding:25px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.08);">
+<h3>Day Scholars</h3>
+<h1>{day_scholars}</h1>
+</div>
+
+</div>
+
+</div>
+"""
+
+    return output            
+
+@app.route("/admin/export")
+def admin_export():
+
+    if session.get("role") != "admin":
+        return redirect("/login")
+
+    students = load_students()
+
+    output = admin_nav() + """
+
+<div style="
+max-width:1000px;
+margin:35px auto;
+padding:25px;
+font-family:Arial;
+">
+
+<h1 style="color:#14532d;">
+Export Student Data
+</h1>
+
+<p style="color:#64748b;">
+Download or print student information.
+</p>
+
+<table width="100%" cellpadding="12"
+style="
+border-collapse:collapse;
+background:white;
+margin-top:25px;
+box-shadow:0 6px 18px rgba(0,0,0,.08);
+">
+
+<tr style="background:#14532d;color:white;">
+<th>ID</th>
+<th>Name</th>
+<th>Programme</th>
+<th>Funding</th>
+<th>Accommodation</th>
+</tr>
+"""
+
+    for sid, s in students.items():
+
+        output += f"""
+<tr>
+<td>{sid}</td>
+<td>{s.get("name","")}</td>
+<td>{s.get("program","")}</td>
+<td>{s.get("funding","")}</td>
+<td>{s.get("accommodation","")}</td>
+</tr>
+"""
+
+    output += """
+
+</table>
+
+<div style="margin-top:30px;text-align:center;">
+
+<button onclick="window.print()" style="
+background:#14532d;
+color:white;
+border:none;
+padding:14px 30px;
+border-radius:12px;
+font-size:18px;
+cursor:pointer;
+">
+Print / Save as PDF
+</button>
+
+</div>
+
+</div>
+"""
+
+    return output                                    
+                                                                                                            
+@app.route("/announcements", methods=["GET", "POST"])
+def announcements():
+
+    if session.get("role") != "admin":
+        return redirect("/login")
+
+    announcements = load_announcements()
+
+    # ---------------- DELETE ----------------
+    delete = request.args.get("delete")
+
+    if delete:
+
+        announcements = [
+            a for a in announcements
+            if str(a["id"]) != delete
+        ]
+
+        save_announcements(announcements)
+
+        return redirect("/announcements")
 
 
+    # ---------------- ADD ----------------
     if request.method == "POST":
 
-        message = request.form["message"]
+        title = request.form.get("title", "").strip()
+        message = request.form.get("message", "").strip()
 
-        audience = request.form["audience"]
+        if title and message:
 
+            from datetime import datetime
 
-        cursor.execute("""
-        INSERT INTO announcements
-        (message, audience)
+            announcement = {
+                "id": len(announcements) + 1,
+                "title": title,
+                "message": message,
+                "date": datetime.now().strftime("%Y-%m-%d %H:%M")
+            }
 
-        VALUES (?,?)
-        """,
-        (message, audience))
+            announcements.append(announcement)
 
+            save_announcements(announcements)
 
-        conn.commit()
+        return redirect("/announcements")
 
+    output = admin_nav() + f"""
 
+<div style="
+max-width:900px;
+margin:35px auto;
+padding:20px;
+font-family:Arial;
+">
 
-    cursor.execute("""
-    SELECT id,message,audience,created_at
-    FROM announcements
-    ORDER BY id DESC
-    """)
+<h1 style="
+color:#14532d;
+margin-bottom:10px;
+">
+Announcements
+</h1>
 
+<p style="
+color:#64748b;
+margin-bottom:30px;
+">
+Create announcements that students will see on their dashboard.
+</p>
 
-    announcements = cursor.fetchall()
+<div style="
+background:white;
+padding:25px;
+border-radius:18px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+margin-bottom:30px;
+">
 
+<form method="POST">
 
-    conn.close()
+<label><b>Title</b></label><br>
 
+<input
+name="title"
+required
+style="
+width:100%;
+padding:12px;
+margin:10px 0 20px;
+border-radius:10px;
+border:1px solid #ddd;
+">
 
-    return f"""
+<label><b>Announcement</b></label><br>
 
-    <h1>
-    Announcements
-    </h1>
+<textarea
+name="message"
+required
+rows="5"
+style="
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+resize:vertical;
+"></textarea>
 
+<br><br>
 
-    <form method="POST">
+<button style="
+background:#14532d;
+color:white;
+padding:14px 30px;
+border:none;
+border-radius:12px;
+font-size:16px;
+cursor:pointer;
+">
 
+Post Announcement
 
-    <textarea
-    name="message"
-    placeholder="Write announcement..."
-    required>
-    </textarea>
+</button>
 
+</form>
 
-    <br><br>
+</div>
 
+<h2 style="color:#14532d;">
+Recent Announcements
+</h2>
+"""
 
-    <select name="audience">
+    if announcements:
 
-        <option value="student">
-            Students
-        </option>
+        for a in announcements:
 
+            output += f"""
 
-        <option value="staff">
-            Staff
-        </option>
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+margin-top:20px;
+box-shadow:0 6px 18px rgba(0,0,0,.08);
+">
 
+<h3 style="margin:0;color:#2563eb;">
+{a['title']}
+</h3>
 
-    </select>
+<p style="
+color:#64748b;
+font-size:14px;
+margin-top:5px;
+">
+{a['date']}
+</p>
 
+<p style="
+margin-top:18px;
+font-size:17px;
+line-height:1.6;
+">
+{a['message']}
+</p>
 
-    <br><br>
+<a
+href="/announcements?delete={a['id']}"
 
+onclick="return confirm('Delete this announcement?')"
 
-    <button>
-    Publish Announcement
-    </button>
+style="
+display:inline-block;
+margin-top:15px;
+padding:10px 18px;
+background:#dc2626;
+color:white;
+border-radius:10px;
+text-decoration:none;
+font-weight:bold;
+">
 
+Delete
 
-    </form>
+</a>
 
+</div>
 
-    <hr>
+"""
 
+    else:
 
-    <h2>
-    Previous Announcements
-    </h2>
+        output += """
 
+<div style="
+background:white;
+padding:30px;
+border-radius:15px;
+text-align:center;
+color:#64748b;
+box-shadow:0 6px 18px rgba(0,0,0,.08);
+">
 
-    """
+No announcements have been posted yet.
+
+</div>
+
+"""
+
+    output += "</div>"
+
+    return output
+
 
 @app.route("/admin/edit/<sid>", methods=["GET", "POST"])
 def edit_student(sid):
@@ -2430,9 +3663,7 @@ def staff_library():
                         "%d %B %Y | %I:%M %p"
                     )
 
-            students[sid]["library"]["books"] = books
-
-        save_students(students)
+                    save_students(students)
 
         return redirect("/library")
 
@@ -3438,6 +4669,8 @@ def stores():
 
     for sid in students:
         ensure_departments(students[sid])
+        
+    
 
     # ---------------- POST ----------------
     if request.method == "POST":
@@ -3470,13 +4703,31 @@ def stores():
             if action == "assign":
 
                 if items.get("mattress") != "NIL":
-                    items["mattress"] = "Assigned"
+
+                    students[sid].setdefault(
+                        "item_requests",
+                        []
+                    )
+
+                    students[sid]["item_requests"].append({
+
+                        "department": "Stores",
+
+                        "item": "Mattress",
+
+                        "status": "Pending",
+
+                        "assigned_by": session.get("user"),
+
+                        "date": datetime.now().strftime("%d/%m/%Y")
+
+                    })
+
 
             elif action == "returned":
 
                 if items.get("mattress") != "NIL":
                     items["mattress"] = "Returned"
-
             # ---------------- ASSIGN PROPERTY ----------------
 
             elif (
@@ -3520,8 +4771,7 @@ def stores():
                 ]
 
             students[sid]["stores"] = store
-
-        save_students(students)
+            save_students(students)
 
         return redirect("/stores")
 
@@ -4942,6 +6192,7 @@ def student():
     sid = session.get("user")
 
     students = load_students()
+    announcements = load_announcements()
 
     if sid not in students:
         return "<h3>Student not found</h3>"
@@ -4979,6 +6230,11 @@ def student():
     name = s.get("name", "Student")
 
     profile_pic = s.get("profile_pic") or "https://via.placeholder.com/120"
+    requests = s.get("item_requests", [])
+    pending_requests = [
+    r for r in requests
+    if r["status"] == "Pending"
+]
     
     nav = get_nav("student")
 
@@ -5180,6 +6436,7 @@ def student():
         """
 
     physical_html = ""
+    digital_message = ""
 
     if not is_day_scholar:
 
@@ -5227,9 +6484,8 @@ def student():
         </div>
         """
 
-    if percentage == 100:
-
-        digital_message = """
+        if percentage == 100:
+        	digital_message = """
         <div style="
         margin-top:18px;
         color:#2E7D32;
@@ -5238,17 +6494,16 @@ def student():
         ">
         🎉 Congratulations!
 
-You have completed all digital
-clearance requirements.
+        You have completed all digital
+        clearance requirements.
+
         </div>
         """
 
-    else:
-
-        digital_message = ""
     
-    return nav + f"""
-<html>
+    output = nav + f"""
+
+    <html>
 
 <head>
 
@@ -5476,6 +6731,23 @@ line-height:1.8;
 
 </div>
 
+<h2>Item Confirmation Required</h2>
+
+<p>
+    Stores wants to assign you:
+    <strong>Mattress</strong>
+</p>
+
+<div class="actions">
+    <a class="btn btn-success" href="/student/accept_item/Mattress">
+        Accept
+    </a>
+
+    <a class="btn btn-danger" href="/student/decline_item/Mattress">
+        Decline
+    </a>
+</div>
+
 
     
 Visit your clearance page to view departmental status.
@@ -5504,10 +6776,13 @@ font-weight:bold;
 </a>
 
 </div>
+"""
 
+    # ---------------- ANNOUNCEMENTS ----------------
 
-<!-- ANNOUNCEMENTS -->
+    announcements = load_announcements()
 
+    output += """
 <div style="
 max-width:700px;
 margin:auto;
@@ -5522,45 +6797,100 @@ text-align:left;
 font-size:24px;
 font-weight:700;
 color:#14532d;
-margin-bottom:15px;
+margin-bottom:18px;
 ">
 
 Announcements
 
 </div>
+"""
+
+
+    if announcements:
+
+        for a in announcements[:5]:
+
+            output += f"""
+<div style="
+padding:18px 0;
+border-bottom:1px solid #e5e7eb;
+">
 
 <div style="
+font-size:22px;
+font-weight:700;
+color:#2563eb;
+">
+
+{a["title"]}
+
+</div>
+
+<div style="
+font-size:14px;
 color:#64748b;
+margin:6px 0 12px;
+">
+
+{a["date"]}
+
+</div>
+
+<div style="
 font-size:17px;
+line-height:1.8;
+color:#334155;
+white-space:pre-wrap;
 ">
 
-There are currently no active
-announcements.
-
-Enjoy your day!
+{a["message"]}
 
 </div>
 
 </div>
-    
-    <div style="
-    text-align:center;
-    padding:28px;
-    margin-top:40px;
-    color:#64748b;
-    font-size:16px;
-    border-top:1px solid #e2e8f0;
+"""
+
+    else:
+
+        output += """
+<div style="
+text-align:center;
+padding:20px;
+color:#64748b;
 ">
 
-    © 2026 Zambia Air Services Training Institute
-
-    <br>
-
-    All Rights Reserved
+No announcements available.
 
 </div>
-    
-    """
+"""
+
+
+    output += """
+</div>
+
+
+<div style="
+text-align:center;
+padding:28px;
+margin-top:40px;
+color:#64748b;
+font-size:15px;
+border-top:1px solid #e2e8f0;
+">
+
+© 2026 Zambia Air Services Training Institute
+
+<br>
+
+All Rights Reserved
+
+</div>
+
+"""
+
+
+    return output
+
 
 @app.route("/student/profile", methods=["GET", "POST"])
 def student_profile():
@@ -5878,7 +7208,143 @@ def student_accommodation():
 
 </div>
 """
-    
+
+@app.route("/student/accept_item/<item>")
+def accept_item(item):
+
+    if session.get("role") != "student":
+        return redirect("/login")
+
+    sid = session.get("user")
+
+    students = load_students()
+
+    if sid not in students:
+        return "<h3>Student not found</h3>"
+
+
+    student = students[sid]
+
+
+    # Make sure item_requests exists
+    student.setdefault(
+        "item_requests",
+        []
+    )
+
+
+    # Find the pending request
+    for req in student["item_requests"]:
+
+        if (
+            req.get("item") == item
+            and req.get("status") == "Pending"
+        ):
+
+            # Accept request
+            req["status"] = "Accepted"
+
+
+            # Add timestamp
+            from datetime import datetime
+
+            req["accepted_at"] = datetime.now().strftime(
+                "%d/%m/%Y %H:%M"
+            )
+
+
+            # Add item to stores
+            stores = student.setdefault(
+                "stores",
+                {}
+            )
+
+
+            properties = stores.setdefault(
+                "properties",
+                []
+            )
+
+
+            # Prevent duplicates
+            already_exists = any(
+                p.get("name") == item
+                for p in properties
+            )
+
+
+            if not already_exists:
+
+                properties.append({
+
+                    "name": item,
+
+                    "status": "Issued",
+
+                    "returned": False
+
+                })
+
+
+            break
+
+
+    save_students(students)
+
+
+    return redirect("/student")
+
+@app.route("/student/decline_item/<item>")
+def decline_item(item):
+
+    if session.get("role") != "student":
+        return redirect("/login")
+
+
+    sid = session.get("user")
+
+    students = load_students()
+
+
+    if sid not in students:
+        return "<h3>Student not found</h3>"
+
+
+    student = students[sid]
+
+
+    # Ensure item_requests exists
+    student.setdefault(
+        "item_requests",
+        []
+    )
+
+
+    for req in student["item_requests"]:
+
+        if (
+            req.get("item") == item
+            and req.get("status") == "Pending"
+        ):
+
+            req["status"] = "Declined"
+
+
+            from datetime import datetime
+
+            req["declined_at"] = datetime.now().strftime(
+                "%d/%m/%Y %H:%M"
+            )
+
+
+            break
+
+
+    save_students(students)
+
+
+    return redirect("/student")   
+            
 @app.route("/student/accounts")
 def student_accounts():
 
@@ -6339,7 +7805,7 @@ def student_clearance():
         "Not Assigned"
     )
 
-    # 🔥 Navigation
+    # Navigation
     nav = get_nav("student", sid)
 
     # -------- LIBRARY --------
