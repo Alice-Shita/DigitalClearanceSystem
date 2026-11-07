@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tool Records | AME Stores | ZASTI</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        :root {
+            --green: #15803d;
+            --green-dark: #166534;
+            --green-light: #ecfdf5;
+            --blue: #2563eb;
+            --text: #172033;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f8fafc;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 260px;
+            z-index: 1100;
+
+            display: flex;
+            flex-direction: column;
+
+            background: #fff;
+            border-right: 1px solid var(--border);
+            padding: 24px 15px 18px;
+
+            box-shadow: 4px 0 20px rgba(15,23,42,.035);
+
+            overflow-y: auto;
+            scrollbar-width: thin;
+
+            transition: transform .25s ease;
+        }
+
+        .brand {
+            padding: 4px 10px 25px;
+            border-bottom: 1px solid #eef0f2;
+            margin-bottom: 22px;
+        }
+
+        .brand-title {
+            margin: 0;
+            color: var(--green-dark);
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .brand-subtitle {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .nav-title {
+            padding: 0 10px 9px;
+            color: #9ca3af;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav a {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 45px;
+            padding: 10px 12px;
+
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 10px;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            transition:
+                background .18s ease,
+                color .18s ease,
+                transform .18s ease;
+        }
+
+        .nav a:hover {
+            background: #f3fdf7;
+            color: var(--green-dark);
+            transform: translateX(2px);
+        }
+
+        .nav a.active {
+            background: #ecfdf5;
+            color: var(--green-dark);
+        }
+
+        .nav a.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 9px;
+            bottom: 9px;
+            width: 3px;
+            background: var(--green);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-icon {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 9px;
+            background: #f3f4f6;
+            color: #6b7280;
+
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .nav a:hover .nav-icon,
+        .nav a.active .nav-icon {
+            background: #dff7e9;
+            color: var(--green-dark);
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #eef0f2;
+        }
+
+.staff-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px 13px;
+        }
+
+        .staff-avatar {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            border-radius: 50%;
+            background: #dcfce7;
+            color: var(--green-dark);
+
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .staff-info {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .staff-info strong {
+            color: var(--text);
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .staff-info span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            min-height: 42px;
+            padding: 9px 12px;
+
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 9px;
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .logout:hover {
+            background: #f9fafb;
+            color: var(--text);
+        }
+
+        /* MAIN */
+
+        .main {
+            width: 100%;
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .page-header {
+            margin-bottom: 22px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 25px;
+            color: #173f38;
+        }
+
+        .page-header p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* FLASH */
+
+        .flash {
+            margin-bottom: 18px;
+            padding: 13px 15px;
+            border-radius: 10px;
+            border: 1px solid #bbf7d0;
+            background: #f0fdf4;
+            color: #166534;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* CARD */
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .tool-count {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 13px 20px;
+            text-align: left;
+
+            background: #f8fafc;
+            color: #6b7280;
+
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f1f5f9;
+
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .student-name {
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .student-id {
+            margin-top: 3px;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        .tool-name {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .issued-date {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .return-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            border: 0;
+            border-radius: 8px;
+
+            padding: 9px 13px;
+
+            background: var(--green);
+            color: #fff;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        .return-button:hover {
+            background: var(--green-dark);
+        }
+
+        .empty {
+            padding: 45px 20px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .empty-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: #cbd5e1;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px 15px;
+            }
+        }
+    
+        /* AME MOBILE NAVIGATION */
+
+        .mobile-top-header {
+            display: none;
+        }
+
+        .mobile-menu {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid var(--border);
+            border-radius: 9px;
+
+            background: white;
+            color: var(--green-dark);
+
+            cursor: pointer;
+            font-size: 19px;
+
+            box-shadow: 0 2px 6px rgba(15,23,42,.04);
+        }
+
+        .mobile-page-title {
+            min-width: 0;
+        }
+
+        .mobile-page-title h1 {
+            margin: 0;
+            color: var(--text);
+            font-size: 19px;
+            line-height: 1.2;
+            font-weight: 750;
+        }
+
+        .mobile-page-title p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.35;
+        }
+
+        .sidebar-close {
+            display: none;
+        }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        @media (max-width: 1000px) {
+
+            .mobile-top-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1040;
+
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                padding: 11px 15px;
+
+                background: rgba(248, 250, 252, .97);
+                border-bottom: 1px solid var(--border);
+
+                backdrop-filter: blur(9px);
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+                z-index: 1050;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-close {
+                display: flex;
+                position: absolute;
+                top: 12px;
+                right: 12px;
+
+                width: 34px;
+                height: 34px;
+
+                align-items: center;
+                justify-content: center;
+
+                border: 1px solid var(--border);
+                border-radius: 8px;
+
+                background: white;
+                color: var(--text);
+
+                cursor: pointer;
+                font-size: 22px;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 1045;
+
+                background: rgba(15, 23, 42, .38);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            .main {
+                margin-left: 0;
+                padding-top: 78px;
+            }
+        }
+
+    
+        /* TOOL RECORDS */
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(15,23,42,.035);
+            overflow: hidden;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 22px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-header h2 {
+            margin: 0;
+            color: #173f38;
+            font-size: 17px;
+            font-weight: 750;
+        }
+
+        .card-header p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .record-count {
+            flex-shrink: 0;
+            padding: 7px 11px;
+            border-radius: 8px;
+            background: #f0fdf4;
+            color: var(--green-dark);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .search-box input {
+            width: 100%;
+            height: 42px;
+            padding: 0 14px 0 38px;
+            border: 1px solid #dfe3e8;
+            border-radius: 9px;
+            outline: none;
+            background: #fff;
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .search-box input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(21,128,61,.08);
+        }
+
+        .search-button,
+        .clear-button {
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 16px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .search-button {
+            border: 1px solid var(--green);
+            background: var(--green);
+            color: #fff;
+        }
+
+        .search-button:hover {
+            background: var(--green-dark);
+        }
+
+        .clear-button {
+            border: 1px solid var(--border);
+            background: #fff;
+            color: #4b5563;
+        }
+
+        .clear-button:hover {
+            background: #f9fafb;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .records-table {
+            width: 100%;
+            min-width: 1050px;
+            border-collapse: collapse;
+        }
+
+        .records-table th {
+            padding: 13px 16px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            color: #6b7280;
+            font-size: 10px;
+            font-weight: 750;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            white-space: nowrap;
+        }
+
+        .records-table td {
+            padding: 15px 16px;
+            border-bottom: 1px solid #eef0f2;
+            color: #374151;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        .records-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .records-table tbody tr:hover {
+            background: #fafdfb;
+        }
+
+        .student-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 150px;
+        }
+
+        .student-cell strong {
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .student-cell span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 9px;
+            border-radius: 7px;
+            font-size: 10px;
+            font-weight: 750;
+            white-space: nowrap;
+        }
+
+        .status.issued {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .status.returned {
+            background: #ecfdf5;
+            color: var(--green-dark);
+        }
+
+        .remarks {
+            display: block;
+            max-width: 260px;
+            color: #6b7280;
+            line-height: 1.45;
+        }
+
+        .empty-state {
+            padding: 70px 25px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 54px;
+            height: 54px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: #f3f4f6;
+            color: #6b7280;
+            font-size: 22px;
+        }
+
+        .empty-state h3 {
+            margin: 0;
+            color: var(--text);
+            font-size: 15px;
+        }
+
+        .empty-state p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        @media (max-width: 700px) {
+
+            .main {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .page-header h1 {
+                font-size: 22px;
+            }
+
+            .card-header {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 18px;
+            }
+
+            .search-form {
+                align-items: stretch;
+                flex-direction: column;
+                padding: 15px 18px;
+            }
+
+            .search-button,
+            .clear-button {
+                width: 100%;
+            }
+
+            .table-wrap {
+                margin: 0;
+            }
+        }
+
+</style>
+</head>
+
+<body>
+
+<header class="mobile-top-header">
+
+    <button
+        class="mobile-menu"
+        onclick="toggleSidebar()"
+        aria-label="Open menu"
+        type="button"
+    >
+        ☰
+    </button>
+
+    <div class="mobile-page-title">
+        <h1>Return Tool</h1>
+        <p>Record returned AME Stores tools.</p>
+    </div>
+
+</header>
+
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+    onclick="toggleSidebar()"
+></div>
+
+
+<aside class="sidebar" id="sidebar">
+
+    <button
+        class="sidebar-close"
+        onclick="toggleSidebar()"
+        aria-label="Close menu"
+        type="button"
+    >
+        ×
+    </button>
+
+
+
+    <div class="brand">
+        <h1 class="brand-title">ZASTI</h1>
+        <div class="brand-subtitle">
+            Digital Student Clearance System
+        </div>
+    </div>
+
+    <div class="nav-title">Main Menu</div>
+
+        <nav class="nav">
+
+        <a href="{{ url_for('new_staff_ame_dashboard') }}">
+            <span class="nav-icon">
+                <i class="bi bi-grid-1x2-fill"></i>
+            </span>
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('new_staff_ame_students') }}">
+            <span class="nav-icon">
+                <i class="bi bi-people-fill"></i>
+            </span>
+            Students
+        </a>
+
+        <a href="{{ url_for('new_staff_ame_issue_tool') }}">
+            <span class="nav-icon">
+                <i class="bi bi-tools"></i>
+            </span>
+            Issue Tool
+        </a>
+
+        <a href="{{ url_for('new_staff_ame_return_tool') }}">
+            <span class="nav-icon">
+                <i class="bi bi-arrow-return-left"></i>
+            </span>
+            Return Tool
+        </a>
+
+        <a href="{{ url_for('new_staff_ame_tool_records') }}" class="active">
+            <span class="nav-icon">
+                <i class="bi bi-journal-text"></i>
+            </span>
+            Tool Records
+        </a>
+
+        <a href="{{ url_for('new_staff_ame_announcements') }}">
+            <span class="nav-icon">
+                <i class="bi bi-megaphone-fill"></i>
+            </span>
+            Announcements
+        </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <div class="staff-mini">
+            <div class="staff-avatar">
+                {{ (staff_name or "S")[0]|upper }}
+            </div>
+
+            <div class="staff-info">
+                <strong>{{ staff_name or "AME Staff" }}</strong>
+                <span>{{ department or "AME Stores" }}</span>
+            </div>
+        </div>
+
+        <a href="{{ url_for('staff_change_password') }}" class="logout">
+            <i class="bi bi-key-fill"></i>
+            Change Password
+        </a>
+
+        <a href="{{ url_for('new_staff_login') }}" class="logout">
+            <i class="bi bi-box-arrow-right"></i>
+            Logout
+        </a>
+
+    </div>
+
+</aside>
+
+<main class="main">
+
+    <div class="page-header">
+        <h1>Tool Records</h1>
+        <p>View the complete AME Stores tool issue and return history.</p>
+    </div>
+
+    <section class="card">
+
+        <div class="card-header">
+            <div>
+                <h2>AME Tool History</h2>
+                <p>
+                    All issued and returned tools are recorded here.
+                </p>
+            </div>
+
+            <div class="record-count">
+                {{ records|length }} record{{ "" if records|length == 1 else "s" }}
+            </div>
+        </div>
+
+        <form method="GET"
+              action="{{ url_for('new_staff_ame_tool_records') }}"
+              class="search-form">
+
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="search"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search student or tool..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <button type="submit" class="search-button">
+                Search
+            </button>
+
+            {% if search %}
+                <a
+                    href="{{ url_for('new_staff_ame_tool_records') }}"
+                    class="clear-button"
+                >
+                    Clear
+                </a>
+            {% endif %}
+
+        </form>
+
+        {% if records %}
+
+        <div class="table-wrap">
+
+            <table class="records-table">
+
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Tool</th>
+                        <th>Status</th>
+                        <th>Issued</th>
+                        <th>Issued By</th>
+                        <th>Returned</th>
+                        <th>Returned By</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for record in records %}
+
+                    {% set tool = record.tool %}
+                    {% set student = record.student %}
+
+                    <tr>
+
+                        <td>
+                            <div class="student-cell">
+                                <strong>
+                                    {{ student.name if student else "Unknown Student" }}
+                                </strong>
+
+                                <span>
+                                    {{ tool.student_id }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <td>
+                            <strong>{{ tool.name }}</strong>
+                        </td>
+
+                        <td>
+
+                            {% if tool.returned %}
+
+                                <span class="status returned">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Returned
+                                </span>
+
+                            {% else %}
+
+                                <span class="status issued">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    Issued
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ tool.issued_at or "—" }}
+                        </td>
+
+                        <td>
+                            {{ tool.issued_by or "—" }}
+                        </td>
+
+                        <td>
+                            {{ tool.returned_at or "—" }}
+                        </td>
+
+                        <td>
+                            {{ tool.returned_by or "—" }}
+                        </td>
+
+                        <td>
+                            <span class="remarks">
+                                {{ tool.remarks or "—" }}
+                            </span>
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    <i class="bi bi-journal-text"></i>
+                </div>
+
+                {% if search %}
+                    <h3>No matching records</h3>
+                    <p>
+                        No tool records matched
+                        "<strong>{{ search }}</strong>".
+                    </p>
+                {% else %}
+                    <h3>No tool records yet</h3>
+                    <p>
+                        AME tool issue and return records will appear here.
+                    </p>
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</main>
+
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+
+    if (!sidebar || !overlay) {
+        return;
+    }
+
+    sidebar.classList.toggle("open");
+    overlay.classList.toggle("show");
+}
+</script>
+
+</body>
+</html>

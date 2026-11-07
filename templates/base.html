@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+        ZASTI Digital Clearance System
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    {% block extra_css %}{% endblock %}
+
+<style id="ADMIN-HEADER-FINAL-CLEARANCE">
+
+/* =========================================================
+   ZASTI GLOBAL HEADER
+   ========================================================= */
+
+/*
+   Desktop:
+   Admin sidebar = 270px.
+
+   The header starts after the sidebar, and the actual
+   header words are given a little extra left padding so
+   they do not sit too close to the sidebar.
+*/
+
+body:has(.admin-sidebar) .site-header {
+    position: relative !important;
+    margin-left: 290px !important;
+    width: calc(100% - 290px) !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    z-index: 100 !important;
+}
+
+body:has(.admin-sidebar) .site-header .header-inner {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 45px !important;
+    padding-right: 30px !important;
+    box-sizing: border-box !important;
+}
+
+body:has(.admin-sidebar) .site-header .header-brand {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+
+
+/* =========================================================
+   STUDENT HEADER
+   ========================================================= */
+
+/*
+   Student pages have no fixed sidebar offset on desktop.
+   Give the header contents some breathing room from the
+   left edge.
+*/
+
+body:not(:has(.admin-sidebar)) .site-header .header-inner {
+    padding-left: 45px !important;
+    padding-right: 30px !important;
+    box-sizing: border-box !important;
+}
+
+body:not(:has(.admin-sidebar)) .site-header .header-brand {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    /*
+       ADMIN MOBILE
+
+       Sidebar overlays the page, therefore the header remains
+       full width.
+    */
+
+    body:has(.admin-sidebar) .site-header {
+        position: relative !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+        box-sizing: border-box !important;
+        z-index: 100 !important;
+    }
+
+    body:has(.admin-sidebar) .site-header .header-inner {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+
+        /*
+           Leave space for the menu button without making the
+           header text touch the left side.
+        */
+        padding-left: 292px !important;
+        padding-right: 18px !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /*
+       STUDENT MOBILE
+
+       The student menu button is part of the page flow and
+       therefore moves together with the page instead of
+       remaining fixed to the screen.
+    */
+
+    body:not(:has(.admin-sidebar)) .site-header .header-inner {
+        padding-left: 72px !important;
+        padding-right: 18px !important;
+        box-sizing: border-box !important;
+    }
+
+    body:not(:has(.admin-sidebar)) .site-header .header-brand {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
+
+}
+
+</style>
+
+
+<style id="ADMIN-HEADER-SAME-AS-STUDENT">
+
+/* =========================================================
+   ADMIN HEADER — MATCH STUDENT HEADER POSITION
+   ========================================================= */
+
+/*
+   The header wording on admin pages must begin at the
+   SAME position as the wording on student pages.
+
+   Do NOT change the footer.
+*/
+
+body:has(.admin-sidebar) .site-header {
+    margin-left: 270px !important;
+    width: calc(100% - 270px) !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+}
+
+body:has(.admin-sidebar) .site-header .header-inner {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    /* SAME horizontal starting point as student header */
+    padding-left: 50px !important;
+    padding-right: 30px !important;
+
+    box-sizing: border-box !important;
+}
+
+body:has(.admin-sidebar) .site-header .header-brand {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+
+/* Mobile: header remains full width */
+@media (max-width: 900px) {
+
+    body:has(.admin-sidebar) .site-header {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    body:has(.admin-sidebar) .site-header .header-inner {
+        padding-left: 50px !important;
+        padding-right: 18px !important;
+    }
+
+}
+
+</style>
+
+
+<style>
+/* FINAL MENU BUTTON SCROLL-BEHAVIOR FIX */
+
+/*
+   IMPORTANT:
+   Menu buttons must belong to the DOCUMENT, not the viewport.
+
+   position:absolute = scrolls with the page
+   position:fixed    = stays stuck to the screen
+
+   Therefore both admin and student buttons are explicitly
+   forced to absolute positioning.
+*/
+
+/* STUDENT */
+.student-menu-button {
+    position: absolute !important;
+    top: 14px !important;
+    left: 14px !important;
+    right: auto !important;
+    bottom: auto !important;
+}
+
+/* ADMIN */
+.admin-mobile-menu {
+    position: absolute !important;
+    top: 14px !important;
+    left: 14px !important;
+    right: auto !important;
+    bottom: auto !important;
+}
+
+/* Older student menu button classes */
+.sidebar-toggle,
+.menu-toggle,
+#menuBtn {
+    position: absolute !important;
+    top: 14px !important;
+    left: 14px !important;
+    right: auto !important;
+    bottom: auto !important;
+}
+
+/* Never allow these menu buttons to use fixed positioning */
+.student-menu-button,
+.admin-mobile-menu,
+.sidebar-toggle,
+.menu-toggle,
+#menuBtn {
+    inset-inline-end: auto !important;
+    inset-block-end: auto !important;
+}
+</style>
+
+
+<style>
+/* STUDENT MENU BUTTON POSITION FIX */
+.student-menu-button {
+    top: 65px !important;
+}
+</style>
+
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <div class="header-inner">
+
+        <div class="header-brand">
+
+            <h1>ZASTI</h1>
+
+            <p>
+                Digital Student Clearance System
+            </p>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+{% block content %}
+{% endblock %}
+
+
+<footer class="site-footer">
+
+    <div class="footer-inner">
+
+        <div class="footer-brand">
+
+            <strong>
+                Zambia Air Services Training Institute
+            </strong>
+
+            <span>
+                Digital Student Clearance System
+            </span>
+
+        </div>
+
+        <div class="footer-copy">
+
+            © 2026 Zambia Air Services Training Institute
+
+            <br>
+
+            All Rights Reserved
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+{% block scripts %}{% endblock %}
+
+
+<!-- FINAL MOBILE MENU CONTROL -->
+<script>
+(function () {
+
+    function syncStudentMenu() {
+
+        const sidebar = document.querySelector(".student-sidebar");
+
+        if (!sidebar) return;
+
+        const hamburger = document.querySelector(
+            '[onclick="toggleSidebar()"]:not(.sidebar-close)'
+        );
+
+        const closeButton = document.querySelector(
+            ".student-sidebar .sidebar-close"
+        );
+
+        if (!hamburger || !closeButton) return;
+
+        const isOpen = sidebar.classList.contains("sidebar-open");
+
+        if (isOpen) {
+            hamburger.style.setProperty("display", "none", "important");
+            closeButton.style.setProperty("display", "flex", "important");
+        } else {
+            hamburger.style.setProperty("display", "flex", "important");
+            closeButton.style.setProperty("display", "none", "important");
+        }
+    }
+
+
+    function setupStudentMenu() {
+
+        const sidebar = document.querySelector(".student-sidebar");
+
+        if (!sidebar) return;
+
+        const hamburger = document.querySelector(
+            '[onclick="toggleSidebar()"]:not(.sidebar-close)'
+        );
+
+        const closeButton = document.querySelector(
+            ".student-sidebar .sidebar-close"
+        );
+
+        if (!hamburger || !closeButton) return;
+
+
+        /* HAMBURGER */
+
+        hamburger.onclick = function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            sidebar.classList.add("sidebar-open");
+
+            syncStudentMenu();
+        };
+
+
+        /* X BUTTON */
+
+        closeButton.onclick = function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            sidebar.classList.remove("sidebar-open");
+
+            syncStudentMenu();
+        };
+
+
+        syncStudentMenu();
+
+
+        /* Watch for anything else changing the sidebar */
+
+        const observer = new MutationObserver(function () {
+            syncStudentMenu();
+        });
+
+        observer.observe(sidebar, {
+            attributes: true,
+            attributeFilter: ["class"]
+        });
+    }
+
+
+    if (document.readyState === "loading") {
+        document.addEventListener(
+            "DOMContentLoaded",
+            setupStudentMenu
+        );
+    } else {
+        setupStudentMenu();
+    }
+
+})();
+</script>
+
+</body>
+
+</html>

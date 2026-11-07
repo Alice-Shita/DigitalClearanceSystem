@@ -1,0 +1,197 @@
+{% extends "student/base.html" %}
+
+{% block title %}Payment Document Unavailable{% endblock %}
+
+{% block content %}
+
+<style>
+    .document-error-page {
+        width: 100%;
+        min-height: calc(100vh - 120px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 20px 50px;
+        box-sizing: border-box;
+    }
+
+    .document-error-card {
+        width: 100%;
+        max-width: 680px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 42px 34px;
+        text-align: center;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.07);
+        box-sizing: border-box;
+    }
+
+    .document-error-icon {
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 22px;
+        border-radius: 50%;
+        background: #fff4f4;
+        color: #c62828;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+    }
+
+    .document-error-card h1 {
+        margin: 0 0 12px;
+        color: #172033;
+        font-size: 27px;
+        line-height: 1.25;
+        font-weight: 700;
+    }
+
+    .document-error-message {
+        margin: 0 auto;
+        max-width: 540px;
+        color: #64748b;
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    .document-error-note {
+        margin: 24px auto 0;
+        max-width: 540px;
+        padding: 15px 18px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 14px;
+        line-height: 1.6;
+        box-sizing: border-box;
+    }
+
+    .document-error-actions {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 28px;
+    }
+
+    .document-error-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 46px;
+        padding: 0 22px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        box-sizing: border-box;
+        transition: 0.2s ease;
+    }
+
+    .document-error-button.primary {
+        background: #198754;
+        color: #ffffff;
+        border: 1px solid #198754;
+    }
+
+    .document-error-button.primary:hover {
+        background: #157347;
+        border-color: #157347;
+        transform: translateY(-1px);
+    }
+
+    .document-error-button.secondary {
+        background: #ffffff;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+    }
+
+    .document-error-button.secondary:hover {
+        background: #f8fafc;
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 600px) {
+        .document-error-page {
+            min-height: auto;
+            padding: 24px 14px 40px;
+        }
+
+        .document-error-card {
+            padding: 32px 20px;
+            border-radius: 16px;
+        }
+
+        .document-error-icon {
+            width: 66px;
+            height: 66px;
+            font-size: 29px;
+        }
+
+        .document-error-card h1 {
+            font-size: 23px;
+        }
+
+        .document-error-message {
+            font-size: 14px;
+        }
+
+        .document-error-actions {
+            flex-direction: column;
+        }
+
+        .document-error-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="document-error-page">
+
+    <div class="document-error-card">
+
+        <div class="document-error-icon">
+            <i class="fas fa-file-circle-xmark"></i>
+        </div>
+
+        <h1>Payment Document Unavailable</h1>
+
+        <p class="document-error-message">
+            The payment document could not be found on the server.
+            It may have been removed, moved, or is temporarily unavailable.
+        </p>
+
+        <div class="document-error-note">
+            If you recently submitted this payment proof and believe
+            this is an error, please visit Accounts for assistance.
+        </div>
+
+        <div class="document-error-actions">
+
+            <a
+                href="{{ url_for('student_accounts') }}"
+                class="document-error-button primary"
+            >
+                <i class="fas fa-wallet"></i>
+                Visit Accounts for Assistance
+            </a>
+
+            <a
+                href="{{ url_for('student_dashboard') }}"
+                class="document-error-button secondary"
+            >
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

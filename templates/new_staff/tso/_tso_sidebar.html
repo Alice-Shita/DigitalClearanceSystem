@@ -1,0 +1,395 @@
+<style>
+/* =========================================================
+   TSO SIDEBAR — HOSTEL STYLE
+========================================================= */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 260px;
+    z-index: 1100;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+
+    padding: 24px 15px 18px;
+
+    box-shadow: 4px 0 20px rgba(15, 23, 42, .035);
+
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.sidebar *,
+.sidebar *::before,
+.sidebar *::after {
+    box-sizing: border-box;
+}
+
+.sidebar-close {
+    display: none;
+
+    position: absolute;
+    top: 14px;
+    right: 14px;
+
+    width: 36px;
+    height: 36px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: #f3f4f6;
+    color: #4b5563;
+
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.brand {
+    padding: 4px 10px 22px;
+    margin-bottom: 20px;
+
+    border-bottom: 1px solid #eef0f2;
+}
+
+.brand-title {
+    margin: 0;
+
+    color: #166534;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+.brand-subtitle {
+    margin-top: 5px;
+
+    color: #6b7280;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.nav-title {
+    padding: 0 10px 9px;
+
+    color: #9ca3af;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sidebar a {
+    text-decoration: none;
+}
+
+.nav a,
+.nav-disabled,
+.sidebar-bottom .logout {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+    min-height: 45px;
+    padding: 10px 12px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition:
+        background .18s ease,
+        color .18s ease;
+}
+
+.nav a {
+    color: #4b5563;
+}
+
+.nav a:hover {
+    background: #f5f7f8;
+    color: #172033;
+}
+
+.nav a.active {
+    background: #ecfdf5;
+    color: #166534;
+}
+
+.nav a.active::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+
+    width: 3px;
+
+    border-radius: 0 4px 4px 0;
+    background: #15803d;
+}
+
+.nav-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #f3f4f6;
+    color: #6b7280;
+
+    font-size: 15px;
+}
+
+.nav a:hover .nav-icon,
+.nav a.active .nav-icon {
+    background: #dff7e9;
+    color: #166534;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding-top: 18px;
+
+    border-top: 1px solid #eef0f2;
+}
+
+.staff-mini {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+    padding: 9px 10px 13px;
+}
+
+.staff-avatar {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #dcfce7;
+    color: #166534;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.staff-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.staff-info strong {
+    display: block;
+
+    color: #172033;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.staff-info span {
+    display: block;
+
+    color: #6b7280;
+
+    font-size: 10px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sidebar-bottom .logout {
+    color: #4b5563;
+    background: transparent;
+}
+
+.sidebar-bottom .logout:hover {
+    background: #f5f7f8;
+    color: #172033;
+}
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform .25s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-close {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+    }
+}
+</style>
+
+<aside class="sidebar" id="tsoSidebar">
+
+    <button
+        class="sidebar-close"
+        type="button"
+        onclick="closeTSOSidebar()""
+        aria-label="Close menu"
+    >
+        ×
+    </button>
+
+    <div class="brand">
+        <h1 class="brand-title">ZASTI</h1>
+
+        <div class="brand-subtitle">
+            Technical Services Office
+        </div>
+    </div>
+
+    <div class="nav-title">
+        Main Menu
+    </div>
+
+    <nav class="nav">
+
+        <a
+            href="{{ url_for('tso_dashboard') }}"
+            class="{% if request.endpoint == 'tso_dashboard' %}active{% endif %}"
+        >
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a
+            href="{{ url_for('tso_inspection_queue') }}"
+            class="{% if request.endpoint == 'tso_inspection_queue' %}active{% endif %}"
+        >
+            <span class="nav-icon">☷</span>
+            <span>Inspection Queue</span>
+        </a>
+
+        <a
+            href="{{ url_for('tso_records') }}"
+            class="{% if request.endpoint == 'tso_records' %}active{% endif %}"
+        >
+            <span class="nav-icon">▤</span>
+            <span>Inspection Records</span>
+        </a>
+
+        <a
+            href="{{ url_for('tso_announcements') }}"
+            class="{% if request.endpoint == 'tso_announcements' %}active{% endif %}"
+        >
+            <span class="nav-icon">▣</span>
+            <span>Announcements</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <div class="staff-mini">
+
+            <div class="staff-avatar">
+                {{ (staff_name or 'TS')[:2].upper() }}
+            </div>
+
+            <div class="staff-info">
+
+                <strong>
+                    {{ staff_name or 'TSO Staff' }}
+                </strong>
+
+                <span>
+                    {{ department or 'Technical Services Office' }}
+                </span>
+
+            </div>
+
+        </div>
+
+        <a
+            href="{{ url_for('staff_change_password') }}"
+            class="logout"
+        >
+            <span class="nav-icon">⚙</span>
+            <span>Password</span>
+        </a>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout"
+        >
+            <span class="nav-icon">↪</span>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>
+<script>
+function closeTSOSidebar() {
+    const sidebar = document.getElementById("tsoSidebar");
+
+    const overlay =
+        document.getElementById("tsoMobileOverlay") ||
+        document.getElementById("sidebarOverlay");
+
+    if (sidebar) {
+        sidebar.classList.remove("open");
+    }
+
+    if (overlay) {
+        overlay.classList.remove("show");
+    }
+}
+</script>
+
+
+<button class="tso-mobile-toggle"
+        type="button"
+        onclick="document.getElementById('tsoSidebar').classList.toggle('open')">
+    ☰
+</button>

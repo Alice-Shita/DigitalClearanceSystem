@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include "components/admin_sidebar.html" %}
+
+<style>
+
+.payment-review-page {
+    margin-left: 270px;
+    padding: 30px;
+    min-height: 100vh;
+    background: #f5f8f7;
+}
+
+.payment-review-card {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.07);
+    border: 1px solid #e4ebe8;
+}
+
+.payment-review-title {
+    margin-bottom: 25px;
+}
+
+.payment-review-title h1 {
+    margin: 0;
+    color: #123d37;
+    font-size: 25px;
+}
+
+.payment-review-title p {
+    color: #64748b;
+    margin-top: 7px;
+}
+
+.payment-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.info-box {
+    background: #f7faf9;
+    border: 1px solid #e4ebe8;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.info-label {
+    color: #64748b;
+    font-size: 11px;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    color: #123d37;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.proof-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.proof-section h3 {
+    margin-top: 0;
+    color: #123d37;
+}
+
+.proof-button {
+    display: inline-block;
+    background: #1769aa;
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.remarks-label {
+    display: block;
+    margin-top: 25px;
+    margin-bottom: 7px;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.remarks-input {
+    width: 100%;
+    min-height: 110px;
+    padding: 12px;
+    border: 1px solid #d7e0dd;
+    border-radius: 9px;
+    box-sizing: border-box;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.review-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.action-button {
+    border: 0;
+    border-radius: 9px;
+    padding: 11px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.back-button {
+    display: inline-block;
+    margin-top: 20px;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+@media (max-width: 760px) {
+
+    .payment-review-page {
+        margin-left: 0;
+        padding: 20px 15px;
+    }
+
+    .payment-info {
+        grid-template-columns: 1fr;
+    }
+
+    .review-actions {
+        flex-direction: column;
+    }
+
+}
+
+</style>
+
+
+<div class="payment-review-page">
+
+    <div class="payment-review-card">
+
+        <div class="payment-review-title">
+
+            <h1>Review Payment Submission</h1>
+
+            <p>
+                Review the student's payment proof before approving or rejecting it.
+            </p>
+
+        </div>
+
+
+        <div class="payment-info">
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    STUDENT ID
+                </div>
+
+                <div class="info-value">
+                    {{ payment.student_id }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    STUDENT NAME
+                </div>
+
+                <div class="info-value">
+
+                    {% if student %}
+                        {{ student.name }}
+                    {% else %}
+                        Student record not found
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    PAYMENT AMOUNT
+                </div>
+
+                <div class="info-value">
+                    {{ (payment.amount or 0)|money }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    CURRENT STATUS
+                </div>
+
+                <div class="info-value">
+                    {{ payment.status or "Pending" }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    SUBMITTED
+                </div>
+
+                <div class="info-value">
+
+                    {% if payment.created_at %}
+                        {{ payment.created_at.strftime("%d %B %Y, %H:%M") }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    DOCUMENT
+                </div>
+
+                <div class="info-value">
+
+                    {% if payment.file %}
+                        {{ payment.file }}
+                    {% else %}
+                        No document
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="proof-section">
+
+            <h3>
+                Payment Proof
+            </h3>
+
+            {% if payment.file %}
+
+                <a
+                    href="{{ url_for('admin_payment_document', payment_id=payment.id) }}"
+                    target="_blank"
+                    class="proof-button">
+
+                    <i class="bi bi-file-earmark-arrow-down"></i>
+
+                    View Uploaded Proof
+
+                </a>
+
+            {% else %}
+
+                <p>
+                    No proof of payment was attached.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <a
+            href="{{ url_for('admin_documents_payments') }}"
+            class="back-button">
+
+            ← Back to Documents & Payments
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | ZASTI</title>
+
+    <style>
+        :root {
+            --green: #15803d;
+            --green-dark: #166534;
+            --green-soft: #f0fdf4;
+            --text: #172033;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f8fafc;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .tso-main {
+            margin-left: 260px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 750;
+        }
+
+        .page-header p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, .04);
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--green-soft);
+            color: var(--green-dark);
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            margin-top: 14px;
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.4fr .8fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, .04);
+        }
+
+        .panel-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .panel-header p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .recent-list {
+            padding: 0;
+        }
+
+        .recent-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 22px;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        .recent-item:last-child {
+            border-bottom: 0;
+        }
+
+        .student-name {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .student-id {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .recent-meta {
+            text-align: right;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .status {
+            display: inline-flex;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: var(--green-soft);
+            color: var(--green-dark);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .empty {
+            padding: 28px 22px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .queue-card {
+            padding: 22px;
+        }
+
+        .queue-card h2 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .queue-card p {
+            margin: 8px 0 20px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .queue-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 44px;
+            border-radius: 9px;
+            background: var(--green);
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .queue-btn:hover {
+            background: var(--green-dark);
+        }
+
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        .tso-mobile-header {
+            display: none;
+        }
+
+        .tso-mobile-menu {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e4e9f0;
+            border-radius: 9px;
+            background: #ffffff;
+            color: #166534;
+            cursor: pointer;
+            font-size: 19px;
+            line-height: 1;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, .04);
+        }
+
+        .tso-mobile-title {
+            min-width: 0;
+        }
+
+        .tso-mobile-title h1 {
+            margin: 0;
+            color: #172033;
+            font-size: 19px;
+            line-height: 1.2;
+            font-weight: 750;
+        }
+
+        .tso-mobile-title p {
+            margin: 4px 0 0;
+            color: #6b7280;
+            font-size: 10px;
+            line-height: 1.35;
+        }
+
+        .tso-mobile-overlay {
+            display: none;
+        }
+
+        
+        .announcements-section {
+            margin-top: 25px;
+        }
+
+        .announcements-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .announcements-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .announcements-link {
+            color: #166534;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .announcements-link:hover {
+            text-decoration: underline;
+        }
+
+        .dashboard-announcement {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+        }
+
+        .dashboard-announcement:last-child {
+            margin-bottom: 0;
+        }
+
+        .dashboard-announcement-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-announcement-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #172033;
+        }
+
+        .dashboard-announcement-date {
+            color: #6b7280;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .dashboard-announcement-message {
+            margin: 0;
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .dashboard-announcement-audience {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .no-announcements {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 22px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        @media (max-width: 900px) {
+            .tso-mobile-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1040;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 11px 15px;
+                background: rgba(248, 250, 252, .97);
+                border-bottom: 1px solid #e5e7eb;
+                backdrop-filter: blur(9px);
+            }
+
+            .tso-mobile-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 1050;
+                background: rgba(15, 23, 42, .30);
+                backdrop-filter: blur(2px);
+            }
+
+            .tso-mobile-overlay.show {
+                display: block;
+            }
+
+            .tso-main {
+                margin-left: 0;
+                padding: 80px 15px 30px;
+            }
+
+            .page-header {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                padding: 17px;
+            }
+
+            .recent-item {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .recent-meta {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+{% include "new_staff/tso/_tso_sidebar.html" %}
+
+<header class="tso-mobile-header">
+    <button
+        class="tso-mobile-menu"
+        type="button"
+        onclick="toggleTSOSidebar()"
+        aria-label="Open menu"
+    >
+        ☰
+    </button>
+
+    <div class="tso-mobile-title">
+        <h1>Dashboard</h1>
+        <p>Technical Services Office</p>
+    </div>
+</header>
+
+<div
+    class="tso-mobile-overlay"
+    id="tsoMobileOverlay"
+    onclick="toggleTSOSidebar()"
+></div>
+
+
+<style>
+/* =========================================================
+   STAFF MINI ACADEMIC CALENDAR
+   ========================================================= */
+
+.staff-mini-calendar {
+    width: 220px;
+    flex-shrink: 0;
+    background: #ffffff;
+    border: 1px solid #e1e9e6;
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 15px rgba(18,59,53,.05);
+    box-sizing: border-box;
+    margin-left: auto;
+}
+
+.staff-calendar-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.staff-calendar-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #eaf7f1;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+.staff-calendar-weekday {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    color: #198754;
+    text-transform: uppercase;
+}
+
+.staff-calendar-date {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #173f38;
+}
+
+.staff-calendar-month {
+    margin-top: 2px;
+    font-size: 11px;
+    color: #71818a;
+}
+
+.staff-calendar-divider {
+    height: 1px;
+    background: #edf1f0;
+    margin: 10px 0;
+}
+
+.staff-calendar-academic {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
+    font-size: 10px;
+}
+
+.staff-calendar-academic span {
+    color: #829099;
+}
+
+.staff-calendar-academic strong {
+    color: #173f38;
+    font-weight: 700;
+}
+
+.staff-calendar-time {
+    margin-top: 9px;
+    font-size: 14px;
+    font-weight: 750;
+    letter-spacing: .4px;
+    color: #198754;
+}
+
+@media (max-width: 700px) {
+    .staff-mini-calendar {
+        width: 100%;
+        max-width: 240px;
+        margin-left: 0;
+    }
+}
+</style>
+
+<main class="tso-main">
+
+
+<!-- STAFF MINI ACADEMIC CALENDAR -->
+<div class="staff-mini-calendar" aria-label="Current date and academic term">
+
+    <div class="staff-calendar-top">
+
+        <div class="staff-calendar-icon">
+            <span>▣</span>
+        </div>
+
+        <div>
+
+            <div
+                class="staff-calendar-weekday"
+                id="staffDashboardWeekday"
+            >---</div>
+
+            <div
+                class="staff-calendar-date"
+                id="staffDashboardDay"
+            >--</div>
+
+            <div
+                class="staff-calendar-month"
+                id="staffDashboardMonth"
+            >---</div>
+
+        </div>
+
+    </div>
+
+    <div class="staff-calendar-divider"></div>
+
+    <div class="staff-calendar-academic">
+
+        <span>Academic Year</span>
+        <strong>{{ settings.get('academic_year', '—') }}</strong>
+
+        <span>Academic Term</span>
+        <strong>{{ settings.get('academic_term', '—') }}</strong>
+
+        <span>Academic Week</span>
+        <strong id="staffDashboardAcademicWeek">—</strong>
+
+    </div>
+
+    <div
+        class="staff-calendar-time"
+        id="staffDashboardClock"
+    >
+        --:--:--
+    </div>
+
+</div>
+
+
+
+    <div class="page-header">
+        <h1>Dashboard</h1>
+        <p>Technical Services Office overview</p>
+    </div>
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Inspection Queue</span>
+                <span class="stat-icon">▣</span>
+            </div>
+            <div class="stat-value">{{ queue_count }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Pending Inspections</span>
+                <span class="stat-icon">◷</span>
+            </div>
+            <div class="stat-value">{{ pending_count }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Completed Inspections</span>
+                <span class="stat-icon">✓</span>
+            </div>
+            <div class="stat-value">{{ completed_count }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Keys Collected</span>
+                <span class="stat-icon">⌕</span>
+            </div>
+            <div class="stat-value">{{ keys_count }}</div>
+        </div>
+
+    </section>
+
+    <section class="content-grid">
+
+        <div class="panel">
+            <div class="panel-header">
+                <h2>Recent Inspections</h2>
+                <p>Latest technical inspections completed by the TSO.</p>
+            </div>
+
+            <div class="recent-list">
+
+                {% if recent_inspections %}
+
+                    {% for item in recent_inspections %}
+
+                    <div class="recent-item">
+                        <div>
+                            <div class="student-name">
+                                {{ item.student.name }}
+                            </div>
+
+                            <div class="student-id">
+                                {{ item.student.student_id }}
+                            </div>
+                        </div>
+
+                        <div class="recent-meta">
+                            <div class="status">
+                                {{ item.inspection.status }}
+                            </div>
+
+                            {% if item.inspection.inspected_at %}
+                                <div style="margin-top:6px;">
+                                    {{ item.inspection.inspected_at.strftime('%d %b %Y, %H:%M') }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty">
+                        No inspections have been completed yet.
+                    </div>
+
+                {% endif %}
+
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="queue-card">
+                <h2>Inspection Queue</h2>
+
+                <p>
+                    View students whose TSO clearance still requires
+                    inspection or action.
+                </p>
+
+                <a
+                    href="{{ url_for('tso_inspection_queue') }}"
+                    class="queue-btn"
+                >
+                    Open Inspection Queue
+                </a>
+            </div>
+        </div>
+
+    </section>
+
+
+        <section class="announcements-section">
+
+            <div class="announcements-header">
+                <h2>Recent Announcements</h2>
+
+                <a
+                    href="{{ url_for('tso_announcements') }}"
+                    class="announcements-link"
+                >
+                    View All
+                </a>
+            </div>
+
+            {% if announcements %}
+
+                {% for announcement in announcements %}
+
+                <article class="dashboard-announcement">
+
+                    <div class="dashboard-announcement-top">
+
+                        <h3 class="dashboard-announcement-title">
+                            {{ announcement.title }}
+                        </h3>
+
+                        <span class="dashboard-announcement-date">
+                            {{ announcement.created_at.strftime('%d %b %Y, %H:%M') if announcement.created_at else '' }}
+                        </span>
+
+                    </div>
+
+                    <p class="dashboard-announcement-message">
+                        {{ announcement.message | trim }}
+                    </p>
+
+                    <span class="dashboard-announcement-audience">
+                        {{ announcement.audience | replace('_', ' ') | title }}
+                    </span>
+
+                </article>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="no-announcements">
+                    No announcements at the moment.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+</main>
+
+
+<script>
+function toggleTSOSidebar() {
+    const sidebar = document.getElementById("tsoSidebar");
+    const overlay = document.getElementById("tsoMobileOverlay");
+
+    if (!sidebar) {
+        return;
+    }
+
+    sidebar.classList.toggle("open");
+
+    if (overlay) {
+        overlay.classList.toggle(
+            "show",
+            sidebar.classList.contains("open")
+        );
+    }
+}
+</script>
+
+
+
+<script>
+(function () {
+
+    function updateStaffDashboardCalendar() {
+
+        const now = new Date();
+
+        const formatter = new Intl.DateTimeFormat("en-GB", {
+            timeZone: "Africa/Lusaka",
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        });
+
+        const parts = formatter.formatToParts(now);
+        const values = {};
+
+        parts.forEach(function (part) {
+            if (part.type !== "literal") {
+                values[part.type] = part.value;
+            }
+        });
+
+        const weekday =
+            document.getElementById("staffDashboardWeekday");
+
+        const day =
+            document.getElementById("staffDashboardDay");
+
+        const month =
+            document.getElementById("staffDashboardMonth");
+
+        const clock =
+            document.getElementById("staffDashboardClock");
+
+        if (weekday) {
+            weekday.textContent = values.weekday || "---";
+        }
+
+        if (day) {
+            day.textContent = values.day || "--";
+        }
+
+        if (month) {
+            month.textContent =
+                (values.month || "---") + " " +
+                (values.year || "");
+        }
+
+        if (clock) {
+            clock.textContent =
+                (values.hour || "--") + ":" +
+                (values.minute || "--") + ":" +
+                (values.second || "--");
+        }
+
+        updateStaffAcademicWeek();
+    }
+
+
+    function updateStaffAcademicWeek() {
+
+        const academicWeek =
+            document.getElementById(
+                "staffDashboardAcademicWeek"
+            );
+
+        if (!academicWeek) {
+            return;
+        }
+
+        const startDateString =
+            "{{ settings.get('term_start_date', '') }}";
+
+        const endDateString =
+            "{{ settings.get('term_end_date', '') }}";
+
+        if (!startDateString) {
+            academicWeek.textContent = "Not set";
+            return;
+        }
+
+        const now = new Date();
+
+        const startDate =
+            new Date(startDateString + "T00:00:00");
+
+        const endDate =
+            endDateString
+                ? new Date(endDateString + "T23:59:59")
+                : null;
+
+        if (isNaN(startDate.getTime())) {
+            academicWeek.textContent = "Not set";
+            return;
+        }
+
+        if (now < startDate) {
+            academicWeek.textContent = "Not started";
+            return;
+        }
+
+        if (endDate && now > endDate) {
+            academicWeek.textContent = "Term ended";
+            return;
+        }
+
+        const difference =
+            now.getTime() - startDate.getTime();
+
+        const daysElapsed =
+            Math.floor(
+                difference /
+                (1000 * 60 * 60 * 24)
+            );
+
+        const week =
+            Math.floor(daysElapsed / 7) + 1;
+
+        academicWeek.textContent =
+            "Week " + week;
+    }
+
+
+    updateStaffDashboardCalendar();
+
+    setInterval(
+        updateStaffDashboardCalendar,
+        1000
+    );
+
+})();
+</script>
+
+</body>
+</html>

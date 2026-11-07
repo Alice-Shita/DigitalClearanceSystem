@@ -1,0 +1,1191 @@
+{% extends "base.html" %}
+
+{% block title %}{{ hostel_name }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .hostel-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 24px;
+    }
+
+    .page-heading {
+        margin-bottom: 20px;
+    }
+
+    .page-heading h1 {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 750;
+        color: var(--text, #0f172a);
+    }
+
+    .page-heading p {
+        margin: 5px 0 0;
+        color: var(--muted, #64748b);
+        font-size: 13px;
+    }
+
+    .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .toolbar-left {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn {
+        min-height: 38px;
+        padding: 8px 13px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .btn-primary {
+        background: var(--green-dark, #166534);
+        color: white;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--text, #334155);
+        border-color: var(--border, #e2e8f0);
+    }
+
+    .btn-danger {
+        background: white;
+        color: #b91c1c;
+        border-color: #fecaca;
+    }
+
+    .add-panel {
+        background: white;
+        border: 1px solid var(--border, #e2e8f0);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 18px;
+    }
+
+    .add-panel h2 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        color: var(--text, #0f172a);
+    }
+
+    .add-form {
+        display: flex;
+        align-items: end;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .field {
+        flex: 1;
+        min-width: 180px;
+    }
+
+    .field label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #475569;
+    }
+
+    .field input,
+    .field select {
+        width: 100%;
+        height: 39px;
+        padding: 0 10px;
+        border: 1px solid var(--border, #cbd5e1);
+        border-radius: 8px;
+        box-sizing: border-box;
+        background: white;
+        color: var(--text, #0f172a);
+        font-size: 12px;
+    }
+
+    .structure-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .structure-card {
+        background: white;
+        border: 1px solid var(--border, #e2e8f0);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .structure-header {
+        min-height: 58px;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .structure-name {
+        min-width: 0;
+    }
+
+    .structure-name h2 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 750;
+        color: var(--text, #0f172a);
+    }
+
+    .structure-name p {
+        margin: 3px 0 0;
+        color: var(--muted, #64748b);
+        font-size: 11px;
+    }
+
+    .actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .actions form {
+        margin: 0;
+    }
+
+    .rooms {
+        border-top: 1px solid var(--border, #e2e8f0);
+        padding: 12px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 8px;
+    }
+
+    .room {
+        border: 1px solid var(--border, #e2e8f0);
+        border-radius: 9px;
+        padding: 10px;
+        background: #f8fafc;
+    }
+
+    .room-name {
+        font-size: 13px;
+        font-weight: 750;
+        color: var(--text, #0f172a);
+    }
+
+    .room-status {
+        margin-top: 4px;
+        font-size: 11px;
+        color: var(--muted, #64748b);
+    }
+
+    .room-status.full {
+        color: var(--green-dark, #166534);
+        font-weight: 700;
+    }
+
+    .room-actions {
+        display: flex;
+        gap: 5px;
+        margin-top: 8px;
+    }
+
+    .room-actions .btn {
+        min-height: 31px;
+        padding: 5px 9px;
+        font-size: 10px;
+    }
+
+    .empty {
+        background: white;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 30px 20px;
+        text-align: center;
+        color: var(--muted, #64748b);
+        font-size: 12px;
+    }
+
+    .empty strong {
+        display: block;
+        color: var(--text, #0f172a);
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .mobile-top-header {
+        display: none;
+    }
+
+    .mobile-menu {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border, #e2e8f0);
+        border-radius: 9px;
+        background: white;
+        color: var(--green-dark, #166534);
+        cursor: pointer;
+        font-size: 19px;
+    }
+
+    .mobile-page-title {
+        min-width: 0;
+    }
+
+    .mobile-page-title h1 {
+        margin: 0;
+        color: var(--text, #0f172a);
+        font-size: 19px;
+        line-height: 1.2;
+        font-weight: 750;
+    }
+
+    .mobile-page-title p {
+        margin: 4px 0 0;
+        color: var(--muted, #64748b);
+        font-size: 10px;
+        line-height: 1.35;
+    }
+
+    @media (max-width: 800px) {
+
+        .mobile-top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1040;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 15px;
+            background: rgba(248, 250, 252, .97);
+            border-bottom: 1px solid var(--border, #e2e8f0);
+            backdrop-filter: blur(8px);
+        }
+
+        .hostel-page {
+            padding: 78px 14px 22px;
+        }
+
+        .page-heading {
+            display: none;
+        }
+
+        .toolbar {
+            margin-bottom: 12px;
+        }
+
+        .toolbar .btn {
+            min-height: 36px;
+        }
+
+        .add-form {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .field {
+            min-width: 0;
+        }
+
+        .add-form .btn {
+            width: 100%;
+        }
+
+        .structure-header {
+            padding: 11px 12px;
+        }
+
+        .rooms {
+            grid-template-columns: 1fr;
+        }
+
+        .actions {
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+    }
+</style>
+
+<header class="mobile-top-header">
+    <button
+        class="mobile-menu"
+        onclick="toggleSidebar()"
+        aria-label="Open menu"
+        type="button"
+    >☰</button>
+
+    <div class="mobile-page-title">
+        <h1>{{ hostel_name }}</h1>
+        <p>Hostel room management</p>
+    </div>
+</header>
+
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+    onclick="toggleSidebar()"
+></div>
+
+<div class="hostel-page">
+
+    <div class="page-heading">
+        <h1>{{ hostel_name }}</h1>
+        <p>Manage the physical rooms in this hostel.</p>
+    </div>
+
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <a
+                href="{{ url_for('new_staff_hostels') }}"
+                class="btn btn-secondary"
+            >
+                Back to Hostels
+            </a>
+        </div>
+    </div>
+
+
+    {# =========================================================
+       ORDINARY HOSTELS
+       ========================================================= #}
+
+    {% if structure_mode == "room" %}
+
+        <div class="add-panel">
+            <h2>Add Room</h2>
+
+            <form
+                class="add-form"
+                method="POST"
+                action="{{ url_for('hostel_add_room', hostel_id=hostel.id) }}"
+            >
+
+                <div class="field">
+                    <label for="room_number">Room Number</label>
+                    <input
+                        id="room_number"
+                        name="room_number"
+                        type="text"
+                        placeholder="e.g. ANT 2"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="capacity">Capacity</label>
+                    <input
+                        id="capacity"
+                        name="capacity"
+                        type="number"
+                        min="1"
+                        value="2"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="room_gender_policy">Room Gender Policy</label>
+                    <select id="room_gender_policy" name="gender_policy">
+                        <option value="male" {% if hostel.gender_policy == "male" %}selected{% endif %}>Male</option>
+                        <option value="female" {% if hostel.gender_policy == "female" %}selected{% endif %}>Female</option>
+                        <option value="both" {% if hostel.gender_policy not in ["male", "female"] %}selected{% endif %}>Both</option>
+                    </select>
+                </div>
+
+                <input
+                    type="hidden"
+                    name="room_type"
+                    value="normal"
+                >
+
+                <button class="btn btn-primary" type="submit">
+                    Add Room
+                </button>
+
+            </form>
+        </div>
+
+
+        {% if rooms %}
+
+            <div class="structure-list">
+
+                {% for room in rooms if not room.block_id %}
+
+                    {% set occupants = occupants_by_room.get(room.id, []) %}
+
+                    <div class="structure-card">
+
+                        <div class="structure-header">
+
+                            <div class="structure-name">
+
+                                <h2>{{ room.room_number }}</h2>
+
+                                <p>
+                                    {% if occupants %}
+                                        {{ occupants|length }}
+                                        occupant{% if occupants|length != 1 %}s{% endif %}
+
+                                        {% if occupants|length >= room.capacity %}
+                                            · Full
+                                        {% endif %}
+                                    {% else %}
+                                        Vacant
+                                    {% endif %}
+                                </p>
+
+                            </div>
+
+                            <div class="actions">
+
+                                <details class="room-edit-panel">
+    <summary class="btn btn-secondary">Edit</summary>
+
+    <form
+        method="POST"
+        action="{{ url_for('hostel_edit_room', room_id=room.id) }}"
+        class="add-form"
+    >
+        <div class="field">
+            <label>Room Number</label>
+            <input
+                type="text"
+                name="room_number"
+                value="{{ room.room_number }}"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label>Capacity</label>
+            <input
+                type="number"
+                name="capacity"
+                min="1"
+                value="{{ room.capacity }}"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label>Room Gender Policy</label>
+            <select name="gender_policy">
+                <option value="male" {% if room.gender_policy == "male" %}selected{% endif %}>Male</option>
+                <option value="female" {% if room.gender_policy == "female" %}selected{% endif %}>Female</option>
+                <option value="both" {% if room.gender_policy not in ["male", "female"] %}selected{% endif %}>Both</option>
+            </select>
+        </div>
+
+        <input type="hidden" name="section_id" value="{{ room.section_id or '' }}">
+        <input type="hidden" name="block_id" value="{{ room.block_id or '' }}">
+        <input type="hidden" name="room_type" value="{{ room.room_type or 'normal' }}">
+
+        <button type="submit" class="btn btn-primary">
+            Save Changes
+        </button>
+    </form>
+</details>
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('hostel_toggle_room', room_id=room.id) }}"
+                                    onsubmit="return confirm('Remove this room?');"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger"
+                                    >
+                                        Remove
+                                    </button>
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty">
+                <strong>No rooms yet.</strong>
+                Add the first room using the form above.
+            </div>
+
+        {% endif %}
+
+
+    {# =========================================================
+       KATILUNGU
+       ========================================================= #}
+
+    {% elif structure_mode == "cube" %}
+
+        <div class="add-panel">
+            <h2>Add Cube</h2>
+
+            <form
+                class="add-form"
+                method="POST"
+                action="{{ url_for('hostel_add_block', hostel_id=hostel.id) }}"
+            >
+
+                <div class="field">
+                    <label for="cube_name">Cube Number</label>
+                    <input
+                        id="cube_name"
+                        name="name"
+                        type="text"
+                        placeholder="e.g. Cube 22"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="cube_gender_policy">Gender Policy</label>
+                    <select id="cube_gender_policy" name="gender_policy">
+                        <option value="male" {% if hostel.gender_policy == "male" %}selected{% endif %}>Male</option>
+                        <option value="female" {% if hostel.gender_policy == "female" %}selected{% endif %}>Female</option>
+                        <option value="both" {% if hostel.gender_policy not in ["male", "female"] %}selected{% endif %}>Both</option>
+                    </select>
+                </div>
+
+                <input
+                    type="hidden"
+                    name="group_type"
+                    value="cube"
+                >
+
+                <button class="btn btn-primary" type="submit">
+                    Add Cube
+                </button>
+
+            </form>
+        </div>
+
+
+        {% if blocks %}
+
+            <div class="structure-list">
+
+                {% for block in blocks %}
+
+                    <div class="structure-card">
+
+                        <div class="structure-header">
+
+                            <div class="structure-name">
+
+                                <h2>{{ block.name }}</h2>
+                                <p>Rooms A, B, C and D</p>
+
+                            </div>
+
+                            <div class="actions">
+
+                                <details class="structure-edit">
+                                    <summary class="btn btn-secondary">Edit</summary>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('hostel_edit_block', block_id=block.id) }}"
+                                    >
+                                        <div class="field">
+                                            <label for="structure_name_{{ block.id }}">Name</label>
+                                            <input
+                                                id="structure_name_{{ block.id }}"
+                                                type="text"
+                                                name="name"
+                                                value="{{ block.name }}"
+                                                required
+                                            >
+                                        </div>
+
+                                        <div class="field">
+                                            <label for="structure_policy_{{ block.id }}">Gender Policy</label>
+                                            <select
+                                                id="structure_policy_{{ block.id }}"
+                                                name="gender_policy"
+                                            >
+                                                <option value="male" {% if block.gender_policy == "male" %}selected{% endif %}>Male</option>
+                                                <option value="female" {% if block.gender_policy == "female" %}selected{% endif %}>Female</option>
+                                                <option value="both" {% if block.gender_policy not in ["male", "female"] %}selected{% endif %}>Both</option>
+                                            </select>
+                                        </div>
+
+                                        <input type="hidden" name="group_type" value="{{ block.group_type }}">
+                                        <input type="hidden" name="section_id" value="{{ block.section_id or '' }}">
+
+                                        <button class="btn btn-primary" type="submit">
+                                            Save Changes
+                                        </button>
+                                    </form>
+                                </details>
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('hostel_toggle_block', block_id=block.id) }}"
+                                    onsubmit="return confirm('Remove this cube?');"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger"
+                                    >
+                                        Remove
+                                    </button>
+                                </form>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="rooms">
+
+                            {% for room in block.rooms if room.active %}
+
+                                {% set occupants = occupants_by_room.get(room.id, []) %}
+
+                                <div class="room">
+
+                                    <div class="room-name">
+                                        {{ room.room_number }}
+                                    </div>
+
+                                    <div
+                                        class="room-status {% if occupants|length >= room.capacity %}full{% endif %}"
+                                    >
+
+                                        {% if occupants %}
+
+                                            {{ occupants|length }}
+                                            occupant{% if occupants|length != 1 %}s{% endif %}
+
+                                            {% if occupants|length >= room.capacity %}
+                                                · Full
+                                            {% endif %}
+
+                                        {% else %}
+
+                                            Vacant
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div class="room-actions">
+
+                                        <details class="room-edit-panel">
+    <summary class="btn btn-secondary">Edit</summary>
+
+    <form
+        method="POST"
+        action="{{ url_for('hostel_edit_room', room_id=room.id) }}"
+        class="add-form"
+    >
+        <div class="field">
+            <label>Room Number</label>
+            <input
+                type="text"
+                name="room_number"
+                value="{{ room.room_number }}"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label>Capacity</label>
+            <input
+                type="number"
+                name="capacity"
+                min="1"
+                value="{{ room.capacity }}"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label>Room Gender Policy</label>
+            <select name="gender_policy">
+                <option value="male" {% if room.gender_policy == "male" %}selected{% endif %}>Male</option>
+                <option value="female" {% if room.gender_policy == "female" %}selected{% endif %}>Female</option>
+                <option value="both" {% if room.gender_policy not in ["male", "female"] %}selected{% endif %}>Both</option>
+            </select>
+        </div>
+
+        <input type="hidden" name="section_id" value="{{ room.section_id or '' }}">
+        <input type="hidden" name="block_id" value="{{ room.block_id or '' }}">
+        <input type="hidden" name="room_type" value="{{ room.room_type or 'normal' }}">
+
+        <button type="submit" class="btn btn-primary">
+            Save Changes
+        </button>
+    </form>
+</details>
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for('hostel_toggle_room', room_id=room.id) }}"
+                                            onsubmit="return confirm('Remove this room?');"
+                                        >
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger"
+                                            >
+                                                Remove
+                                            </button>
+                                        </form>
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="add-panel" style="margin:0 12px 12px;">
+
+                            <form
+                                class="add-form"
+                                method="POST"
+                                action="{{ url_for('hostel_add_room', hostel_id=hostel.id) }}"
+                            >
+
+                                <div class="field">
+
+                                    <label>Room</label>
+
+                                    <select
+                                        name="room_number"
+                                        required
+                                    >
+                                        <option value="">
+                                            Select room
+                                        </option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                    </select>
+
+                                </div>
+
+                                <div class="field">
+
+                                    <label>Capacity</label>
+
+                                    <input
+                                        name="capacity"
+                                        type="number"
+                                        min="1"
+                                        value="2"
+                                        required
+                                    >
+
+                                </div>
+
+                                <input
+                                    type="hidden"
+                                    name="block_id"
+                                    value="{{ block.id }}"
+                                >
+
+                                <div class="field">
+                                    <label for="room_gender_policy_{{ block.id }}">Room Gender Policy</label>
+                                    <select
+                                        id="room_gender_policy_{{ block.id }}"
+                                        name="gender_policy"
+                                    >
+                                        <option value="male" {% if block.gender_policy == "male" %}selected{% endif %}>Male</option>
+                                        <option value="female" {% if block.gender_policy == "female" %}selected{% endif %}>Female</option>
+                                        <option value="both" {% if block.gender_policy not in ["male", "female"] %}selected{% endif %}>Both</option>
+                                    </select>
+                                </div>
+
+                                <input
+                                    type="hidden"
+                                    name="room_type"
+                                    value="normal"
+                                >
+
+                                <button
+                                    class="btn btn-primary"
+                                    type="submit"
+                                >
+                                    Add Room
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty">
+                <strong>No cubes yet.</strong>
+                Add a cube to begin managing its A, B, C and D rooms.
+            </div>
+
+        {% endif %}
+
+
+    {# =========================================================
+       CHINA JIANXI
+       ========================================================= #}
+
+    {% elif structure_mode == "block" %}
+
+        <div class="add-panel">
+            <h2>Add Block</h2>
+
+            <form
+                class="add-form"
+                method="POST"
+                action="{{ url_for('hostel_add_block', hostel_id=hostel.id) }}"
+            >
+
+                <div class="field">
+
+                    <label for="block_name">
+                        Block Name
+                    </label>
+
+                    <input
+                        id="block_name"
+                        name="name"
+                        type="text"
+                        placeholder="e.g. Block F"
+                        required
+                    >
+
+                </div>
+
+                <div class="field">
+                    <label for="block_gender_policy">Gender Policy</label>
+                    <select id="block_gender_policy" name="gender_policy">
+                        <option value="male" {% if hostel.gender_policy == "male" %}selected{% endif %}>Male</option>
+                        <option value="female" {% if hostel.gender_policy == "female" %}selected{% endif %}>Female</option>
+                        <option value="both" {% if hostel.gender_policy not in ["male", "female"] %}selected{% endif %}>Both</option>
+                    </select>
+                </div>
+
+                <input
+                    type="hidden"
+                    name="group_type"
+                    value="block"
+                >
+
+                <button
+                    class="btn btn-primary"
+                    type="submit"
+                >
+                    Add Block
+                </button>
+
+            </form>
+        </div>
+
+
+        {% if blocks %}
+
+            <div class="structure-list">
+
+                {% for block in blocks %}
+
+                    <div class="structure-card">
+
+                        <div class="structure-header">
+
+                            <div class="structure-name">
+
+                                <h2>{{ block.name }}</h2>
+                                <p>Rooms in this block</p>
+
+                            </div>
+
+                            <div class="actions">
+
+                                <details class="structure-edit">
+                                    <summary class="btn btn-secondary">Edit</summary>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('hostel_edit_block', block_id=block.id) }}"
+                                    >
+                                        <div class="field">
+                                            <label for="structure_name_{{ block.id }}">Name</label>
+                                            <input
+                                                id="structure_name_{{ block.id }}"
+                                                type="text"
+                                                name="name"
+                                                value="{{ block.name }}"
+                                                required
+                                            >
+                                        </div>
+
+                                        <div class="field">
+                                            <label for="structure_policy_{{ block.id }}">Gender Policy</label>
+                                            <select
+                                                id="structure_policy_{{ block.id }}"
+                                                name="gender_policy"
+                                            >
+                                                <option value="male" {% if block.gender_policy == "male" %}selected{% endif %}>Male</option>
+                                                <option value="female" {% if block.gender_policy == "female" %}selected{% endif %}>Female</option>
+                                                <option value="both" {% if block.gender_policy not in ["male", "female"] %}selected{% endif %}>Both</option>
+                                            </select>
+                                        </div>
+
+                                        <input type="hidden" name="group_type" value="{{ block.group_type }}">
+                                        <input type="hidden" name="section_id" value="{{ block.section_id or '' }}">
+
+                                        <button class="btn btn-primary" type="submit">
+                                            Save Changes
+                                        </button>
+                                    </form>
+                                </details>
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('hostel_toggle_block', block_id=block.id) }}"
+                                    onsubmit="return confirm('Remove this block?');"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger"
+                                    >
+                                        Remove
+                                    </button>
+                                </form>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="rooms">
+
+                            {% for room in block.rooms if room.active %}
+
+                                {% set occupants = occupants_by_room.get(room.id, []) %}
+
+                                <div class="room">
+
+                                    <div class="room-name">
+                                        {{ room.room_number }}
+                                    </div>
+
+                                    <div
+                                        class="room-status {% if occupants|length >= room.capacity %}full{% endif %}"
+                                    >
+
+                                        {% if occupants %}
+
+                                            {{ occupants|length }}
+                                            occupant{% if occupants|length != 1 %}s{% endif %}
+
+                                            {% if occupants|length >= room.capacity %}
+                                                · Full
+                                            {% endif %}
+
+                                        {% else %}
+
+                                            Vacant
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div class="room-actions">
+
+                                        <details class="room-edit-panel">
+    <summary class="btn btn-secondary">Edit</summary>
+
+    <form
+        method="POST"
+        action="{{ url_for('hostel_edit_room', room_id=room.id) }}"
+        class="add-form"
+    >
+        <div class="field">
+            <label>Room Number</label>
+            <input
+                type="text"
+                name="room_number"
+                value="{{ room.room_number }}"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label>Capacity</label>
+            <input
+                type="number"
+                name="capacity"
+                min="1"
+                value="{{ room.capacity }}"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label>Room Gender Policy</label>
+            <select name="gender_policy">
+                <option value="male" {% if room.gender_policy == "male" %}selected{% endif %}>Male</option>
+                <option value="female" {% if room.gender_policy == "female" %}selected{% endif %}>Female</option>
+                <option value="both" {% if room.gender_policy not in ["male", "female"] %}selected{% endif %}>Both</option>
+            </select>
+        </div>
+
+        <input type="hidden" name="section_id" value="{{ room.section_id or '' }}">
+        <input type="hidden" name="block_id" value="{{ room.block_id or '' }}">
+        <input type="hidden" name="room_type" value="{{ room.room_type or 'normal' }}">
+
+        <button type="submit" class="btn btn-primary">
+            Save Changes
+        </button>
+    </form>
+</details>
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for('hostel_toggle_room', room_id=room.id) }}"
+                                            onsubmit="return confirm('Remove this room?');"
+                                        >
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger"
+                                            >
+                                                Remove
+                                            </button>
+                                        </form>
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="add-panel" style="margin:0 12px 12px;">
+
+                            <form
+                                class="add-form"
+                                method="POST"
+                                action="{{ url_for('hostel_add_room', hostel_id=hostel.id) }}"
+                            >
+
+                                <div class="field">
+
+                                    <label>
+                                        Room Number
+                                    </label>
+
+                                    <input
+                                        name="room_number"
+                                        type="text"
+                                        placeholder="e.g. 1"
+                                        required
+                                    >
+
+                                </div>
+
+                                <div class="field">
+
+                                    <label>
+                                        Capacity
+                                    </label>
+
+                                    <input
+                                        name="capacity"
+                                        type="number"
+                                        min="1"
+                                        value="2"
+                                        required
+                                    >
+
+                                </div>
+
+                                <input
+                                    type="hidden"
+                                    name="block_id"
+                                    value="{{ block.id }}"
+                                >
+
+                                <div class="field">
+                                    <label for="room_gender_policy_{{ block.id }}">Room Gender Policy</label>
+                                    <select
+                                        id="room_gender_policy_{{ block.id }}"
+                                        name="gender_policy"
+                                    >
+                                        <option value="male" {% if block.gender_policy == "male" %}selected{% endif %}>Male</option>
+                                        <option value="female" {% if block.gender_policy == "female" %}selected{% endif %}>Female</option>
+                                        <option value="both" {% if block.gender_policy not in ["male", "female"] %}selected{% endif %}>Both</option>
+                                    </select>
+                                </div>
+
+                                <input
+                                    type="hidden"
+                                    name="room_type"
+                                    value="normal"
+                                >
+
+                                <button
+                                    class="btn btn-primary"
+                                    type="submit"
+                                >
+                                    Add Room
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

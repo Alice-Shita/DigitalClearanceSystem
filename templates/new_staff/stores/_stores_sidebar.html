@@ -1,0 +1,232 @@
+<!-- =====================================================
+     STORES MOBILE HEADER
+===================================================== -->
+
+<header class="mobile-top-header">
+
+    <button
+        class="mobile-menu"
+        onclick="toggleSidebar()"
+        aria-label="Open menu"
+        type="button"
+    >
+        ☰
+    </button>
+
+    <div class="mobile-page-title">
+
+        <h1>{{ stores_page_title }}</h1>
+
+        <p>{{ stores_page_description }}</p>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     MOBILE OVERLAY
+===================================================== -->
+
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+    onclick="toggleSidebar()"
+></div>
+
+
+<!-- =====================================================
+     STORES SIDEBAR
+===================================================== -->
+
+<aside class="sidebar" id="sidebar">
+
+    <button
+        class="sidebar-close"
+        onclick="toggleSidebar()"
+        aria-label="Close menu"
+        type="button"
+    >
+        ×
+    </button>
+
+
+    <div class="brand">
+
+        <h1 class="brand-title">
+            ZASTI
+        </h1>
+
+        <div class="brand-subtitle">
+            Digital Student Clearance System
+        </div>
+
+    </div>
+
+
+    <div class="nav-title">
+        Main Menu
+    </div>
+
+
+    <nav class="nav">
+
+
+        <a
+            href="{{ url_for('new_staff_stores_dashboard') }}"
+            class="{% if request.endpoint == 'new_staff_stores_dashboard' %}active{% endif %}"
+        >
+
+            <span class="nav-icon">
+                ⌂
+            </span>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('new_staff_stores_students') }}"
+            class="{% if request.endpoint == 'new_staff_stores_students' %}active{% endif %}"
+        >
+
+            <span class="nav-icon">
+                ♙
+            </span>
+
+            <span>
+                Students
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('new_staff_stores_issue_property') }}"
+            class="{% if request.endpoint == 'new_staff_stores_issue_property' %}active{% endif %}"
+        >
+
+            <span class="nav-icon">
+                ▣
+            </span>
+
+            <span>
+                Issue Property
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('new_staff_stores_return_property') }}"
+            class="{% if request.endpoint == 'new_staff_stores_return_property' %}active{% endif %}"
+        >
+
+            <span class="nav-icon">
+                ↩
+            </span>
+
+            <span>
+                Return Property
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('new_staff_stores_property_records') }}"
+            class="{% if request.endpoint == 'new_staff_stores_property_records' %}active{% endif %}"
+        >
+
+            <span class="nav-icon">
+                ▤
+            </span>
+
+            <span>
+                Property Records
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('new_staff_stores_announcements') }}"
+            class="{% if request.endpoint == 'new_staff_stores_announcements' %}active{% endif %}"
+        >
+
+            <span class="nav-icon">
+                ▰
+            </span>
+
+            <span>
+                Announcements
+            </span>
+
+        </a>
+
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+
+        <div class="staff-mini">
+
+            <div class="staff-avatar">
+                {{ (staff_name or "Staff")[:1]|upper }}
+            </div>
+
+            <div class="staff-info">
+
+                <strong>
+                    {{ staff_name or "Stores Staff" }}
+                </strong>
+
+                <span>
+                    Stores Staff
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('staff_change_password') }}"
+            class="logout"
+        >
+
+            <span class="nav-icon">
+                ⚙
+            </span>
+
+            <span>
+                Change Password
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout"
+        >
+
+            <span class="nav-icon">
+                ↪
+            </span>
+
+            <span>
+                Logout
+            </span>
+
+        </a>
+
+
+    </div>
+
+</aside>

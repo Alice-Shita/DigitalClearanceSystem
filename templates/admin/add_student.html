@@ -1,0 +1,575 @@
+{% extends "base.html" %}
+{% block title %}Register Student | ZASTI Clearance System{% endblock %}
+
+{% block content %}
+{% include "components/admin_sidebar.html" %}
+
+<style>
+.registration-page {
+    min-height: calc(100vh - 68px);
+    background: #f5f8f7;
+    padding: 25px 20px 45px;
+    box-sizing: border-box;
+}
+.registration-wrap {
+    max-width: 1050px;
+    margin: auto;
+}
+.registration-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+.registration-heading h1 {
+    margin: 0;
+    color: #173f38;
+    font-size: 25px;
+}
+.registration-heading p {
+    color: #71818a;
+    font-size: 13px;
+    margin: 6px 0 0;
+}
+.back-link {
+    text-decoration: none;
+    color: #198754;
+    font-size: 13px;
+    font-weight: 700;
+}
+.registration-card {
+    background: white;
+    border: 1px solid #e3e9e7;
+    border-radius: 15px;
+    padding: 22px;
+    margin-bottom: 17px;
+    box-shadow: 0 4px 15px rgba(18,59,53,.04);
+}
+.section-title {
+    color: #173f38;
+    font-size: 16px;
+    font-weight: 750;
+    margin: 0 0 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #edf1f0;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+}
+.field {
+    min-width: 0;
+}
+.field.full {
+    grid-column: 1 / -1;
+}
+.field label {
+    display: block;
+    color: #40564f;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+.field input, .field select, .field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #dce6e3;
+    border-radius: 9px;
+    padding: 11px 12px;
+    background: #fff;
+    color: #30443f;
+    font-size: 13px;
+    outline: none;
+}
+.field input, .field select {
+    min-height: 43px;
+}
+.field textarea {
+    min-height: 82px;
+    resize: vertical;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+    border-color: #198754;
+}
+.required {
+    color: #c0392b;
+}
+.form-note {
+    color: #829099;
+    font-size: 11px;
+    margin-top: 6px;
+}
+.form-error {
+    background: #fff1f0;
+    border: 1px solid #f0c7c3;
+    color: #a93226;
+    padding: 12px 14px;
+    border-radius: 9px;
+    margin-bottom: 17px;
+    font-size: 13px;
+}
+.success-panel {
+    background: #eff8f2;
+    border: 1px solid #cce8d5;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 18px;
+    color: #245b38;
+}
+.temporary-password {
+    display: block;
+    background: white;
+    border: 1px dashed #8ab99a;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.cancel-button, .submit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 43px;
+    padding: 0 19px;
+    border-radius: 9px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.cancel-button {
+    background: #eef3f1;
+    color: #49605a;
+}
+.submit-button {
+    border: 0;
+    background: #198754;
+    color: white;
+}
+@media(max-width: 650px) {
+    .registration-page { padding: 18px 12px 35px; }
+    .registration-card { padding: 16px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .field.full { grid-column: auto; }
+    .registration-heading h1 { font-size: 22px; }
+    .form-actions > * { flex: 1; }
+}
+</style>
+
+<main class="registration-page">
+<div class="registration-wrap">
+
+    <div class="registration-heading">
+        <div>
+            <h1>Register Student</h1>
+            <p>Create a student record and login account.</p>
+        </div>
+        <a class="back-link" href="{{ url_for('admin_students') }}">
+            Back to Students
+        </a>
+    </div>
+
+    {% if error %}
+    <div class="form-error">{{ error }}</div>
+    {% endif %}
+
+    {% if created_student %}
+    <div class="success-panel">
+        <strong>Student registered successfully.</strong>
+        <p>
+            {{ created_student.name }} ({{ created_student.student_id }})
+            can log in using the temporary details below.
+        </p>
+        <p><strong>Username / Student ID</strong></p>
+        <span class="temporary-password">{{ created_student.student_id }}</span>
+        <p><strong>Temporary password</strong></p>
+        <span class="temporary-password">{{ temporary_password }}</span>
+        <p>
+            Give these details to the student securely. The student will
+            be required to change the temporary password after login.
+        </p>
+        <a class="back-link" href="{{ url_for('admin_add_student') }}">
+            Register another student
+        </a>
+    </div>
+    {% else %}
+
+    {% set data = form_data if form_data is defined and form_data else {} %}
+
+    <form method="POST" action="{{ url_for('admin_add_student') }}">
+
+        <section class="registration-card">
+            <h2 class="section-title">Personal Details</h2>
+            <div class="form-grid">
+
+                <div class="field">
+                    <label>Student ID <span class="required">*</span></label>
+                    <input name="student_id" maxlength="20" required
+                           value="{{ data.get('student_id', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input name="name" maxlength="150" required
+                           value="{{ data.get('name', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Gender <span class="required">*</span></label>
+                    <select name="gender" required>
+                        <option value="">Select gender</option>
+                        <option value="Male" {% if data.get('gender') == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if data.get('gender') == 'Female' %}selected{% endif %}>Female</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Date of Birth <span class="required">*</span></label>
+                    <input type="date" name="date_of_birth" required
+                           value="{{ data.get('date_of_birth', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Nationality <span class="required">*</span></label>
+                    <select name="nationality" required>
+                    <option value="">Select nationality</option>
+                    <option value="Zambia" {% if data.get("nationality", "") == "Zambia" %}selected{% endif %}>Zambia</option>
+                    <option value="Afghanistan" {% if data.get("nationality", "") == "Afghanistan" %}selected{% endif %}>Afghanistan</option>
+                    <option value="Albania" {% if data.get("nationality", "") == "Albania" %}selected{% endif %}>Albania</option>
+                    <option value="Algeria" {% if data.get("nationality", "") == "Algeria" %}selected{% endif %}>Algeria</option>
+                    <option value="Andorra" {% if data.get("nationality", "") == "Andorra" %}selected{% endif %}>Andorra</option>
+                    <option value="Angola" {% if data.get("nationality", "") == "Angola" %}selected{% endif %}>Angola</option>
+                    <option value="Antigua and Barbuda" {% if data.get("nationality", "") == "Antigua and Barbuda" %}selected{% endif %}>Antigua and Barbuda</option>
+                    <option value="Argentina" {% if data.get("nationality", "") == "Argentina" %}selected{% endif %}>Argentina</option>
+                    <option value="Armenia" {% if data.get("nationality", "") == "Armenia" %}selected{% endif %}>Armenia</option>
+                    <option value="Australia" {% if data.get("nationality", "") == "Australia" %}selected{% endif %}>Australia</option>
+                    <option value="Austria" {% if data.get("nationality", "") == "Austria" %}selected{% endif %}>Austria</option>
+                    <option value="Azerbaijan" {% if data.get("nationality", "") == "Azerbaijan" %}selected{% endif %}>Azerbaijan</option>
+                    <option value="Bahamas" {% if data.get("nationality", "") == "Bahamas" %}selected{% endif %}>Bahamas</option>
+                    <option value="Bahrain" {% if data.get("nationality", "") == "Bahrain" %}selected{% endif %}>Bahrain</option>
+                    <option value="Bangladesh" {% if data.get("nationality", "") == "Bangladesh" %}selected{% endif %}>Bangladesh</option>
+                    <option value="Barbados" {% if data.get("nationality", "") == "Barbados" %}selected{% endif %}>Barbados</option>
+                    <option value="Belarus" {% if data.get("nationality", "") == "Belarus" %}selected{% endif %}>Belarus</option>
+                    <option value="Belgium" {% if data.get("nationality", "") == "Belgium" %}selected{% endif %}>Belgium</option>
+                    <option value="Belize" {% if data.get("nationality", "") == "Belize" %}selected{% endif %}>Belize</option>
+                    <option value="Benin" {% if data.get("nationality", "") == "Benin" %}selected{% endif %}>Benin</option>
+                    <option value="Bhutan" {% if data.get("nationality", "") == "Bhutan" %}selected{% endif %}>Bhutan</option>
+                    <option value="Bolivia" {% if data.get("nationality", "") == "Bolivia" %}selected{% endif %}>Bolivia</option>
+                    <option value="Bosnia and Herzegovina" {% if data.get("nationality", "") == "Bosnia and Herzegovina" %}selected{% endif %}>Bosnia and Herzegovina</option>
+                    <option value="Botswana" {% if data.get("nationality", "") == "Botswana" %}selected{% endif %}>Botswana</option>
+                    <option value="Brazil" {% if data.get("nationality", "") == "Brazil" %}selected{% endif %}>Brazil</option>
+                    <option value="Brunei" {% if data.get("nationality", "") == "Brunei" %}selected{% endif %}>Brunei</option>
+                    <option value="Bulgaria" {% if data.get("nationality", "") == "Bulgaria" %}selected{% endif %}>Bulgaria</option>
+                    <option value="Burkina Faso" {% if data.get("nationality", "") == "Burkina Faso" %}selected{% endif %}>Burkina Faso</option>
+                    <option value="Burundi" {% if data.get("nationality", "") == "Burundi" %}selected{% endif %}>Burundi</option>
+                    <option value="Cabo Verde" {% if data.get("nationality", "") == "Cabo Verde" %}selected{% endif %}>Cabo Verde</option>
+                    <option value="Cambodia" {% if data.get("nationality", "") == "Cambodia" %}selected{% endif %}>Cambodia</option>
+                    <option value="Cameroon" {% if data.get("nationality", "") == "Cameroon" %}selected{% endif %}>Cameroon</option>
+                    <option value="Canada" {% if data.get("nationality", "") == "Canada" %}selected{% endif %}>Canada</option>
+                    <option value="Central African Republic" {% if data.get("nationality", "") == "Central African Republic" %}selected{% endif %}>Central African Republic</option>
+                    <option value="Chad" {% if data.get("nationality", "") == "Chad" %}selected{% endif %}>Chad</option>
+                    <option value="Chile" {% if data.get("nationality", "") == "Chile" %}selected{% endif %}>Chile</option>
+                    <option value="China" {% if data.get("nationality", "") == "China" %}selected{% endif %}>China</option>
+                    <option value="Colombia" {% if data.get("nationality", "") == "Colombia" %}selected{% endif %}>Colombia</option>
+                    <option value="Comoros" {% if data.get("nationality", "") == "Comoros" %}selected{% endif %}>Comoros</option>
+                    <option value="Congo" {% if data.get("nationality", "") == "Congo" %}selected{% endif %}>Congo</option>
+                    <option value="Costa Rica" {% if data.get("nationality", "") == "Costa Rica" %}selected{% endif %}>Costa Rica</option>
+                    <option value="Côte d'Ivoire" {% if data.get("nationality", "") == "Côte d'Ivoire" %}selected{% endif %}>Côte d'Ivoire</option>
+                    <option value="Croatia" {% if data.get("nationality", "") == "Croatia" %}selected{% endif %}>Croatia</option>
+                    <option value="Cuba" {% if data.get("nationality", "") == "Cuba" %}selected{% endif %}>Cuba</option>
+                    <option value="Cyprus" {% if data.get("nationality", "") == "Cyprus" %}selected{% endif %}>Cyprus</option>
+                    <option value="Czechia" {% if data.get("nationality", "") == "Czechia" %}selected{% endif %}>Czechia</option>
+                    <option value="Democratic Republic of the Congo" {% if data.get("nationality", "") == "Democratic Republic of the Congo" %}selected{% endif %}>Democratic Republic of the Congo</option>
+                    <option value="Denmark" {% if data.get("nationality", "") == "Denmark" %}selected{% endif %}>Denmark</option>
+                    <option value="Djibouti" {% if data.get("nationality", "") == "Djibouti" %}selected{% endif %}>Djibouti</option>
+                    <option value="Dominica" {% if data.get("nationality", "") == "Dominica" %}selected{% endif %}>Dominica</option>
+                    <option value="Dominican Republic" {% if data.get("nationality", "") == "Dominican Republic" %}selected{% endif %}>Dominican Republic</option>
+                    <option value="Ecuador" {% if data.get("nationality", "") == "Ecuador" %}selected{% endif %}>Ecuador</option>
+                    <option value="Egypt" {% if data.get("nationality", "") == "Egypt" %}selected{% endif %}>Egypt</option>
+                    <option value="El Salvador" {% if data.get("nationality", "") == "El Salvador" %}selected{% endif %}>El Salvador</option>
+                    <option value="Equatorial Guinea" {% if data.get("nationality", "") == "Equatorial Guinea" %}selected{% endif %}>Equatorial Guinea</option>
+                    <option value="Eritrea" {% if data.get("nationality", "") == "Eritrea" %}selected{% endif %}>Eritrea</option>
+                    <option value="Estonia" {% if data.get("nationality", "") == "Estonia" %}selected{% endif %}>Estonia</option>
+                    <option value="Eswatini" {% if data.get("nationality", "") == "Eswatini" %}selected{% endif %}>Eswatini</option>
+                    <option value="Ethiopia" {% if data.get("nationality", "") == "Ethiopia" %}selected{% endif %}>Ethiopia</option>
+                    <option value="Fiji" {% if data.get("nationality", "") == "Fiji" %}selected{% endif %}>Fiji</option>
+                    <option value="Finland" {% if data.get("nationality", "") == "Finland" %}selected{% endif %}>Finland</option>
+                    <option value="France" {% if data.get("nationality", "") == "France" %}selected{% endif %}>France</option>
+                    <option value="Gabon" {% if data.get("nationality", "") == "Gabon" %}selected{% endif %}>Gabon</option>
+                    <option value="Gambia" {% if data.get("nationality", "") == "Gambia" %}selected{% endif %}>Gambia</option>
+                    <option value="Georgia" {% if data.get("nationality", "") == "Georgia" %}selected{% endif %}>Georgia</option>
+                    <option value="Germany" {% if data.get("nationality", "") == "Germany" %}selected{% endif %}>Germany</option>
+                    <option value="Ghana" {% if data.get("nationality", "") == "Ghana" %}selected{% endif %}>Ghana</option>
+                    <option value="Greece" {% if data.get("nationality", "") == "Greece" %}selected{% endif %}>Greece</option>
+                    <option value="Grenada" {% if data.get("nationality", "") == "Grenada" %}selected{% endif %}>Grenada</option>
+                    <option value="Guatemala" {% if data.get("nationality", "") == "Guatemala" %}selected{% endif %}>Guatemala</option>
+                    <option value="Guinea" {% if data.get("nationality", "") == "Guinea" %}selected{% endif %}>Guinea</option>
+                    <option value="Guinea-Bissau" {% if data.get("nationality", "") == "Guinea-Bissau" %}selected{% endif %}>Guinea-Bissau</option>
+                    <option value="Guyana" {% if data.get("nationality", "") == "Guyana" %}selected{% endif %}>Guyana</option>
+                    <option value="Haiti" {% if data.get("nationality", "") == "Haiti" %}selected{% endif %}>Haiti</option>
+                    <option value="Honduras" {% if data.get("nationality", "") == "Honduras" %}selected{% endif %}>Honduras</option>
+                    <option value="Hungary" {% if data.get("nationality", "") == "Hungary" %}selected{% endif %}>Hungary</option>
+                    <option value="Iceland" {% if data.get("nationality", "") == "Iceland" %}selected{% endif %}>Iceland</option>
+                    <option value="India" {% if data.get("nationality", "") == "India" %}selected{% endif %}>India</option>
+                    <option value="Indonesia" {% if data.get("nationality", "") == "Indonesia" %}selected{% endif %}>Indonesia</option>
+                    <option value="Iran" {% if data.get("nationality", "") == "Iran" %}selected{% endif %}>Iran</option>
+                    <option value="Iraq" {% if data.get("nationality", "") == "Iraq" %}selected{% endif %}>Iraq</option>
+                    <option value="Ireland" {% if data.get("nationality", "") == "Ireland" %}selected{% endif %}>Ireland</option>
+                    <option value="Israel" {% if data.get("nationality", "") == "Israel" %}selected{% endif %}>Israel</option>
+                    <option value="Italy" {% if data.get("nationality", "") == "Italy" %}selected{% endif %}>Italy</option>
+                    <option value="Jamaica" {% if data.get("nationality", "") == "Jamaica" %}selected{% endif %}>Jamaica</option>
+                    <option value="Japan" {% if data.get("nationality", "") == "Japan" %}selected{% endif %}>Japan</option>
+                    <option value="Jordan" {% if data.get("nationality", "") == "Jordan" %}selected{% endif %}>Jordan</option>
+                    <option value="Kazakhstan" {% if data.get("nationality", "") == "Kazakhstan" %}selected{% endif %}>Kazakhstan</option>
+                    <option value="Kenya" {% if data.get("nationality", "") == "Kenya" %}selected{% endif %}>Kenya</option>
+                    <option value="Kiribati" {% if data.get("nationality", "") == "Kiribati" %}selected{% endif %}>Kiribati</option>
+                    <option value="Kuwait" {% if data.get("nationality", "") == "Kuwait" %}selected{% endif %}>Kuwait</option>
+                    <option value="Kyrgyzstan" {% if data.get("nationality", "") == "Kyrgyzstan" %}selected{% endif %}>Kyrgyzstan</option>
+                    <option value="Laos" {% if data.get("nationality", "") == "Laos" %}selected{% endif %}>Laos</option>
+                    <option value="Latvia" {% if data.get("nationality", "") == "Latvia" %}selected{% endif %}>Latvia</option>
+                    <option value="Lebanon" {% if data.get("nationality", "") == "Lebanon" %}selected{% endif %}>Lebanon</option>
+                    <option value="Lesotho" {% if data.get("nationality", "") == "Lesotho" %}selected{% endif %}>Lesotho</option>
+                    <option value="Liberia" {% if data.get("nationality", "") == "Liberia" %}selected{% endif %}>Liberia</option>
+                    <option value="Libya" {% if data.get("nationality", "") == "Libya" %}selected{% endif %}>Libya</option>
+                    <option value="Liechtenstein" {% if data.get("nationality", "") == "Liechtenstein" %}selected{% endif %}>Liechtenstein</option>
+                    <option value="Lithuania" {% if data.get("nationality", "") == "Lithuania" %}selected{% endif %}>Lithuania</option>
+                    <option value="Luxembourg" {% if data.get("nationality", "") == "Luxembourg" %}selected{% endif %}>Luxembourg</option>
+                    <option value="Madagascar" {% if data.get("nationality", "") == "Madagascar" %}selected{% endif %}>Madagascar</option>
+                    <option value="Malawi" {% if data.get("nationality", "") == "Malawi" %}selected{% endif %}>Malawi</option>
+                    <option value="Malaysia" {% if data.get("nationality", "") == "Malaysia" %}selected{% endif %}>Malaysia</option>
+                    <option value="Maldives" {% if data.get("nationality", "") == "Maldives" %}selected{% endif %}>Maldives</option>
+                    <option value="Mali" {% if data.get("nationality", "") == "Mali" %}selected{% endif %}>Mali</option>
+                    <option value="Malta" {% if data.get("nationality", "") == "Malta" %}selected{% endif %}>Malta</option>
+                    <option value="Marshall Islands" {% if data.get("nationality", "") == "Marshall Islands" %}selected{% endif %}>Marshall Islands</option>
+                    <option value="Mauritania" {% if data.get("nationality", "") == "Mauritania" %}selected{% endif %}>Mauritania</option>
+                    <option value="Mauritius" {% if data.get("nationality", "") == "Mauritius" %}selected{% endif %}>Mauritius</option>
+                    <option value="Mexico" {% if data.get("nationality", "") == "Mexico" %}selected{% endif %}>Mexico</option>
+                    <option value="Micronesia" {% if data.get("nationality", "") == "Micronesia" %}selected{% endif %}>Micronesia</option>
+                    <option value="Moldova" {% if data.get("nationality", "") == "Moldova" %}selected{% endif %}>Moldova</option>
+                    <option value="Monaco" {% if data.get("nationality", "") == "Monaco" %}selected{% endif %}>Monaco</option>
+                    <option value="Mongolia" {% if data.get("nationality", "") == "Mongolia" %}selected{% endif %}>Mongolia</option>
+                    <option value="Montenegro" {% if data.get("nationality", "") == "Montenegro" %}selected{% endif %}>Montenegro</option>
+                    <option value="Morocco" {% if data.get("nationality", "") == "Morocco" %}selected{% endif %}>Morocco</option>
+                    <option value="Mozambique" {% if data.get("nationality", "") == "Mozambique" %}selected{% endif %}>Mozambique</option>
+                    <option value="Myanmar" {% if data.get("nationality", "") == "Myanmar" %}selected{% endif %}>Myanmar</option>
+                    <option value="Namibia" {% if data.get("nationality", "") == "Namibia" %}selected{% endif %}>Namibia</option>
+                    <option value="Nauru" {% if data.get("nationality", "") == "Nauru" %}selected{% endif %}>Nauru</option>
+                    <option value="Nepal" {% if data.get("nationality", "") == "Nepal" %}selected{% endif %}>Nepal</option>
+                    <option value="Netherlands" {% if data.get("nationality", "") == "Netherlands" %}selected{% endif %}>Netherlands</option>
+                    <option value="New Zealand" {% if data.get("nationality", "") == "New Zealand" %}selected{% endif %}>New Zealand</option>
+                    <option value="Nicaragua" {% if data.get("nationality", "") == "Nicaragua" %}selected{% endif %}>Nicaragua</option>
+                    <option value="Niger" {% if data.get("nationality", "") == "Niger" %}selected{% endif %}>Niger</option>
+                    <option value="Nigeria" {% if data.get("nationality", "") == "Nigeria" %}selected{% endif %}>Nigeria</option>
+                    <option value="North Korea" {% if data.get("nationality", "") == "North Korea" %}selected{% endif %}>North Korea</option>
+                    <option value="North Macedonia" {% if data.get("nationality", "") == "North Macedonia" %}selected{% endif %}>North Macedonia</option>
+                    <option value="Norway" {% if data.get("nationality", "") == "Norway" %}selected{% endif %}>Norway</option>
+                    <option value="Oman" {% if data.get("nationality", "") == "Oman" %}selected{% endif %}>Oman</option>
+                    <option value="Pakistan" {% if data.get("nationality", "") == "Pakistan" %}selected{% endif %}>Pakistan</option>
+                    <option value="Palau" {% if data.get("nationality", "") == "Palau" %}selected{% endif %}>Palau</option>
+                    <option value="Palestine" {% if data.get("nationality", "") == "Palestine" %}selected{% endif %}>Palestine</option>
+                    <option value="Panama" {% if data.get("nationality", "") == "Panama" %}selected{% endif %}>Panama</option>
+                    <option value="Papua New Guinea" {% if data.get("nationality", "") == "Papua New Guinea" %}selected{% endif %}>Papua New Guinea</option>
+                    <option value="Paraguay" {% if data.get("nationality", "") == "Paraguay" %}selected{% endif %}>Paraguay</option>
+                    <option value="Peru" {% if data.get("nationality", "") == "Peru" %}selected{% endif %}>Peru</option>
+                    <option value="Philippines" {% if data.get("nationality", "") == "Philippines" %}selected{% endif %}>Philippines</option>
+                    <option value="Poland" {% if data.get("nationality", "") == "Poland" %}selected{% endif %}>Poland</option>
+                    <option value="Portugal" {% if data.get("nationality", "") == "Portugal" %}selected{% endif %}>Portugal</option>
+                    <option value="Qatar" {% if data.get("nationality", "") == "Qatar" %}selected{% endif %}>Qatar</option>
+                    <option value="Romania" {% if data.get("nationality", "") == "Romania" %}selected{% endif %}>Romania</option>
+                    <option value="Russia" {% if data.get("nationality", "") == "Russia" %}selected{% endif %}>Russia</option>
+                    <option value="Rwanda" {% if data.get("nationality", "") == "Rwanda" %}selected{% endif %}>Rwanda</option>
+                    <option value="Saint Kitts and Nevis" {% if data.get("nationality", "") == "Saint Kitts and Nevis" %}selected{% endif %}>Saint Kitts and Nevis</option>
+                    <option value="Saint Lucia" {% if data.get("nationality", "") == "Saint Lucia" %}selected{% endif %}>Saint Lucia</option>
+                    <option value="Saint Vincent and the Grenadines" {% if data.get("nationality", "") == "Saint Vincent and the Grenadines" %}selected{% endif %}>Saint Vincent and the Grenadines</option>
+                    <option value="Samoa" {% if data.get("nationality", "") == "Samoa" %}selected{% endif %}>Samoa</option>
+                    <option value="San Marino" {% if data.get("nationality", "") == "San Marino" %}selected{% endif %}>San Marino</option>
+                    <option value="Sao Tome and Principe" {% if data.get("nationality", "") == "Sao Tome and Principe" %}selected{% endif %}>Sao Tome and Principe</option>
+                    <option value="Saudi Arabia" {% if data.get("nationality", "") == "Saudi Arabia" %}selected{% endif %}>Saudi Arabia</option>
+                    <option value="Senegal" {% if data.get("nationality", "") == "Senegal" %}selected{% endif %}>Senegal</option>
+                    <option value="Serbia" {% if data.get("nationality", "") == "Serbia" %}selected{% endif %}>Serbia</option>
+                    <option value="Seychelles" {% if data.get("nationality", "") == "Seychelles" %}selected{% endif %}>Seychelles</option>
+                    <option value="Sierra Leone" {% if data.get("nationality", "") == "Sierra Leone" %}selected{% endif %}>Sierra Leone</option>
+                    <option value="Singapore" {% if data.get("nationality", "") == "Singapore" %}selected{% endif %}>Singapore</option>
+                    <option value="Slovakia" {% if data.get("nationality", "") == "Slovakia" %}selected{% endif %}>Slovakia</option>
+                    <option value="Slovenia" {% if data.get("nationality", "") == "Slovenia" %}selected{% endif %}>Slovenia</option>
+                    <option value="Solomon Islands" {% if data.get("nationality", "") == "Solomon Islands" %}selected{% endif %}>Solomon Islands</option>
+                    <option value="Somalia" {% if data.get("nationality", "") == "Somalia" %}selected{% endif %}>Somalia</option>
+                    <option value="South Africa" {% if data.get("nationality", "") == "South Africa" %}selected{% endif %}>South Africa</option>
+                    <option value="South Korea" {% if data.get("nationality", "") == "South Korea" %}selected{% endif %}>South Korea</option>
+                    <option value="South Sudan" {% if data.get("nationality", "") == "South Sudan" %}selected{% endif %}>South Sudan</option>
+                    <option value="Spain" {% if data.get("nationality", "") == "Spain" %}selected{% endif %}>Spain</option>
+                    <option value="Sri Lanka" {% if data.get("nationality", "") == "Sri Lanka" %}selected{% endif %}>Sri Lanka</option>
+                    <option value="Sudan" {% if data.get("nationality", "") == "Sudan" %}selected{% endif %}>Sudan</option>
+                    <option value="Suriname" {% if data.get("nationality", "") == "Suriname" %}selected{% endif %}>Suriname</option>
+                    <option value="Sweden" {% if data.get("nationality", "") == "Sweden" %}selected{% endif %}>Sweden</option>
+                    <option value="Switzerland" {% if data.get("nationality", "") == "Switzerland" %}selected{% endif %}>Switzerland</option>
+                    <option value="Syria" {% if data.get("nationality", "") == "Syria" %}selected{% endif %}>Syria</option>
+                    <option value="Tajikistan" {% if data.get("nationality", "") == "Tajikistan" %}selected{% endif %}>Tajikistan</option>
+                    <option value="Tanzania" {% if data.get("nationality", "") == "Tanzania" %}selected{% endif %}>Tanzania</option>
+                    <option value="Thailand" {% if data.get("nationality", "") == "Thailand" %}selected{% endif %}>Thailand</option>
+                    <option value="Timor-Leste" {% if data.get("nationality", "") == "Timor-Leste" %}selected{% endif %}>Timor-Leste</option>
+                    <option value="Togo" {% if data.get("nationality", "") == "Togo" %}selected{% endif %}>Togo</option>
+                    <option value="Tonga" {% if data.get("nationality", "") == "Tonga" %}selected{% endif %}>Tonga</option>
+                    <option value="Trinidad and Tobago" {% if data.get("nationality", "") == "Trinidad and Tobago" %}selected{% endif %}>Trinidad and Tobago</option>
+                    <option value="Tunisia" {% if data.get("nationality", "") == "Tunisia" %}selected{% endif %}>Tunisia</option>
+                    <option value="Turkey" {% if data.get("nationality", "") == "Turkey" %}selected{% endif %}>Turkey</option>
+                    <option value="Turkmenistan" {% if data.get("nationality", "") == "Turkmenistan" %}selected{% endif %}>Turkmenistan</option>
+                    <option value="Tuvalu" {% if data.get("nationality", "") == "Tuvalu" %}selected{% endif %}>Tuvalu</option>
+                    <option value="Uganda" {% if data.get("nationality", "") == "Uganda" %}selected{% endif %}>Uganda</option>
+                    <option value="Ukraine" {% if data.get("nationality", "") == "Ukraine" %}selected{% endif %}>Ukraine</option>
+                    <option value="United Arab Emirates" {% if data.get("nationality", "") == "United Arab Emirates" %}selected{% endif %}>United Arab Emirates</option>
+                    <option value="United Kingdom" {% if data.get("nationality", "") == "United Kingdom" %}selected{% endif %}>United Kingdom</option>
+                    <option value="United States" {% if data.get("nationality", "") == "United States" %}selected{% endif %}>United States</option>
+                    <option value="Uruguay" {% if data.get("nationality", "") == "Uruguay" %}selected{% endif %}>Uruguay</option>
+                    <option value="Uzbekistan" {% if data.get("nationality", "") == "Uzbekistan" %}selected{% endif %}>Uzbekistan</option>
+                    <option value="Vanuatu" {% if data.get("nationality", "") == "Vanuatu" %}selected{% endif %}>Vanuatu</option>
+                    <option value="Vatican City" {% if data.get("nationality", "") == "Vatican City" %}selected{% endif %}>Vatican City</option>
+                    <option value="Venezuela" {% if data.get("nationality", "") == "Venezuela" %}selected{% endif %}>Venezuela</option>
+                    <option value="Vietnam" {% if data.get("nationality", "") == "Vietnam" %}selected{% endif %}>Vietnam</option>
+                    <option value="Yemen" {% if data.get("nationality", "") == "Yemen" %}selected{% endif %}>Yemen</option>
+                    <option value="Zimbabwe" {% if data.get("nationality", "") == "Zimbabwe" %}selected{% endif %}>Zimbabwe</option>
+                    </select>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="registration-card">
+            <h2 class="section-title">Contact and Residential Address</h2>
+            <div class="form-grid">
+
+                <div class="field">
+                    <label>Phone Number</label>
+                    <input name="phone_number" maxlength="30"
+                           value="{{ data.get('phone_number', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Alternative Phone Number</label>
+                    <input name="alternative_phone" maxlength="30"
+                           value="{{ data.get('alternative_phone', '') }}">
+                </div>
+
+                <div class="field full">
+                    <label>Email Address</label>
+                    <input type="email" name="email" maxlength="120"
+                           value="{{ data.get('email', '') }}">
+                </div>
+
+                <div class="field full">
+                    <label>Residential Address</label>
+                    <textarea name="residential_address">{{ data.get('residential_address', '') }}</textarea>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="registration-card">
+            <h2 class="section-title">Next of Kin Details</h2>
+            <div class="form-grid">
+
+                <div class="field">
+                    <label>Full Name</label>
+                    <input name="next_of_kin_name" maxlength="150"
+                           value="{{ data.get('next_of_kin_name', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Relationship</label>
+                    <input name="next_of_kin_relationship" maxlength="80"
+                           value="{{ data.get('next_of_kin_relationship', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Phone Number</label>
+                    <input name="next_of_kin_phone" maxlength="30"
+                           value="{{ data.get('next_of_kin_phone', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Alternative Phone Number</label>
+                    <input name="next_of_kin_alternative_phone" maxlength="30"
+                           value="{{ data.get('next_of_kin_alternative_phone', '') }}">
+                </div>
+
+                <div class="field full">
+                    <label>Residential Address</label>
+                    <textarea name="next_of_kin_address">{{ data.get('next_of_kin_address', '') }}</textarea>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="registration-card">
+            <h2 class="section-title">Academic and Accommodation Details</h2>
+            <div class="form-grid">
+
+                <div class="field full">
+                    <label>Programme <span class="required">*</span></label>
+                    <input name="program" maxlength="150" required
+                           value="{{ data.get('program', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Year <span class="required">*</span></label>
+                    <input type="number" name="year" min="1" required
+                           value="{{ data.get('year', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Term <span class="required">*</span></label>
+                    <input type="number" name="term" min="1" required
+                           value="{{ data.get('term', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Funding Type <span class="required">*</span></label>
+                    <select name="funding" required>
+                        <option value="">Select funding</option>
+                        {% for option in ['Self Sponsored', 'CDF', 'Bursary', 'Other'] %}
+                        <option value="{{ option }}" {% if data.get('funding') == option %}selected{% endif %}>
+                            {{ option }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Accommodation <span class="required">*</span></label>
+                    <select name="accommodation" required>
+                        <option value="">Select accommodation</option>
+                        <option value="Boarder" {% if data.get('accommodation') == 'Boarder' %}selected{% endif %}>Boarder</option>
+                        <option value="Day Scholar" {% if data.get('accommodation') == 'Day Scholar' %}selected{% endif %}>Day Scholar</option>
+                    </select>
+                </div>
+
+            </div>
+            <p class="form-note">
+                Hostel and room allocation will be completed separately
+                through the existing accommodation process.
+            </p>
+        </section>
+
+        <div class="form-actions">
+            <a class="cancel-button" href="{{ url_for('admin_students') }}">Cancel</a>
+            <button class="submit-button" type="submit">Register Student</button>
+        </div>
+
+    </form>
+    {% endif %}
+
+</div>
+</main>
+{% endblock %}

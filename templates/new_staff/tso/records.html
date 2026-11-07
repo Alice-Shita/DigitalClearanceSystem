@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inspection Records | ZASTI</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, Arial, sans-serif;
+            background: #f7f9fb;
+            color: #172033;
+        }
+
+        .tso-main {
+            margin-left: 260px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-heading {
+            margin-bottom: 24px;
+        }
+
+        .page-heading h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 750;
+            color: #172033;
+        }
+
+        .page-heading p {
+            margin: 7px 0 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .records-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, .04);
+        }
+
+        .records-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid #edf0f2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .records-header h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .record-count {
+            color: #166534;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .records-search {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .records-search input {
+            width: 240px;
+            height: 38px;
+            padding: 0 11px;
+            border: 1px solid #d9e0e7;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #172033;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .records-search input:focus {
+            border-color: #86b99a;
+            box-shadow: 0 0 0 3px rgba(22, 101, 52, .08);
+        }
+
+        .records-search button {
+            height: 38px;
+            padding: 0 13px;
+            border: 0;
+            border-radius: 8px;
+            background: #166534;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .records-search button:hover {
+            background: #14532d;
+        }
+
+        .clear-search {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 38px;
+            padding: 0 10px;
+            border-radius: 8px;
+            border: 1px solid #d9e0e7;
+            color: #475569;
+            background: #ffffff;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .clear-search:hover {
+            background: #f8fafc;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #64748b;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 750;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            padding: 13px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 15px 16px;
+            border-bottom: 1px solid #eef1f4;
+            font-size: 13px;
+            color: #334155;
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background: #fafdfb;
+        }
+
+        .student-name {
+            font-weight: 700;
+            color: #172033;
+        }
+
+        .student-id {
+            margin-top: 3px;
+            color: #64748b;
+            font-size: 11px;
+        }
+
+        .accommodation-main {
+            font-weight: 700;
+            color: #172033;
+        }
+
+        .accommodation-detail {
+            margin-top: 3px;
+            color: #64748b;
+            font-size: 11px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 9px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+        .status-cleared {
+            color: #166534;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+
+        .key-yes {
+            color: #166534;
+            font-weight: 700;
+        }
+
+        .key-no {
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .view-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 11px;
+            border-radius: 7px;
+            background: #166534;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .view-button:hover {
+            background: #14532d;
+        }
+
+        .empty-state {
+            padding: 60px 25px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .empty-state strong {
+            display: block;
+            color: #334155;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .empty-state span {
+            font-size: 13px;
+        }
+
+        /* Mobile header */
+
+        .tso-mobile-header {
+            display: none;
+        }
+
+        .tso-mobile-menu {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e4e9f0;
+            border-radius: 9px;
+            background: #ffffff;
+            color: #166534;
+            cursor: pointer;
+            font-size: 19px;
+            line-height: 1;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, .04);
+        }
+
+        .tso-mobile-menu:hover {
+            background: #f5f7f8;
+        }
+
+        .tso-mobile-title {
+            min-width: 0;
+        }
+
+        .tso-mobile-title h1 {
+            margin: 0;
+            color: #172033;
+            font-size: 19px;
+            line-height: 1.2;
+            font-weight: 750;
+        }
+
+        .tso-mobile-title p {
+            margin: 4px 0 0;
+            color: #6b7280;
+            font-size: 10px;
+            line-height: 1.35;
+        }
+
+        .tso-mobile-overlay {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+
+            .tso-mobile-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1040;
+
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                padding: 11px 15px;
+
+                background: rgba(248, 250, 252, .97);
+                border-bottom: 1px solid #e5e7eb;
+
+                backdrop-filter: blur(9px);
+            }
+
+            .tso-mobile-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 1050;
+                background: rgba(15, 23, 42, .30);
+                backdrop-filter: blur(2px);
+            }
+
+            .tso-mobile-overlay.show {
+                display: block;
+            }
+
+            .tso-main {
+                margin-left: 0;
+                padding: 80px 15px 30px;
+            }
+
+            .page-heading h1 {
+                font-size: 23px;
+            }
+
+            .records-header {
+                padding: 16px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .records-search {
+                width: 100%;
+            }
+
+            .records-search input {
+                width: 100%;
+                min-width: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="tso-mobile-header">
+
+    <button
+        class="tso-mobile-menu"
+        type="button"
+        onclick="toggleTSOSidebar()"
+        aria-label="Open menu"
+    >
+        ☰
+    </button>
+
+    <div class="tso-mobile-title">
+        <h1>Inspection Records</h1>
+        <p>Technical Services Office</p>
+    </div>
+
+</header>
+
+<div
+    class="tso-mobile-overlay"
+    id="tsoMobileOverlay"
+    onclick="toggleTSOSidebar()"
+></div>
+
+{% include "new_staff/tso/_tso_sidebar.html" %}
+
+<main class="tso-main">
+
+    <div class="page-heading">
+        <h1>Inspection Records</h1>
+        <p>Completed physical and technical inspections conducted by the Technical Services Office.</p>
+    </div>
+
+    <section class="records-card">
+
+        <div class="records-header">
+
+            <div>
+                <h2>Completed Inspections</h2>
+
+                <span class="record-count">
+                    {{ records|length }} record{% if records|length != 1 %}s{% endif %}
+                </span>
+            </div>
+
+            <form
+                method="GET"
+                action="{{ url_for('tso_records') }}"
+                class="records-search"
+            >
+
+                <input
+                    type="search"
+                    name="search"
+                    value="{{ search or '' }}"
+                    placeholder="Search student ID or name"
+                    aria-label="Search student ID or name"
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+
+                {% if search %}
+                    <a
+                        href="{{ url_for('tso_records') }}"
+                        class="clear-search"
+                    >
+                        Clear
+                    </a>
+                {% endif %}
+
+            </form>
+
+        </div>
+
+        {% if records %}
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Accommodation</th>
+                        <th>Inspector</th>
+                        <th>Inspected</th>
+                        <th>Key</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for row in records %}
+
+                    {% set student = row.student %}
+                    {% set inspection = row.inspection %}
+                    {% set assignment = row.assignment %}
+                    {% set room = row.room %}
+
+                    <tr>
+
+                        <td>
+                            <div class="student-name">
+                                {{ student.name }}
+                            </div>
+
+                            <div class="student-id">
+                                {{ student.student_id }}
+                            </div>
+                        </td>
+
+                        <td>
+                            {% if room %}
+                                {% set hostel = room.hostel %}
+                                {% set block = room.block %}
+
+                                {% if hostel %}
+                                    <div class="accommodation-main">
+                                        {{ hostel.name }}
+                                    </div>
+                                {% endif %}
+
+                                {% if block %}
+                                    <div class="accommodation-detail">
+                                        {{ block.name }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="accommodation-detail">
+                                    {% if room.room_number %}
+                                        Room {{ room.room_number }}
+                                    {% else %}
+                                        Room not specified
+                                    {% endif %}
+                                </div>
+
+                            {% elif assignment %}
+                                <div class="accommodation-main">
+                                    Accommodation assigned
+                                </div>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ inspection.inspected_by or 'TSO Staff' }}
+                        </td>
+
+                        <td>
+                            {% if inspection.inspected_at %}
+                                {{ inspection.inspected_at.strftime('%d %b %Y, %H:%M') }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if inspection.key_collected %}
+                                <span class="key-yes">Collected</span>
+                            {% else %}
+                                <span class="key-no">Not recorded</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <span class="status status-cleared">
+                                {{ inspection.status or 'Cleared' }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <a
+                                href="{{ url_for('tso_record_detail', inspection_id=inspection.id) }}"
+                                class="view-button"
+                            >
+                                View
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <strong>No inspection records yet</strong>
+            <span>Completed TSO inspections will appear here.</span>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</main>
+
+<script>
+function toggleTSOSidebar() {
+
+    const sidebar = document.getElementById("tsoSidebar");
+    const overlay = document.getElementById("tsoMobileOverlay");
+
+    if (!sidebar) {
+        return;
+    }
+
+    sidebar.classList.toggle("open");
+
+    if (overlay) {
+        overlay.classList.toggle(
+            "show",
+            sidebar.classList.contains("open")
+        );
+    }
+}
+</script>
+
+</body>
+</html>

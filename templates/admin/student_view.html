@@ -1,0 +1,1253 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ student.name }} | Student Details
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.student-view-page {
+    min-height: calc(100vh - 68px);
+    background: #f5f8f7;
+    padding: 28px 24px 50px;
+    box-sizing: border-box;
+}
+
+.student-view-container {
+    max-width: 1250px;
+    margin: 0 auto;
+}
+
+/* --------------------------------------------------
+   TOP
+-------------------------------------------------- */
+
+.student-view-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.student-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 13px;
+    border-radius: 9px;
+    background: white;
+    border: 1px solid #dfe8e5;
+    color: #49605a;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.student-back:hover {
+    color: #198754;
+}
+
+/* --------------------------------------------------
+   PROFILE HERO
+-------------------------------------------------- */
+
+.student-profile-card {
+    background: white;
+    border: 1px solid #e1e9e6;
+    border-radius: 17px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 5px 18px rgba(18,59,53,.05);
+    margin-bottom: 18px;
+}
+
+.student-photo-wrapper {
+    flex-shrink: 0;
+}
+
+.student-photo {
+    width: 105px;
+    height: 105px;
+    border-radius: 16px;
+    object-fit: cover;
+    border: 3px solid #e9f5f0;
+    background: #edf5f2;
+}
+
+.student-photo-placeholder {
+    width: 105px;
+    height: 105px;
+    border-radius: 16px;
+    background: #eaf7f1;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    border: 3px solid #e0f0ea;
+}
+
+.student-profile-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.student-profile-info h1 {
+    margin: 0;
+    color: #173f38;
+    font-size: 25px;
+    font-weight: 750;
+}
+
+.student-profile-id {
+    margin-top: 5px;
+    color: #198754;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.student-profile-program {
+    margin-top: 5px;
+    color: #71818a;
+    font-size: 12px;
+}
+
+.student-profile-badges {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.profile-badge {
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #edf8f3;
+    color: #198754;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* --------------------------------------------------
+   GRID
+-------------------------------------------------- */
+
+.student-section-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.student-card {
+    background: white;
+    border: 1px solid #e1e9e6;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(18,59,53,.04);
+}
+
+.student-card-header {
+    padding: 16px 18px;
+    border-bottom: 1px solid #edf1f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.student-card-header h2 {
+    margin: 0;
+    color: #173f38;
+    font-size: 15px;
+}
+
+.student-card-header i {
+    color: #198754;
+    margin-right: 5px;
+}
+
+.student-card-body {
+    padding: 17px 18px;
+}
+
+/* --------------------------------------------------
+   INFORMATION
+-------------------------------------------------- */
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.info-item label {
+    display: block;
+    color: #8a969b;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.info-item div {
+    color: #30443f;
+    font-size: 12px;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+/* --------------------------------------------------
+   ACCOUNT
+-------------------------------------------------- */
+
+.account-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.account-box {
+    background: #f7faf9;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.account-box small {
+    display: block;
+    color: #829099;
+    font-size: 9px;
+    margin-bottom: 4px;
+}
+
+.account-box strong {
+    color: #173f38;
+    font-size: 14px;
+}
+
+.money-green {
+    color: #198754 !important;
+}
+
+.money-red {
+    color: #c94b4b !important;
+}
+
+/* --------------------------------------------------
+   CLEARANCE
+-------------------------------------------------- */
+
+.clearance-list {
+    padding: 4px 18px 12px;
+}
+
+.clearance-row {
+    padding: 12px 2px;
+    border-bottom: 1px solid #f0f3f2;
+}
+
+.clearance-row:last-child {
+    border-bottom: 0;
+}
+
+.clearance-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.clearance-name {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #30443f;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.clearance-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: #edf8f3;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clearance-status {
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-cleared,
+.status-approved,
+.status-returned,
+.status-completed {
+    background: #e8f7ef;
+    color: #198754;
+}
+
+.status-pending {
+    background: #fff6df;
+    color: #9a7200;
+}
+
+.status-rejected,
+.status-not-cleared,
+.status-outstanding {
+    background: #fdecec;
+    color: #c94b4b;
+}
+
+.status-default {
+    background: #eef2f1;
+    color: #65736f;
+}
+
+.clearance-note {
+    margin: 7px 0 0 39px;
+    color: #8a969b;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+/* --------------------------------------------------
+   ITEMS
+-------------------------------------------------- */
+
+.item-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-row {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f3f2;
+}
+
+.item-row:last-child {
+    border-bottom: 0;
+}
+
+.item-title {
+    color: #30443f;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.item-meta {
+    margin-top: 4px;
+    color: #8a969b;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.item-status {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 4px 8px;
+    border-radius: 15px;
+    background: #edf8f3;
+    color: #198754;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.empty-section {
+    padding: 25px 10px;
+    text-align: center;
+    color: #9aa6a2;
+    font-size: 11px;
+}
+
+.empty-section i {
+    display: block;
+    font-size: 25px;
+    margin-bottom: 7px;
+}
+
+/* --------------------------------------------------
+   FULL WIDTH
+-------------------------------------------------- */
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* --------------------------------------------------
+   RESPONSIVE
+-------------------------------------------------- */
+
+@media (max-width: 800px) {
+
+    .student-section-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: auto;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .student-view-page {
+        padding: 20px 13px 35px;
+    }
+
+    .student-profile-card {
+        align-items: flex-start;
+        padding: 16px;
+    }
+
+    .student-photo,
+    .student-photo-placeholder {
+        width: 82px;
+        height: 82px;
+    }
+
+    .student-photo-placeholder {
+        font-size: 30px;
+    }
+
+    .student-profile-info h1 {
+        font-size: 20px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .account-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .clearance-main {
+        align-items: flex-start;
+    }
+
+}
+
+</style>
+
+
+{% include "components/admin_sidebar.html" %}
+
+
+<main class="admin-main">
+
+<div class="student-view-page">
+
+<div class="student-view-container">
+
+
+<!-- ==================================================
+     BACK
+================================================== -->
+
+<div class="student-view-top">
+
+    <a
+        href="{{ url_for('admin_students') }}"
+        class="student-back"
+    >
+        <i class="bi bi-arrow-left"></i>
+        Back to Students
+    </a>
+
+</div>
+
+
+<!-- ==================================================
+     PROFILE
+================================================== -->
+
+<section class="student-profile-card">
+
+    <div class="student-photo-wrapper">
+
+        {% if student.profile_pic %}
+
+            <img
+                src="{{ url_for('admin_student_photo', filename=student.profile_pic) }}"
+                class="student-photo"
+                alt="{{ student.name }}"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            >
+
+            <div
+                class="student-photo-placeholder"
+                style="display:none;"
+            >
+                <i class="bi bi-person-fill"></i>
+            </div>
+
+        {% else %}
+
+            <div class="student-photo-placeholder">
+                <i class="bi bi-person-fill"></i>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="student-profile-info">
+
+        <h1>
+            {{ student.name }}
+        </h1>
+
+        <div class="student-profile-id">
+            {{ student.student_id }}
+        </div>
+
+        <div class="student-profile-program">
+            {{ student.program }}
+        </div>
+
+        <div class="student-profile-badges">
+
+            {% if student.year %}
+                <span class="profile-badge">
+                    Year {{ student.year }}
+                </span>
+            {% endif %}
+
+            {% if student.term %}
+                <span class="profile-badge">
+                    Term {{ student.term }}
+                </span>
+            {% endif %}
+
+            {% if student.funding %}
+                <span class="profile-badge">
+                    {{ student.funding }}
+                </span>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div style="margin: 18px 0;">
+            {% for category, message in messages %}
+                <div
+                    role="alert"
+                    style="
+                        padding: 12px 16px;
+                        margin-bottom: 10px;
+                        border-radius: 8px;
+                        border: 1px solid {{ '#f5c2c7' if category == 'error' else '#badbcc' }};
+                        background: {{ '#f8d7da' if category == 'error' else '#d1e7dd' }};
+                        color: {{ '#842029' if category == 'error' else '#0f5132' }};
+                    "
+                >
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<!-- ==================================================
+     PERSONAL + ACCOMMODATION
+================================================== -->
+
+<div class="student-section-grid">
+
+
+<section class="student-card">
+
+    <div class="student-card-header">
+        <h2>
+            <i class="bi bi-person-vcard"></i>
+            Student Information
+        </h2>
+    </div>
+
+    <div class="student-card-body">
+
+        <div class="info-grid">
+
+            <div class="info-item">
+                <label>Student ID</label>
+                <div>{{ student.student_id }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Full Name</label>
+                <div>{{ student.name }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Programme</label>
+                <div>{{ student.program }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Year</label>
+                <div>{{ student.year or "Not specified" }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Term</label>
+                <div>{{ student.term or "Not specified" }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Funding</label>
+                <div>{{ student.funding or "Not specified" }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Gender</label>
+                <div>{{ student.gender or "Not recorded" }}</div>
+            </div>
+
+            <div class="info-item" style="grid-column: 1 / -1;">
+                <form
+                    method="POST"
+                    action="{{ url_for('admin_update_student_gender', student_id=student.student_id) }}"
+                    style="display:flex; flex-wrap:wrap; align-items:end; gap:12px;"
+                >
+                    <div style="min-width:180px; flex:1;">
+                        <label for="student_gender">Update Gender</label>
+                        <select
+                            id="student_gender"
+                            name="gender"
+                            required
+                            style="width:100%; padding:10px; border:1px solid #dce3e8; border-radius:6px;"
+                        >
+                            <option value="">Select gender</option>
+                            <option value="male"
+                                {% if (student.gender or '')|lower == 'male' %}selected{% endif %}
+                            >Male</option>
+                            <option value="female"
+                                {% if (student.gender or '')|lower == 'female' %}selected{% endif %}
+                            >Female</option>
+                        </select>
+                    </div>
+
+                    <button
+                        type="submit"
+                        style="padding:11px 18px; border:0; border-radius:6px; background:#0b8f62; color:white; cursor:pointer;"
+                    >
+                        Save Gender
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="student-card">
+
+    <div class="student-card-header">
+        <h2>
+            <i class="bi bi-house-door"></i>
+            Accommodation
+        </h2>
+    </div>
+
+    <div class="student-card-body">
+
+        <div class="info-grid">
+
+            <div class="info-item">
+                <label>Accommodation</label>
+                <div>{{ student.accommodation or "Not specified" }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Hostel</label>
+                <div>{{ student.hostel or "Not specified" }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Room</label>
+                <div>{{ student.room or "Not specified" }}</div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     ACCOUNT
+================================================== -->
+
+<section class="student-card full-width">
+
+    <div class="student-card-header">
+
+        <h2>
+            <i class="bi bi-cash-stack"></i>
+            Accounts & Payments
+        </h2>
+
+        {% if account %}
+            <span>{{ account.status or "Pending" }}</span>
+        {% endif %}
+
+    </div>
+
+
+    <div class="student-card-body">
+
+        {% if account %}
+
+            {% set balance = (account.total_fee or 0) - (account.paid or 0) %}
+
+            <div class="account-summary">
+
+                <div class="account-box">
+                    <small>Total Fee</small>
+                    <strong>
+                        {{ (account.total_fee or 0)|money }}
+                    </strong>
+                </div>
+
+                <div class="account-box">
+                    <small>Paid</small>
+                    <strong class="money-green">
+                        {{ (account.paid or 0)|money }}
+                    </strong>
+                </div>
+
+                <div class="account-box">
+                    <small>Balance</small>
+                    <strong class="{% if balance > 0 %}money-red{% else %}money-green{% endif %}">
+                        {{ "%.2f"|format(balance) }}
+                    </strong>
+                </div>
+
+            </div>
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <label>Minimum Required</label>
+                    <div>
+                        {{ (account.minimum_required or 0)|money }}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <label>Status</label>
+                    <div>
+                        {{ account.status or "Pending" }}
+                    </div>
+                </div>
+
+                {% if account.reason %}
+                <div class="info-item">
+                    <label>Reason</label>
+                    <div>{{ account.reason }}</div>
+                </div>
+                {% endif %}
+
+                {% if account.remarks %}
+                <div class="info-item">
+                    <label>Remarks</label>
+                    <div>{{ account.remarks }}</div>
+                </div>
+                {% endif %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-section">
+                <i class="bi bi-wallet2"></i>
+                No account record found for this student.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     DEPARTMENT CLEARANCE
+================================================== -->
+
+<section class="student-card full-width">
+
+    <div class="student-card-header">
+
+        <h2>
+            <i class="bi bi-check2-square"></i>
+            Department Clearance
+        </h2>
+
+        <span>
+            {{ departments|length }} Departments
+        </span>
+
+    </div>
+
+
+    <div class="clearance-list">
+
+        {% for department in departments %}
+
+            {% set status_lower = department.status|lower|replace(" ", "-") %}
+
+            <div class="clearance-row">
+
+                <div class="clearance-main">
+
+                    <div class="clearance-name">
+
+                        <div class="clearance-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+
+                        {{ department.name }}
+
+                    </div>
+
+
+                    <span
+                        class="clearance-status
+                        {% if status_lower in ['cleared','approved','returned','completed'] %}
+                            status-cleared
+                        {% elif status_lower == 'pending' %}
+                            status-pending
+                        {% elif status_lower in ['rejected','not-cleared','outstanding'] %}
+                            status-rejected
+                        {% else %}
+                            status-default
+                        {% endif %}
+                        "
+                    >
+                        {{ department.status }}
+                    </span>
+
+                </div>
+
+
+                {% if department.reason or department.remarks %}
+
+                    <div class="clearance-note">
+
+                        {% if department.reason %}
+                            <strong>Reason:</strong>
+                            {{ department.reason }}
+                        {% endif %}
+
+                        {% if department.remarks %}
+
+                            {% if department.reason %}
+                                <br>
+                            {% endif %}
+
+                            <strong>Remarks:</strong>
+                            {{ department.remarks }}
+
+                        {% endif %}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     LIBRARY
+================================================== -->
+
+<section class="student-card">
+
+    <div class="student-card-header">
+
+        <h2>
+            <i class="bi bi-book"></i>
+            Library
+        </h2>
+
+        <span>
+            {{ library_books|length }} record{% if library_books|length != 1 %}s{% endif %}
+        </span>
+
+    </div>
+
+
+    <div class="student-card-body">
+
+        {% if library_books %}
+
+            <div class="item-list">
+
+                {% for book in library_books %}
+
+                    <div class="item-row">
+
+                        <div class="item-title">
+                            {{ book.name }}
+                        </div>
+
+                        <div class="item-meta">
+
+                            Borrowed:
+                            {{ book.borrowed_at or "Not recorded" }}
+
+                            {% if book.returned %}
+                                <br>
+                                Returned:
+                                {{ book.returned_at or "Yes" }}
+                            {% endif %}
+
+                        </div>
+
+                        <span class="item-status">
+                            {% if book.returned %}
+                                Returned
+                            {% else %}
+                                Not Returned
+                            {% endif %}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-section">
+                <i class="bi bi-book"></i>
+                No library records.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     SPORTS
+================================================== -->
+
+<section class="student-card">
+
+    <div class="student-card-header">
+
+        <h2>
+            <i class="bi bi-trophy"></i>
+            Sports
+        </h2>
+
+        <span>
+            {{ sports_items|length }} record{% if sports_items|length != 1 %}s{% endif %}
+        </span>
+
+    </div>
+
+
+    <div class="student-card-body">
+
+        {% if sports_items %}
+
+            <div class="item-list">
+
+                {% for item in sports_items %}
+
+                    <div class="item-row">
+
+                        <div class="item-title">
+                            {{ item.item or item.sport }}
+                        </div>
+
+                        <div class="item-meta">
+                            Sport:
+                            {{ item.sport or "Not specified" }}
+
+                            {% if item.remarks %}
+                                <br>
+                                {{ item.remarks }}
+                            {% endif %}
+                        </div>
+
+                        {% if item.status %}
+                            <span class="item-status">
+                                {{ item.status }}
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-section">
+                <i class="bi bi-trophy"></i>
+                No sports records.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     AME STORES
+================================================== -->
+
+<section class="student-card">
+
+    <div class="student-card-header">
+
+        <h2>
+            <i class="bi bi-tools"></i>
+            AME Tools
+        </h2>
+
+        <span>
+            {{ ame_tools|length }} record{% if ame_tools|length != 1 %}s{% endif %}
+        </span>
+
+    </div>
+
+
+    <div class="student-card-body">
+
+        {% if ame_tools %}
+
+            <div class="item-list">
+
+                {% for tool in ame_tools %}
+
+                    <div class="item-row">
+
+                        <div class="item-title">
+                            {{ tool.name }}
+                        </div>
+
+                        <div class="item-meta">
+
+                            {% if tool.returned %}
+                                Returned:
+                                {{ tool.returned_at or "Yes" }}
+                            {% else %}
+                                Not returned
+                            {% endif %}
+
+                            {% if tool.remarks %}
+                                <br>
+                                {{ tool.remarks }}
+                            {% endif %}
+
+                        </div>
+
+                        <span class="item-status">
+                            {% if tool.returned %}
+                                Returned
+                            {% else %}
+                                Not Returned
+                            {% endif %}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-section">
+                <i class="bi bi-tools"></i>
+                No AME tool records.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     STORES
+================================================== -->
+
+<section class="student-card">
+
+    <div class="student-card-header">
+
+        <h2>
+            <i class="bi bi-box-seam"></i>
+            Stores Property
+        </h2>
+
+        <span>
+            {{ store_properties|length }} record{% if store_properties|length != 1 %}s{% endif %}
+        </span>
+
+    </div>
+
+
+    <div class="student-card-body">
+
+        {% if store_properties %}
+
+            <div class="item-list">
+
+                {% for item in store_properties %}
+
+                    <div class="item-row">
+
+                        <div class="item-title">
+                            {{ item.name }}
+                        </div>
+
+                        {% if item.remarks %}
+                            <div class="item-meta">
+                                {{ item.remarks }}
+                            </div>
+                        {% endif %}
+
+                        {% if item.status %}
+                            <span class="item-status">
+                                {{ item.status }}
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-section">
+                <i class="bi bi-box-seam"></i>
+                No stores records.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     ACCOUNT HISTORY
+================================================== -->
+
+{% if account_history %}
+
+<section class="student-card full-width">
+
+    <div class="student-card-header">
+
+        <h2>
+            <i class="bi bi-clock-history"></i>
+            Account History
+        </h2>
+
+        <span>
+            {{ account_history|length }} record{% if account_history|length != 1 %}s{% endif %}
+        </span>
+
+    </div>
+
+
+    <div class="student-card-body">
+
+        <div class="item-list">
+
+            {% for history in account_history %}
+
+                <div class="item-row">
+
+                    <div class="item-title">
+                        {{ (history.amount or 0)|money }}
+                    </div>
+
+                    <div class="item-meta">
+
+                        Status:
+                        {{ history.status or "Not recorded" }}
+
+                        {% if history.reason %}
+                            <br>
+                            Reason: {{ history.reason }}
+                        {% endif %}
+
+                        {% if history.remarks %}
+                            <br>
+                            Remarks: {{ history.remarks }}
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+{% endblock %}

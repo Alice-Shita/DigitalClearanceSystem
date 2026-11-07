@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Student Clearance</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+.clearance-wrapper {
+    max-width: 1500px;
+    margin: 25px auto;
+    padding: 0 16px 40px;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.header {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 18px;
+}
+
+.header h1 {
+    margin: 0;
+    color: #166534;
+    font-size: 28px;
+}
+
+.generated {
+    margin: 7px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* =========================================================
+   STUDENT INFORMATION
+   ========================================================= */
+
+.student-info {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.info-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px 16px;
+}
+
+.info-label {
+    display: block;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    display: block;
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   REPORT
+   ========================================================= */
+
+.report-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.report-heading {
+    padding: 19px 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.report-heading h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 19px;
+}
+
+.report-heading p {
+    margin: 5px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.clearance-table {
+    width: 100%;
+    min-width: 1150px;
+    border-collapse: collapse;
+}
+
+.clearance-table th {
+    background: #f1f5f9;
+    color: #334155;
+    border-bottom: 1px solid #cbd5e1;
+    padding: 13px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.clearance-table td {
+    padding: 13px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 12px;
+    line-height: 1.45;
+    vertical-align: top;
+}
+
+.clearance-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.clearance-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.department {
+    color: #0f172a !important;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.remarks {
+    max-width: 260px;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 70px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-cleared {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.empty {
+    text-align: center !important;
+    color: #64748b !important;
+    padding: 35px !important;
+}
+
+/* =========================================================
+   SUMMARY
+   ========================================================= */
+
+.summary {
+    margin-top: 18px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 18px 20px;
+}
+
+.summary-result {
+    color: #0f172a;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.summary p {
+    margin: 7px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.button-primary {
+    background: #166534;
+    color: #ffffff;
+}
+
+.button-secondary {
+    background: #ffffff;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer {
+    text-align: center;
+    margin-top: 28px;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.footer strong {
+    color: #64748b;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 850px) {
+
+    .student-info {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .clearance-wrapper {
+        margin-top: 15px;
+        padding: 0 10px 30px;
+    }
+
+    .header {
+        padding: 18px;
+    }
+
+    .header h1 {
+        font-size: 23px;
+    }
+
+    .student-info {
+        grid-template-columns: 1fr;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .button {
+        width: 100%;
+    }
+
+}
+
+/* =========================================================
+   PRINT
+   ========================================================= */
+
+@media print {
+
+    body {
+        background: #ffffff;
+    }
+
+    .clearance-wrapper {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .actions {
+        display: none !important;
+    }
+
+    .clearance-table {
+        min-width: 0;
+    }
+
+    .clearance-table th,
+    .clearance-table td {
+        padding: 7px 6px;
+        font-size: 8px;
+    }
+
+    .status {
+        background: transparent !important;
+        color: #111827 !important;
+        border: 1px solid #999;
+    }
+
+}
+
+</style>
+
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+    @media print {
+        .site-header,
+        .student-sidebar,
+        .student-menu-button,
+        .student-menu-overlay {
+            display: none !important;
+        }
+        body {
+            padding-top: 0 !important;
+        }
+        .student-portal-layout,
+        .student-portal-content {
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+    }
+    </style>
+
+</head>
+
+<body>
+
+{% include "components/student_header.html" %}
+<div class="student-portal-layout">
+    {% include "components/sidebar.html" %}
+    <main class="student-portal-content">
+
+
+<div class="clearance-wrapper">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="header">
+
+        <h1>Student Clearance Report</h1>
+
+        <p class="generated">
+            Generated: {{ generated_time }}
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         STUDENT INFORMATION
+         ===================================================== -->
+
+    <div class="student-info">
+
+        <div class="info-box">
+            <span class="info-label">Name</span>
+            <span class="info-value">
+                {{ student.name }}
+            </span>
+        </div>
+
+        <div class="info-box">
+            <span class="info-label">Student ID</span>
+            <span class="info-value">
+                {{ student.student_id }}
+            </span>
+        </div>
+
+        <div class="info-box">
+            <span class="info-label">Program</span>
+            <span class="info-value">
+                {{ student.program }}
+            </span>
+        </div>
+
+        <div class="info-box">
+            <span class="info-label">Year</span>
+            <span class="info-value">
+                {{ student.year }}
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CLEARANCE TABLE
+         ===================================================== -->
+
+    <div class="report-card">
+
+        <div class="report-heading">
+
+            <h2>Clearance Details</h2>
+
+            <p>
+                Current clearance status and assigned requirements.
+            </p>
+
+        </div>
+
+        <div class="table-scroll">
+
+            <table class="clearance-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Department</th>
+                        <th>Item / Requirement</th>
+                        <th>Issued / Assigned</th>
+                        <th>Assigned By</th>
+                        <th>Returned / Resolved</th>
+                        <th>Returned / Resolved By</th>
+                        <th>Remarks</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% if clearance_rows %}
+
+                        {% for row in clearance_rows %}
+
+                        <tr>
+
+                            <td class="department">
+                                {{ row.department }}
+                            </td>
+
+                            <td>
+                                {{ row.item }}
+                            </td>
+
+                            <td>
+                                {{ row.issued_at }}
+                            </td>
+
+                            <td>
+                                {{ row.issued_by }}
+                            </td>
+
+                            <td>
+                                {{ row.resolved_at }}
+                            </td>
+
+                            <td>
+                                {{ row.resolved_by }}
+                            </td>
+
+                            <td class="remarks">
+                                {{ row.remarks }}
+                            </td>
+
+                            <td>
+
+                                {% if row.status == "Cleared" %}
+
+                                    <span class="status status-cleared">
+                                        Cleared
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status status-pending">
+                                        Pending
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <tr>
+                            <td colspan="8" class="empty">
+                                No clearance records available.
+                            </td>
+                        </tr>
+
+                    {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY
+         ===================================================== -->
+
+    <div class="summary">
+
+        <div class="summary-result">
+            {{ overall }}
+        </div>
+
+        <p>
+            If any clearance status appears incorrect or requires
+            verification, please visit the respective department.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         ACTIONS
+         ===================================================== -->
+
+    <div class="actions">
+
+        
+
+        <a
+            href="{{ url_for('print_clearance') }}"
+            class="button button-primary"
+        >
+            Export Report
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+
+    <div class="footer">
+
+        © 2026 <strong>Zambia Air Services Training Institute</strong>
+        <br>
+        All Rights Reserved
+
+    </div>
+
+</div>
+
+
+    </main>
+</div>
+</body>
+
+</html>

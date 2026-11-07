@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Hostels | ZASTI</title>
+
+<style>
+
+:root {
+    --green-dark: #075e54;
+    --green: #0b806f;
+    --green-light: #e8f5f2;
+
+    --text: #17202a;
+    --muted: #69757e;
+    --border: #e5e9ec;
+    --background: #f4f7f8;
+    --white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+}
+
+
+/* ================= SIDEBAR ================= */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 250px;
+
+    background: white;
+    border-right: 1px solid var(--border);
+
+    padding: 24px 16px;
+
+    z-index: 1000;
+
+    overflow-y: auto;
+}
+
+.brand {
+    padding: 5px 12px 25px;
+}
+
+.brand-title {
+    margin: 0;
+
+    color: var(--green-dark);
+
+    font-size: 27px;
+    font-weight: 800;
+}
+
+.brand-subtitle {
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.nav-title {
+    padding: 0 12px 10px;
+
+    color: #8a949b;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 5px;
+
+    padding: 11px 12px;
+
+    border-radius: 9px;
+
+    color: #44515a;
+
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.nav a:hover {
+    background: #f1f6f5;
+}
+
+.nav a.active {
+    background: var(--green-light);
+    color: var(--green-dark);
+}
+
+.nav-icon {
+    width: 22px;
+    text-align: center;
+    font-size: 17px;
+}
+
+
+/* ================= MAIN ================= */
+
+.main {
+    margin-left: 250px;
+    min-height: 100vh;
+    padding: 30px;
+}
+
+
+/* ================= MOBILE HEADER ================= */
+
+.mobile-top-header {
+    display: none;
+}
+
+.mobile-menu {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--border);
+
+    border-radius: 9px;
+
+    background: white;
+
+    color: var(--green-dark);
+
+    cursor: pointer;
+
+    font-size: 19px;
+}
+
+.mobile-page-title {
+    min-width: 0;
+}
+
+.mobile-page-title h1 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 19px;
+    line-height: 1.2;
+}
+
+.mobile-page-title p {
+    margin: 4px 0 0;
+
+    color: var(--muted);
+
+    font-size: 10px;
+}
+
+.sidebar-close {
+    display: none;
+}
+
+.sidebar-overlay {
+    display: none;
+}
+
+
+/* ================= PAGE HEADER ================= */
+
+.page-heading {
+    margin-bottom: 25px;
+}
+
+.page-heading h1 {
+    margin: 0;
+    font-size: 27px;
+}
+
+.page-heading p {
+    margin: 6px 0 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+/* ================= HOSTEL GRID ================= */
+
+.hostel-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.hostel-card {
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 3px 12px rgba(15,23,42,.05);
+}
+
+.hostel-card h2 {
+    margin: 0 0 7px;
+
+    font-size: 18px;
+}
+
+.hostel-card p {
+    margin: 0 0 18px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+.hostel-info {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+    margin-bottom: 18px;
+}
+
+.info-box {
+    padding: 11px;
+
+    border-radius: 8px;
+
+    background: #f7f9fa;
+}
+
+.info-label {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 10px;
+
+    margin-bottom: 4px;
+}
+
+.info-value {
+    color: var(--text);
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.status {
+    display: inline-block;
+
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    background: var(--green-light);
+
+    color: var(--green-dark);
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+.status.inactive {
+    background: #f1f3f4;
+
+    color: #68727a;
+}
+
+.open-button {
+    display: block;
+
+    width: 100%;
+
+    padding: 10px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: var(--green-dark);
+
+    color: white;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.open-button:hover {
+    background: var(--green);
+}
+
+
+/* ================= STRUCTURE FORM ================= */
+
+.structure-form {
+    margin-top: 4px;
+}
+
+.structure-form label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--text);
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.structure-row {
+    display: flex;
+
+    gap: 8px;
+}
+
+.structure-row input {
+    min-width: 0;
+    flex: 1;
+
+    padding: 10px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 8px;
+
+    background: white;
+
+    color: var(--text);
+
+    font-size: 12px;
+
+    outline: none;
+}
+
+.structure-row input:focus {
+    border-color: var(--green);
+}
+
+.structure-row button {
+    flex-shrink: 0;
+
+    padding: 10px 13px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: var(--green-dark);
+
+    color: white;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.structure-row button:hover {
+    background: var(--green);
+}
+
+
+
+/* ================= STRUCTURE DROPDOWN ================= */
+
+.structure-dropdown {
+    margin-top: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--background);
+    overflow: hidden;
+}
+
+.structure-dropdown summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    cursor: pointer;
+    list-style: none;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.structure-dropdown summary::-webkit-details-marker {
+    display: none;
+}
+
+.structure-dropdown summary::after {
+    content: "▾";
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.structure-dropdown[open] summary::after {
+    content: "▴";
+}
+
+.structure-dropdown summary span {
+    margin-left: auto;
+    margin-right: 8px;
+    min-width: 22px;
+    padding: 3px 7px;
+    border-radius: 10px;
+    background: var(--green-light);
+    color: var(--green-dark);
+    text-align: center;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.structure-dropdown-list {
+    border-top: 1px solid var(--border);
+    background: white;
+}
+
+.structure-dropdown-item {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-size: 12px;
+}
+
+.structure-dropdown-item:last-child {
+    border-bottom: 0;
+}
+
+.structure-empty {
+    padding: 10px 12px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 1000px) {
+
+    .hostel-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+@media (max-width: 800px) {
+
+    .mobile-top-header {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        position: sticky;
+
+        top: 0;
+
+        z-index: 900;
+
+        background: var(--background);
+
+        padding: 14px 16px;
+
+        border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+
+        transition:
+            transform .25s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-close {
+        display: flex;
+
+        position: absolute;
+
+        top: 18px;
+        right: 15px;
+
+        width: 36px;
+        height: 36px;
+
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid var(--border);
+
+        border-radius: 8px;
+
+        background: white;
+
+        color: var(--text);
+
+        font-size: 22px;
+
+        cursor: pointer;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+
+        inset: 0;
+
+        background: rgba(15,23,42,.38);
+
+        z-index: 950;
+
+        opacity: 0;
+
+        pointer-events: none;
+
+        transition: opacity .25s ease;
+
+        display: block;
+    }
+
+    .sidebar-overlay.show {
+        opacity: 1;
+
+        pointer-events: auto;
+    }
+
+    .main {
+        margin-left: 0;
+
+        padding: 20px 16px;
+    }
+
+    .page-heading {
+        display: none;
+    }
+
+    .hostel-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+        .structure-item-with-action {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .structure-item-with-action form {
+            margin: 0;
+        }
+
+        .structure-delete-btn {
+            border: 1px solid #dc3545;
+            background: #fff;
+            color: #dc3545;
+            padding: 7px 11px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .structure-delete-btn:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .structure-delete-btn:focus {
+            outline: 2px solid rgba(220, 53, 69, 0.25);
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 600px) {
+            .structure-item-with-action {
+                align-items: flex-start;
+            }
+
+            .structure-delete-btn {
+                padding: 6px 9px;
+                font-size: 11px;
+            }
+        }
+
+</style>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+</head>
+
+<body>
+
+
+<header class="mobile-top-header">
+
+    <button
+        class="mobile-menu"
+        onclick="toggleSidebar()"
+        aria-label="Open menu"
+        type="button"
+    >
+        ☰
+    </button>
+
+    <div class="mobile-page-title">
+
+        <h1>Hostels</h1>
+
+        <p>
+            Accommodation management
+        </p>
+
+    </div>
+
+</header>
+
+
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+    onclick="toggleSidebar()"
+></div>
+
+
+<div class="layout">
+
+
+{% include "new_staff/hostel/_sidebar.html" %}
+
+
+<main class="main">
+
+
+    <div class="page-heading">
+
+        <h1>
+            Hostels
+        </h1>
+
+        <p>
+            Configure and manage ZASTI accommodation facilities.
+        </p>
+
+    </div>
+
+
+    <div class="hostel-grid">
+
+
+        {% for hostel in hostels %}
+
+        <article class="hostel-card">
+
+            <h2>
+                {{ hostel.name }}
+            </h2>
+
+            <p>
+                Hostel accommodation configuration
+            </p>
+
+
+            <div class="hostel-info">
+
+                <div class="info-box">
+
+                    <span class="info-label">
+                        Gender policy
+                    </span>
+
+                    <span class="info-value">
+
+                        {% if hostel.gender_policy == "male" %}
+                            Male
+                        {% elif hostel.gender_policy == "female" %}
+                            Female
+                        {% else %}
+                            Both
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <span class="info-label">
+                        Status
+                    </span>
+
+                    <span
+                        class="status
+                        {% if not hostel.active %}
+                            inactive
+                        {% endif %}"
+                    >
+
+                        {% if hostel.active %}
+                            Active
+                        {% else %}
+                            Inactive
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <details class="structure-dropdown">
+                <summary>Edit Hostel Gender Policy</summary>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('hostel_edit_policy', hostel_id=hostel.id) }}"
+                    class="structure-form"
+                >
+                    <label for="hostel_policy_{{ hostel.id }}">
+                        Allowed gender
+                    </label>
+
+                    <select
+                        id="hostel_policy_{{ hostel.id }}"
+                        name="gender_policy"
+                        required
+                    >
+                        <option value="male"
+                            {% if hostel.gender_policy == "male" %}selected{% endif %}>
+                            Male
+                        </option>
+
+                        <option value="female"
+                            {% if hostel.gender_policy == "female" %}selected{% endif %}>
+                            Female
+                        </option>
+
+                        <option value="both"
+                            {% if hostel.gender_policy == "both" %}selected{% endif %}>
+                            Both
+                        </option>
+                    </select>
+
+                    <button type="submit">
+                        Save Gender Policy
+                    </button>
+                </form>
+            </details>
+
+            {% set structures = structures_by_hostel.get(hostel.id, []) %}
+
+            {% if hostel.name|lower == "katilungu" %}
+
+            <form
+                method="POST"
+                action="{{ url_for('hostel_add_block', hostel_id=hostel.id) }}"
+                class="structure-form"
+            >
+
+                <label>
+                    Add Cube
+                </label>
+
+                <div class="structure-row">
+
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="e.g. Cube 22"
+                        required
+                    >
+
+                    <button type="submit">
+                        Add Cube
+                    </button>
+
+                </div>
+
+            </form>
+
+            <details class="structure-dropdown">
+
+                <summary>
+                    Cubes
+                    <span>
+                        {{ structures|length }}
+                    </span>
+                </summary>
+
+                <div class="structure-dropdown-list">
+
+                    {% if structures %}
+
+                        {% for structure in structures %}
+
+                        <div class="structure-dropdown-item structure-item-with-action">
+                            <span>{{ structure.name }}</span>
+
+                            {% if structure.active %}
+                            <form method="POST"
+                                  action="{{ url_for('hostel_toggle_block', block_id=structure.id) }}"
+                                  onsubmit="return confirm('Delete {{ structure.name }}?');">
+                                <button type="submit" class="structure-delete-btn">
+                                    Delete Cube
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="structure-empty">
+                            No cubes added yet.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </details>
+
+            {% elif hostel.name|lower == "china jianxi" %}
+
+            <form
+                method="POST"
+                action="{{ url_for('hostel_add_block', hostel_id=hostel.id) }}"
+                class="structure-form"
+            >
+
+                <label>
+                    Add Block
+                </label>
+
+                <div class="structure-row">
+
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="e.g. Block A"
+                        required
+                    >
+
+                    <button type="submit">
+                        Add Block
+                    </button>
+
+                </div>
+
+            </form>
+
+            <details class="structure-dropdown">
+
+                <summary>
+                    Blocks
+                    <span>
+                        {{ structures|length }}
+                    </span>
+                </summary>
+
+                <div class="structure-dropdown-list">
+
+                    {% if structures %}
+
+                        {% for structure in structures %}
+
+                                                                          <div class="structure-dropdown-item structure-item-with-action">
+                            <span>{{ structure.name }}</span>
+
+                            {% if structure.active %}
+                            <form method="POST"
+                                  action="{{ url_for('hostel_toggle_block', block_id=structure.id) }}"
+                                  onsubmit="return confirm('Delete {{ structure.name }}?');">
+                                <button type="submit" class="structure-delete-btn">
+                                    Delete Block
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="structure-empty">
+                            No blocks added yet.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </details>
+
+            {% endif %}
+
+
+        </article>
+
+        {% endfor %}
+
+
+    </div>
+
+
+</main>
+
+</div>
+
+
+<script>
+
+function toggleSidebar() {
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const overlay =
+        document.getElementById("sidebarOverlay");
+
+    if (!sidebar) {
+        return;
+    }
+
+    sidebar.classList.toggle("open");
+
+    if (overlay) {
+
+        overlay.classList.toggle(
+            "show",
+            sidebar.classList.contains("open")
+        );
+
+    }
+
+}
+
+
+document.querySelectorAll(".sidebar a").forEach(
+    function(link) {
+
+        link.addEventListener(
+            "click",
+            function() {
+
+                if (window.innerWidth <= 800) {
+
+                    const sidebar =
+                        document.getElementById("sidebar");
+
+                    const overlay =
+                        document.getElementById("sidebarOverlay");
+
+                    if (sidebar) {
+                        sidebar.classList.remove("open");
+                    }
+
+                    if (overlay) {
+                        overlay.classList.remove("show");
+                    }
+
+                }
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+</body>
+</html>

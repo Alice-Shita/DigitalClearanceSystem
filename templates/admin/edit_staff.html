@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Staff</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 8px 25px rgba(15,23,42,.06);
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-top: 16px;
+            margin-bottom: 6px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            font-size: 15px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button,
+        .cancel {
+            border: 0;
+            padding: 11px 18px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        button {
+            background: #166534;
+            color: white;
+        }
+
+        .cancel {
+            background: #e2e8f0;
+            color: #334155;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Edit Staff Member</h1>
+
+        <p class="subtitle">
+            Update this staff member's account and department details.
+        </p>
+
+        <form method="POST">
+
+            <label>Staff ID</label>
+            <input
+                type="text"
+                value="{{ staff_member.staff_id }}"
+                disabled
+            >
+
+            <label>Name</label>
+            <input
+                type="text"
+                name="name"
+                value="{{ staff_member.name }}"
+                required
+            >
+
+            <label>Username</label>
+            <input
+                type="text"
+                name="username"
+                value="{{ user.username if user else '' }}"
+                required
+            >
+
+            <label>Department</label>
+            <select name="department" required>
+
+                {% for department in departments %}
+                    <option
+                        value="{{ department }}"
+                        {% if staff_member.department == department %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ department }}
+                    </option>
+                {% endfor %}
+
+            </select>
+
+            <label>New Password</label>
+            <input
+                type="password"
+                name="password"
+                placeholder="Leave blank to keep current password"
+            >
+
+            <div class="actions">
+
+                <button type="submit">
+                    Save Changes
+                </button>
+
+                <a
+                    href="{{ url_for('admin_staff') }}"
+                    class="cancel"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

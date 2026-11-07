@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Department | Staff Portal</title>
+
+    <style>
+        :root {
+            --green: #2f7d5a;
+            --green-dark: #246448;
+            --green-soft: #eaf5ef;
+            --green-border: #d5e9dd;
+
+            --blue: #3d6f9e;
+            --blue-soft: #edf4fa;
+
+            --text: #26352e;
+            --muted: #718078;
+
+            --white: #ffffff;
+            --background: #f5f8f6;
+            --border: #e5ebe7;
+
+            --shadow: 0 8px 24px rgba(39, 70, 54, 0.07);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: var(--background);
+            color: var(--text);
+        }
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            top: 0;
+            width: 255px;
+            height: 100vh;
+
+            background: var(--white);
+            border-right: 1px solid var(--border);
+
+            padding: 24px 16px;
+
+            display: flex;
+            flex-direction: column;
+
+            z-index: 1000;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding: 6px 10px 25px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 11px;
+
+            background: var(--green-soft);
+            color: var(--green);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 15px;
+            color: var(--text);
+        }
+
+        .brand-text span {
+            display: block;
+            margin-top: 3px;
+
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .nav-title {
+            margin: 27px 10px 10px;
+
+            font-size: 10px;
+            font-weight: 700;
+
+            text-transform: uppercase;
+            letter-spacing: 1px;
+
+            color: #94a099;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding: 11px 12px;
+
+            border-radius: 9px;
+
+            color: #63716a;
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 500;
+
+            transition: 0.2s ease;
+        }
+
+        .nav a:hover {
+            background: var(--green-soft);
+            color: var(--green-dark);
+        }
+
+        .nav a.active {
+            background: var(--green-soft);
+            color: var(--green-dark);
+            font-weight: 650;
+        }
+
+        .nav-icon {
+            width: 21px;
+            text-align: center;
+
+            font-size: 15px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+
+            padding: 14px 10px 0;
+
+            border-top: 1px solid var(--border);
+        }
+
+        .staff-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .staff-avatar {
+            width: 36px;
+            height: 36px;
+
+            border-radius: 50%;
+
+            background: var(--blue-soft);
+            color: var(--blue);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .staff-info {
+            min-width: 0;
+        }
+
+        .staff-info strong {
+            display: block;
+
+            font-size: 12px;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .staff-info span {
+            display: block;
+
+            margin-top: 2px;
+
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main {
+            margin-left: 255px;
+            min-height: 100vh;
+
+            padding: 30px 34px 50px;
+        }
+
+        .mobile-menu {
+            display: none;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+
+            gap: 20px;
+
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            font-size: 25px;
+            font-weight: 700;
+
+            color: var(--text);
+        }
+
+        .page-header p {
+            margin-top: 7px;
+
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .department-badge {
+            display: inline-flex;
+            align-items: center;
+
+            padding: 8px 13px;
+
+            border-radius: 20px;
+
+            background: var(--blue-soft);
+            color: var(--blue);
+
+            font-size: 11px;
+            font-weight: 650;
+        }
+
+        /* =====================================================
+           OVERVIEW CARDS
+        ===================================================== */
+
+        .overview-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 17px;
+
+            margin-bottom: 28px;
+        }
+
+        .overview-card {
+            background: var(--white);
+
+            border: 1px solid var(--border);
+            border-radius: 13px;
+
+            padding: 20px;
+
+            box-shadow: var(--shadow);
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .overview-card::before {
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            width: 4px;
+            height: 100%;
+
+            background: var(--green);
+        }
+
+        .overview-card.blue::before {
+            background: var(--blue);
+        }
+
+        .card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 14px;
+        }
+
+        .card-label {
+            color: var(--muted);
+
+            font-size: 11px;
+            font-weight: 600;
+
+            text-transform: uppercase;
+            letter-spacing: 0.45px;
+        }
+
+        .card-icon {
+            width: 35px;
+            height: 35px;
+
+            border-radius: 9px;
+
+            background: var(--green-soft);
+            color: var(--green);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 14px;
+        }
+
+        .overview-card.blue .card-icon {
+            background: var(--blue-soft);
+            color: var(--blue);
+        }
+
+        .card-number {
+            font-size: 27px;
+            font-weight: 700;
+
+            color: var(--text);
+        }
+
+        .card-note {
+            margin-top: 5px;
+
+            color: #89948e;
+            font-size: 11px;
+        }
+
+        /* =====================================================
+           SECTION
+        ===================================================== */
+
+        .section {
+            background: var(--white);
+
+            border: 1px solid var(--border);
+            border-radius: 14px;
+
+            box-shadow: var(--shadow);
+
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 19px 21px;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title h2 {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .section-title p {
+            margin-top: 4px;
+
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        /* =====================================================
+           SPORTS GRID
+        ===================================================== */
+
+        .sports-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(5, minmax(0, 1fr));
+
+            gap: 14px;
+
+            padding: 20px;
+        }
+
+        .sport-card {
+            display: block;
+
+            padding: 18px 15px;
+
+            background: #fbfdfc;
+
+            border: 1px solid var(--border);
+            border-radius: 11px;
+
+            text-decoration: none;
+            color: var(--text);
+
+            transition:
+                transform 0.18s ease,
+                box-shadow 0.18s ease,
+                border-color 0.18s ease;
+        }
+
+        .sport-card:hover {
+            transform: translateY(-2px);
+
+            border-color: var(--green-border);
+
+            box-shadow:
+                0 8px 18px rgba(39, 70, 54, 0.08);
+        }
+
+        .sport-icon {
+            width: 39px;
+            height: 39px;
+
+            margin-bottom: 13px;
+
+            border-radius: 10px;
+
+            background: var(--green-soft);
+            color: var(--green);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .sport-card:nth-child(even) .sport-icon {
+            background: var(--blue-soft);
+            color: var(--blue);
+        }
+
+        .sport-name {
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        .sport-description {
+            margin-top: 5px;
+
+            font-size: 10px;
+            color: var(--muted);
+
+            line-height: 1.45;
+        }
+
+        .sport-arrow {
+            margin-top: 13px;
+
+            color: var(--green);
+
+            font-size: 11px;
+            font-weight: 650;
+        }
+
+        /* =====================================================
+           STUDENT SEARCH
+        ===================================================== */
+
+        .search-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 15px;
+
+            padding: 18px 20px;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+
+            width: min(420px, 100%);
+        }
+
+        .search-input {
+            width: 100%;
+
+            padding: 11px 13px;
+
+            border: 1px solid var(--border);
+            border-radius: 8px 0 0 8px;
+
+            background: #fbfdfc;
+
+            color: var(--text);
+
+            font-size: 12px;
+
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--green);
+        }
+
+        .search-button {
+            padding: 11px 16px;
+
+            border: none;
+            border-radius: 0 8px 8px 0;
+
+            background: var(--green);
+
+            color: white;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background: var(--green-dark);
+        }
+
+        /* =====================================================
+           STUDENT TABLE
+        ===================================================== */
+
+        .student-table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 12px 20px;
+
+            background: #fafcfb;
+
+            color: #7d8983;
+
+            font-size: 10px;
+            font-weight: 700;
+
+            text-transform: uppercase;
+            letter-spacing: 0.45px;
+
+            text-align: left;
+
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 14px 20px;
+
+            border-top: 1px solid #eef2ef;
+
+            color: #53615a;
+
+            font-size: 12px;
+        }
+
+        tr:hover td {
+            background: #fbfdfc;
+        }
+
+        .student-name {
+            color: var(--text);
+            font-weight: 650;
+        }
+
+        .student-id {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .item-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-width: 27px;
+            height: 27px;
+
+            padding: 0 8px;
+
+            border-radius: 8px;
+
+            background: var(--green-soft);
+            color: var(--green);
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            padding: 45px 20px;
+
+            text-align: center;
+
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1100px) {
+
+            .overview-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .sports-grid {
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        /* WELCOME CARD */
+
+        .welcome {
+            position: relative;
+            overflow: hidden;
+
+            margin: 8px 0 24px;
+            padding: 24px 26px;
+
+            background: linear-gradient(
+                135deg,
+                #ecfdf5,
+                #f0fdf4
+            );
+
+            border: 1px solid #bbf7d0;
+            border-radius: 16px;
+
+            box-shadow: 0 5px 16px rgba(22, 101, 52, 0.07);
+        }
+
+        .welcome::after {
+            content: "";
+            position: absolute;
+
+            width: 140px;
+            height: 140px;
+
+            right: -45px;
+            top: -55px;
+
+            border-radius: 50%;
+
+            background: rgba(34, 197, 94, 0.07);
+        }
+
+        .welcome h1 {
+            position: relative;
+            z-index: 1;
+
+            margin: 0;
+
+            color: #166534;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .welcome p {
+            position: relative;
+            z-index: 1;
+
+            margin: 7px 0 0;
+
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mobile-top-header {
+            display: none;
+        }
+
+        .mobile-page-title h1 {
+            margin: 0;
+            font-size: 20px;
+            color: var(--text);
+        }
+
+        .mobile-page-title p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .sidebar-close {
+            display: none;
+            position: absolute;
+            top: 18px;
+            right: 15px;
+            width: 34px;
+            height: 34px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--white);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .sidebar-close:hover {
+            background: var(--green-soft);
+            color: var(--green-dark);
+        }
+
+        @media (max-width: 800px) {
+            .sidebar-close {
+                display: flex;
+            }
+
+
+            .sidebar {
+                transform: translateX(-100%);
+
+                transition: transform 0.25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 85px 16px 40px;
+            }
+
+            .mobile-top-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+
+                z-index: 1050;
+
+                padding: 12px 16px;
+
+                background: rgba(248, 250, 252, 0.96);
+                border-bottom: 1px solid var(--border);
+
+                backdrop-filter: blur(8px);
+            }
+
+            .mobile-menu {
+                display: flex;
+
+                width: 39px;
+                height: 39px;
+
+                flex-shrink: 0;
+
+                margin: 0;
+
+                align-items: center;
+                justify-content: center;
+
+                border: 1px solid var(--border);
+                border-radius: 9px;
+
+                background: white;
+
+                color: var(--green);
+
+                font-size: 18px;
+
+                cursor: pointer;
+            }
+
+            .page-header {
+                flex-direction: column;
+            }
+
+            .overview-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .sports-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .search-row {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .search-form {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sports-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 22px;
+            }
+
+            .overview-card {
+                padding: 17px;
+            }
+        }
+    
+        /* =================================================
+           CLEAN STAFF ANNOUNCEMENTS
+        ================================================== */
+
+        .announcements-section {
+            margin-top: 28px;
+        }
+
+        .announcements-header {
+            align-items: center;
+        }
+
+        .announcement-count {
+            min-width: 30px;
+            height: 30px;
+            padding: 0 9px;
+            border-radius: 15px;
+            background: #eaf6ef;
+            color: #237a4b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid #d5ebdd;
+        }
+
+        .announcement-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .announcement-card {
+            background: #ffffff;
+            border: 1px solid #e7ece9;
+            border-radius: 12px;
+            padding: 18px 20px;
+            transition: border-color 0.2s ease,
+                        box-shadow 0.2s ease;
+        }
+
+        .announcement-card:hover {
+            border-color: #cfe2d7;
+            box-shadow: 0 4px 14px rgba(30, 70, 45, 0.06);
+        }
+
+        .announcement-content h3 {
+            margin: 0 0 7px;
+            color: #173b2a;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .announcement-content p {
+            margin: 0;
+            color: #65716b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .announcement-date {
+            display: block;
+            margin-top: 12px;
+            color: #8a958f;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+
+            .announcement-card {
+                padding: 16px;
+            }
+
+            .announcements-header {
+                align-items: flex-start;
+            }
+
+            .announcement-content h3 {
+                font-size: 14px;
+            }
+
+            .announcement-content p {
+                font-size: 13px;
+            }
+        }
+
+    
+        .sidebar {
+            height: 100vh;
+            height: 100dvh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #b8cbc3;
+            border-radius: 10px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+    
+        .sports-welcome {
+            margin-bottom: 28px;
+        }
+
+        .sports-welcome h1 {
+            margin: 0 0 6px;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .sports-welcome p {
+            margin: 0;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .sports-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 0 0 20px;
+            margin-bottom: 28px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .sports-header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .sports-header-icon {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: #166534;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .sports-header h1 {
+            margin: 0 0 4px;
+            font-size: 21px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .sports-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .sports-header-right {
+            color: #166534;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+
+        .sports-header-badge {
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: #f0fdf4;
+            color: #166534;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .sports-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 35px;
+            padding: 18px 4px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        @media (max-width: 700px) {
+            .sports-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .sports-footer {
+                flex-direction: column;
+                gap: 6px;
+                align-items: flex-start;
+            }
+        }
+
+    </style>
+
+<style id="SPORTS-LOGOUT-MATCH">
+.sidebar-bottom > a.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    min-height: 42px;
+    margin-top: 8px;
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.sidebar-bottom > a.nav-item:hover {
+    background: var(--green-soft);
+    color: var(--green-dark);
+}
+
+.sidebar-bottom > a.nav-item .nav-icon {
+    flex: 0 0 21px;
+    width: 21px;
+    text-align: center;
+    font-size: 15px;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar" id="sidebar">
+        <button class="sidebar-close"
+                onclick="toggleSidebar()"
+                aria-label="Close menu">
+            ×
+        </button>
+
+    <div class="brand">
+        <div class="brand-icon">S</div>
+
+        <div class="brand-text">
+            <strong>Staff Portal</strong>
+            <span>Sports Department</span>
+        </div>
+    </div>
+
+    <div class="nav-title">Main Menu</div>
+
+    <nav class="nav">
+
+            <a href="{{ url_for('new_staff_sports_dashboard') }}" class="active">
+                <span class="nav-icon">⌂</span>
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('new_staff_sports_students') }}">
+                <span class="nav-icon">+</span>
+                Assign
+            </a>
+
+            <a href="{{ url_for('new_staff_sports_return') }}">
+                <span class="nav-icon">↩</span>
+                Return
+            </a>
+
+            <a href="{{ url_for('new_staff_sports_football') }}">
+                <span class="nav-icon">⚽</span>
+                Football
+            </a>
+
+            <a href="{{ url_for('new_staff_sports_basketball') }}">
+                <span class="nav-icon">◉</span>
+                Basketball
+            </a>
+
+            <a href="{{ url_for('new_staff_sports_volleyball') }}">
+                <span class="nav-icon">◌</span>
+                Volleyball
+            </a>
+
+            <a href="{{ url_for('new_staff_sports_netball') }}">
+                <span class="nav-icon">◆</span>
+                Netball
+            </a>
+
+            <a href="{{ url_for('new_staff_sports_chess') }}">
+                <span class="nav-icon">♟</span>
+                Chess
+            </a>
+
+            <a href="{{ url_for('staff_change_password') }}">
+                <span class="nav-icon">⚿</span>
+                Change Password
+            </a>
+
+            <div class="nav-title">Records</div>
+
+            <a href="{{ url_for('new_staff_sports_records') }}">
+                <span class="nav-icon">▤</span>
+                Clearance History
+            </a>
+
+            <a href="{{ url_for('new_staff_sports_announcements') }}">
+                <span class="nav-icon">!</span>
+                Announcements
+            </a>
+
+        </nav>
+
+<div class="sidebar-bottom">
+
+        <div class="staff-mini">
+
+            <div class="staff-avatar">
+                {% set staff_display = staff_name or "Staff" %}
+                {{ staff_display[:1]|upper }}
+            </div>
+
+            <div class="staff-info">
+                <strong>{{ staff_display }}</strong>
+                <span>Sports Staff</span>
+            </div>
+
+        </div>
+
+        <a href="{{ url_for('logout') }}" class="nav-item">
+    <span class="nav-icon">↪</span>
+    <span>Logout</span>
+</a>
+
+    </div>
+
+</aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main">
+
+<header class="mobile-top-header">
+
+    <button
+        class="mobile-menu"
+        onclick="document.getElementById('sidebar').classList.toggle('open')"
+        aria-label="Open menu">
+        ☰
+    </button>
+
+    <div class="mobile-page-title">
+        <h1>Sports Dashboard</h1>
+        <p>Manage student sports clearance and assigned items.</p>
+    </div>
+
+</header>
+
+
+
+        
+
+
+<style>
+/* =========================================================
+   STAFF MINI ACADEMIC CALENDAR
+   ========================================================= */
+
+.staff-mini-calendar {
+    width: 220px;
+    flex-shrink: 0;
+    background: #ffffff;
+    border: 1px solid #e1e9e6;
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 15px rgba(18,59,53,.05);
+    box-sizing: border-box;
+    margin-left: auto;
+}
+
+.staff-calendar-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.staff-calendar-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #eaf7f1;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+.staff-calendar-weekday {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    color: #198754;
+    text-transform: uppercase;
+}
+
+.staff-calendar-date {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #173f38;
+}
+
+.staff-calendar-month {
+    margin-top: 2px;
+    font-size: 11px;
+    color: #71818a;
+}
+
+.staff-calendar-divider {
+    height: 1px;
+    background: #edf1f0;
+    margin: 10px 0;
+}
+
+.staff-calendar-academic {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
+    font-size: 10px;
+}
+
+.staff-calendar-academic span {
+    color: #829099;
+}
+
+.staff-calendar-academic strong {
+    color: #173f38;
+    font-weight: 700;
+}
+
+.staff-calendar-time {
+    margin-top: 9px;
+    font-size: 14px;
+    font-weight: 750;
+    letter-spacing: .4px;
+    color: #198754;
+}
+
+@media (max-width: 700px) {
+    .staff-mini-calendar {
+        width: 100%;
+        max-width: 240px;
+        margin-left: 0;
+    }
+}
+</style>
+
+
+
+<!-- STAFF MINI ACADEMIC CALENDAR -->
+<div class="staff-mini-calendar" aria-label="Current date and academic term">
+
+    <div class="staff-calendar-top">
+
+        <div class="staff-calendar-icon">
+            <span>▣</span>
+        </div>
+
+        <div>
+            <div class="staff-calendar-weekday" id="staffDashboardWeekday">---</div>
+
+            <div class="staff-calendar-date" id="staffDashboardDay">--</div>
+
+            <div class="staff-calendar-month" id="staffDashboardMonth">---</div>
+        </div>
+
+    </div>
+
+    <div class="staff-calendar-divider"></div>
+
+    <div class="staff-calendar-academic">
+
+        <span>Academic Year</span>
+        <strong>{{ settings.get('academic_year', '—') }}</strong>
+
+        <span>Academic Term</span>
+        <strong>{{ settings.get('academic_term', '—') }}</strong>
+
+        <span>Academic Week</span>
+        <strong id="staffDashboardAcademicWeek">—</strong>
+
+    </div>
+
+    <div class="staff-calendar-time" id="staffDashboardClock">
+        --:--:--
+    </div>
+
+</div>
+
+
+        <div class="welcome">
+            <h1>
+                Welcome, {{ staff_name }}
+            </h1>
+
+            <p>
+                Here's an overview of the Sports Department today.
+            </p>
+        </div>
+
+<!-- =================================================
+             OVERVIEW
+        ================================================== -->
+
+        {% set total_students = students|length %}
+        {% set students_with_items = students|selectattr('total_items', 'gt', 0)|list|length %}
+        {% set total_items = students|sum(attribute='total_items') %}
+
+        {% set returned_items = namespace(count=0) %}
+
+        {% for row in students %}
+            {% for discipline in disciplines %}
+                {% for item in row.sports.get(discipline, []) %}
+                    {% if (item.status or '')|lower == 'returned' %}
+                        {% set returned_items.count = returned_items.count + 1 %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+
+
+        <section class="overview-grid">
+
+            <div class="overview-card">
+
+                <div class="card-top">
+                    <span class="card-label">
+                        Total Students
+                    </span>
+
+                    <div class="card-icon">
+                        👥
+                    </div>
+                </div>
+
+                <div class="card-number">
+                    {{ total_students }}
+                </div>
+
+                <div class="card-note">
+                    Students in the system
+                </div>
+
+            </div>
+
+
+            <div class="overview-card blue">
+
+                <div class="card-top">
+                    <span class="card-label">
+                        Students With Items
+                    </span>
+
+                    <div class="card-icon">
+                        ●
+                    </div>
+                </div>
+
+                <div class="card-number">
+                    {{ students_with_items }}
+                </div>
+
+                <div class="card-note">
+                    Currently holding sports items
+                </div>
+
+            </div>
+
+
+            <div class="overview-card">
+
+                <div class="card-top">
+                    <span class="card-label">
+                        Items Issued
+                    </span>
+
+                    <div class="card-icon">
+                        +
+                    </div>
+                </div>
+
+                <div class="card-number">
+                    {{ total_items }}
+                </div>
+
+                <div class="card-note">
+                    Total recorded sports items
+                </div>
+
+            </div>
+
+
+            <div class="overview-card blue">
+
+                <div class="card-top">
+                    <span class="card-label">
+                        Items Returned
+                    </span>
+
+                    <div class="card-icon">
+                        ✓
+                    </div>
+                </div>
+
+                <div class="card-number">
+                    {{ returned_items.count }}
+                </div>
+
+                <div class="card-note">
+                    Items marked as returned
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SPORTS DISCIPLINES
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <div class="section-title">
+                    <h2>Sports</h2>
+
+                    <p>
+                        Select a sport to manage its records.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="sports-grid">
+
+                <a href="#" class="sport-card">
+
+                    <div class="sport-icon">
+                        ⚽
+                    </div>
+
+                    <div class="sport-name">
+                        Football
+                    </div>
+
+                    <div class="sport-description">
+                        Manage football equipment and records.
+                    </div>
+
+                </a>
+
+
+                <a href="#" class="sport-card">
+
+                    <div class="sport-icon">
+                        ◉
+                    </div>
+
+                    <div class="sport-name">
+                        Basketball
+                    </div>
+
+                    <div class="sport-description">
+                        Manage basketball equipment and records.
+                    </div>
+
+                </a>
+
+
+                <a href="#" class="sport-card">
+
+                    <div class="sport-icon">
+                        ◌
+                    </div>
+
+                    <div class="sport-name">
+                        Volleyball
+                    </div>
+
+                    <div class="sport-description">
+                        Manage volleyball equipment and records.
+                    </div>
+
+                </a>
+
+
+                <a href="#" class="sport-card">
+
+                    <div class="sport-icon">
+                        ◆
+                    </div>
+
+                    <div class="sport-name">
+                        Netball
+                    </div>
+
+                    <div class="sport-description">
+                        Manage netball equipment and records.
+                    </div>
+
+                </a>
+
+
+                <a href="#" class="sport-card">
+
+                    <div class="sport-icon">
+                        ♟
+                    </div>
+
+                    <div class="sport-name">
+                        Chess
+                    </div>
+
+                    <div class="sport-description">
+                        Manage chess equipment and records.
+                    </div>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             STAFF ANNOUNCEMENTS
+        ================================================== -->
+
+        <section class="section announcements-section">
+
+            <div class="section-header announcements-header">
+
+                <div class="section-title">
+                    <h2>Staff Announcements</h2>
+
+                    <p>
+                        Latest announcements relevant to the Sports Department.
+                    </p>
+                </div>
+
+                {% if announcement_count %}
+                    <div class="announcement-count">
+                        {{ announcement_count }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            <div class="announcement-list">
+
+                {% if announcements %}
+
+                    {% for announcement in announcements %}
+
+                        <article class="announcement-card">
+
+                            <div class="announcement-content">
+
+                                <h3>
+                                    {{ announcement.title }}
+                                </h3>
+
+                                <p>
+                                    {{ announcement.message }}
+                                </p>
+
+                                {% if announcement.created_at %}
+                                    <span class="announcement-date">
+                                        {{ announcement.created_at.strftime('%d %b %Y, %H:%M') }}
+                                    </span>
+                                {% endif %}
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-state">
+                        No staff announcements at the moment.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+    
+        <footer class="sports-footer">
+            <span>Sports Department</span>
+            <span>Student Clearance System</span>
+        </footer>
+
+    </main>
+
+
+    <script>
+        document.addEventListener("click", function(event) {
+
+            const sidebar = document.getElementById("sidebar");
+            const menu = document.querySelector(".mobile-menu");
+
+            if (
+                window.innerWidth <= 800 &&
+                sidebar.classList.contains("open") &&
+                !sidebar.contains(event.target) &&
+                !menu.contains(event.target)
+            ) {
+                sidebar.classList.remove("open");
+            }
+
+        });
+    </script>
+
+
+<script>
+(function () {
+
+    function updateStaffDashboardCalendar() {
+
+        const now = new Date();
+
+        const formatter = new Intl.DateTimeFormat("en-GB", {
+            timeZone: "Africa/Lusaka",
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        });
+
+        const parts = formatter.formatToParts(now);
+        const values = {};
+
+        parts.forEach(function (part) {
+            if (part.type !== "literal") {
+                values[part.type] = part.value;
+            }
+        });
+
+        const weekday =
+            document.getElementById("staffDashboardWeekday");
+
+        const day =
+            document.getElementById("staffDashboardDay");
+
+        const month =
+            document.getElementById("staffDashboardMonth");
+
+        const clock =
+            document.getElementById("staffDashboardClock");
+
+        if (weekday) {
+            weekday.textContent = values.weekday || "---";
+        }
+
+        if (day) {
+            day.textContent = values.day || "--";
+        }
+
+        if (month) {
+            month.textContent =
+                (values.month || "---") + " " +
+                (values.year || "");
+        }
+
+        if (clock) {
+            clock.textContent =
+                (values.hour || "--") + ":" +
+                (values.minute || "--") + ":" +
+                (values.second || "--");
+        }
+
+        updateStaffAcademicWeek();
+    }
+
+
+    function updateStaffAcademicWeek() {
+
+        const academicWeek =
+            document.getElementById(
+                "staffDashboardAcademicWeek"
+            );
+
+        if (!academicWeek) {
+            return;
+        }
+
+        const startDateString =
+            "{{ settings.get('term_start_date', '') }}";
+
+        const endDateString =
+            "{{ settings.get('term_end_date', '') }}";
+
+        if (!startDateString) {
+            academicWeek.textContent = "Not set";
+            return;
+        }
+
+        const now = new Date();
+
+        const startDate =
+            new Date(startDateString + "T00:00:00");
+
+        const endDate =
+            endDateString
+                ? new Date(endDateString + "T23:59:59")
+                : null;
+
+        if (isNaN(startDate.getTime())) {
+            academicWeek.textContent = "Not set";
+            return;
+        }
+
+        if (now < startDate) {
+            academicWeek.textContent = "Not started";
+            return;
+        }
+
+        if (endDate && now > endDate) {
+            academicWeek.textContent = "Term ended";
+            return;
+        }
+
+        const difference =
+            now.getTime() - startDate.getTime();
+
+        const daysElapsed =
+            Math.floor(
+                difference /
+                (1000 * 60 * 60 * 24)
+            );
+
+        const week =
+            Math.floor(daysElapsed / 7) + 1;
+
+        academicWeek.textContent =
+            "Week " + week;
+    }
+
+
+    updateStaffDashboardCalendar();
+
+    setInterval(
+        updateStaffDashboardCalendar,
+        1000
+    );
+
+})();
+</script>
+
+
+</body>
+</html>
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    if (sidebar) {
+        sidebar.classList.toggle("open");
+    }
+}
+</script>

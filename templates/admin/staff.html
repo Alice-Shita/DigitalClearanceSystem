@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+
+{% block title %}
+Staff Management | ZASTI Clearance System
+{% endblock %}
+
+{% block content %}
+
+<div class="staff-management-page">
+
+<style>
+
+.staff-management-page {
+    margin-left: 270px;
+    min-height: 100vh;
+    background: #f5f8f7;
+    box-sizing: border-box;
+    width: calc(100% - 270px);
+    overflow-x: hidden;
+}
+
+.staff-management-main {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+/* -----------------------------------------------
+   STAFF SUMMARY CARDS
+------------------------------------------------ */
+
+.staff-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+/* -----------------------------------------------
+   REGISTER FORM
+------------------------------------------------ */
+
+.staff-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.staff-form-grid input,
+.staff-form-grid select {
+    box-sizing: border-box;
+}
+
+/* -----------------------------------------------
+   TABLE
+------------------------------------------------ */
+
+.staff-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.staff-table {
+    width: 100%;
+    min-width: 750px;
+    border-collapse: collapse;
+}
+
+/* -----------------------------------------------
+   TABLET
+------------------------------------------------ */
+
+@media (max-width: 900px) {
+
+    .staff-management-page {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .staff-management-main {
+        padding: 24px 18px 40px;
+    }
+
+    .staff-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* -----------------------------------------------
+   SMALL PHONES
+------------------------------------------------ */
+
+@media (max-width: 600px) {
+
+    .staff-management-main {
+        padding: 20px 14px 35px;
+    }
+
+    .staff-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-management-page h1 {
+        font-size: 24px !important;
+    }
+
+}
+
+</style>
+
+    {% include "components/admin_sidebar.html" %}
+
+    <main class="staff-management-main">
+
+        <div style="margin-bottom:25px;">
+            <p style="margin:0 0 5px;color:#64748b;font-size:13px;">
+                ADMINISTRATION
+            </p>
+
+            <h1 style="margin:0;color:#12372f;font-size:28px;">
+                Staff Management
+            </h1>
+
+            <p style="color:#64748b;margin-top:7px;">
+                Manage authorized clearance staff and their departmental access.
+            </p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div style="
+                        padding:13px 16px;
+                        margin-bottom:15px;
+                        border-radius:10px;
+                        background:{% if category == 'success' %}#ecfdf5{% else %}#fef2f2{% endif %};
+                        color:{% if category == 'success' %}#166534{% else %}#991b1b{% endif %};
+                        border:1px solid {% if category == 'success' %}#bbf7d0{% else %}#fecaca{% endif %};
+                    ">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="staff-summary-grid">
+
+            <div style="background:white;border:1px solid #e2e8f0;border-radius:14px;padding:20px;">
+                <div style="color:#64748b;font-size:13px;">TOTAL STAFF</div>
+                <strong style="display:block;font-size:28px;color:#12372f;margin-top:5px;">
+                    {{ total_staff }}
+                </strong>
+            </div>
+
+            <div style="background:white;border:1px solid #bbf7d0;border-radius:14px;padding:20px;">
+                <div style="color:#64748b;font-size:13px;">ACTIVE STAFF</div>
+                <strong style="display:block;font-size:28px;color:#15803d;margin-top:5px;">
+                    {{ active_staff }}
+                </strong>
+            </div>
+
+            <div style="background:white;border:1px solid #fecaca;border-radius:14px;padding:20px;">
+                <div style="color:#64748b;font-size:13px;">INACTIVE STAFF</div>
+                <strong style="display:block;font-size:28px;color:#dc2626;margin-top:5px;">
+                    {{ inactive_staff }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div style="
+            background:white;
+            border:1px solid #e2e8f0;
+            border-radius:16px;
+            padding:22px;
+            margin-bottom:25px;
+        ">
+
+            <h2 style="margin-top:0;color:#12372f;font-size:19px;">
+                <i class="bi bi-person-plus-fill"></i>
+                Register Staff Member
+            </h2>
+
+            <form method="POST" action="{{ url_for('admin_staff') }}">
+
+                <div class="staff-form-grid">
+
+                    <div>
+                        <label>Full Name</label>
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="e.g. Mr Banana"
+                            required
+                            style="width:100%;padding:12px;margin-top:6px;border:1px solid #cbd5e1;border-radius:9px;"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Staff ID</label>
+                        <input
+                            type="text"
+                            name="staff_id"
+                            placeholder="Leave blank for automatic ID"
+                            style="width:100%;padding:12px;margin-top:6px;border:1px solid #cbd5e1;border-radius:9px;"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Username</label>
+                        <input
+                            type="text"
+                            name="username"
+                            placeholder="Login username"
+                            required
+                            style="width:100%;padding:12px;margin-top:6px;border:1px solid #cbd5e1;border-radius:9px;"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Temporary Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Initial password"
+                            required
+                            style="width:100%;padding:12px;margin-top:6px;border:1px solid #cbd5e1;border-radius:9px;"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Department</label>
+                        <select
+                            name="department"
+                            required
+                            style="width:100%;padding:12px;margin-top:6px;border:1px solid #cbd5e1;border-radius:9px;"
+                        >
+                            <option value="">Select department</option>
+
+                            {% for department in departments %}
+                                <option value="{{ department }}">
+                                    {{ department }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <div style="display:flex;align-items:end;">
+                        <button
+                            type="submit"
+                            style="
+                                width:100%;
+                                padding:13px;
+                                border:0;
+                                border-radius:9px;
+                                background:#15803d;
+                                color:white;
+                                font-weight:700;
+                                cursor:pointer;
+                            "
+                        >
+                            <i class="bi bi-person-check-fill"></i>
+                            Register Staff
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <div style="
+            background:white;
+            border:1px solid #e2e8f0;
+            border-radius:16px;
+            overflow:hidden;
+        ">
+
+            <div style="padding:20px;border-bottom:1px solid #e2e8f0;">
+                <h2 style="margin:0;color:#12372f;font-size:19px;">
+                    Registered Staff
+                </h2>
+            </div>
+
+            <div class="staff-table-wrapper">
+
+                <table class="staff-table">
+
+                    <thead>
+                        <tr style="background:#f8fafc;">
+                            <th style="padding:14px;text-align:left;">Staff ID</th>
+                            <th style="padding:14px;text-align:left;">Name</th>
+                            <th style="padding:14px;text-align:left;">Department</th>
+                            <th style="padding:14px;text-align:left;">Username</th>
+                            <th style="padding:14px;text-align:left;">Status</th>
+                            <th style="padding:14px;text-align:left;">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for member in staff_members %}
+
+                        <tr style="border-top:1px solid #e2e8f0;">
+
+                            <td style="padding:14px;font-weight:700;">
+                                {{ member.staff_id }}
+                            </td>
+
+                            <td style="padding:14px;">
+                                <a
+                                    href="{{ url_for('admin_edit_staff', staff_id=member.staff_id) }}"
+                                    style="color:#166534;text-decoration:none;font-weight:650;"
+                                >
+                                    {{ member.name }}
+                                </a>
+                            </td>
+
+                            <td style="padding:14px;">
+                                {{ member.department }}
+                            </td>
+
+                            <td style="padding:14px;">
+                                {{ member.user.username if member.user else "—" }}
+                            </td>
+
+                            <td style="padding:14px;">
+
+                                {% if member.active %}
+
+                                    <span style="
+                                        background:#dcfce7;
+                                        color:#166534;
+                                        padding:5px 9px;
+                                        border-radius:20px;
+                                        font-size:12px;
+                                        font-weight:700;
+                                    ">
+                                        Active
+                                    </span>
+
+                                {% else %}
+
+                                    <span style="
+                                        background:#fee2e2;
+                                        color:#991b1b;
+                                        padding:5px 9px;
+                                        border-radius:20px;
+                                        font-size:12px;
+                                        font-weight:700;
+                                    ">
+                                        Inactive
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td style="padding:14px;">
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('admin_toggle_staff', staff_id=member.staff_id) }}"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        style="
+                                            border:0;
+                                            padding:8px 11px;
+                                            border-radius:8px;
+                                            cursor:pointer;
+                                            background:{% if member.active %}#fee2e2{% else %}#dcfce7{% endif %};
+                                            color:{% if member.active %}#991b1b{% else %}#166534{% endif %};
+                                        "
+                                    >
+                                        {% if member.active %}
+                                            Deactivate
+                                        {% else %}
+                                            Activate
+                                        {% endif %}
+                                    </button>
+
+                                </form>
+
+{% if not member.active %}
+<form method="POST"
+      action="{{ url_for('admin_delete_staff', staff_id=member.staff_id) }}"
+      onsubmit="return confirm('Permanently delete this inactive staff member? This cannot be undone.');"
+      style="margin-top:6px;">
+    <button type="submit"
+            style="border:0;padding:8px 11px;border-radius:8px;
+                   cursor:pointer;background:#fee2e2;color:#991b1b;
+                   font-weight:700;">
+        Delete
+    </button>
+</form>
+{% endif %}
+
+
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+                            <td colspan="6" style="padding:35px;text-align:center;color:#64748b;">
+                                No staff members registered yet.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}

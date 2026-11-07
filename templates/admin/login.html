@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Login | ZASTI Clearance System
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-header">
+
+            <div class="auth-logo">
+                <i class="bi bi-shield-lock-fill"></i>
+            </div>
+
+            <h1>Admin Portal</h1>
+
+            <p>
+                ZASTI Digital Student Clearance System
+            </p>
+
+        </div>
+
+
+        <form method="POST">
+
+            <div class="form-group">
+
+                <label for="username">
+                    Administrator Username
+                </label>
+
+                <div class="input-wrapper">
+
+                    <i class="bi bi-person-badge"></i>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter administrator username"
+                        required
+                        autocomplete="username"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="input-wrapper">
+
+                    <i class="bi bi-lock"></i>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                        autocomplete="current-password"
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="togglePassword()"
+                        aria-label="Show password"
+                    >
+
+                        <i
+                            id="password-icon"
+                            class="bi bi-eye"
+                        ></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="auth-button"
+            >
+
+                <i class="bi bi-shield-check"></i>
+
+                Administrator Sign In
+
+            </button>
+
+        </form>
+
+
+        <div class="auth-footer">
+
+            <p>
+                Administrator access
+            </p>
+
+            <span>
+                Authorized ZASTI administrators only.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+function togglePassword() {
+
+    const password =
+        document.getElementById("password");
+
+    const icon =
+        document.getElementById("password-icon");
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+        icon.className =
+            "bi bi-eye-slash";
+
+    } else {
+
+        password.type = "password";
+
+        icon.className =
+            "bi bi-eye";
+
+    }
+
+}
+
+</script>
+
+{% endblock %}

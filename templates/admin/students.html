@@ -1,0 +1,507 @@
+{% extends "base.html" %}
+
+{% block title %}
+Students | ZASTI Clearance System
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.admin-students-page {
+    min-height: calc(100vh - 68px);
+    background: #f5f8f7;
+    padding: 28px 24px 45px;
+    box-sizing: border-box;
+}
+
+.students-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.students-heading h1 {
+    margin: 0;
+    color: #173f38;
+    font-size: 27px;
+    font-weight: 750;
+}
+
+.students-heading p {
+    margin: 5px 0 0;
+    color: #71818a;
+    font-size: 13px;
+}
+
+.students-count {
+    background: white;
+    border: 1px solid #e0e8e6;
+    border-radius: 12px;
+    padding: 10px 15px;
+    color: #198754;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.students-toolbar {
+    background: white;
+    border: 1px solid #e3e9e7;
+    border-radius: 15px;
+    padding: 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 15px rgba(18,59,53,.04);
+}
+
+.students-search {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.students-search-input {
+    flex: none;
+    width: 130px;
+    min-width: 130px;
+    height: 43px;
+    border: 1px solid #dce6e3;
+    border-radius: 10px;
+    padding: 0 13px;
+    box-sizing: border-box;
+    outline: none;
+    font-size: 13px;
+}
+
+.students-search-input:focus {
+    border-color: #198754;
+}
+
+.students-filter {
+    height: 43px;
+    min-width: 155px;
+    border: 1px solid #dce6e3;
+    border-radius: 10px;
+    padding: 0 12px;
+    background: white;
+    color: #30443f;
+    outline: none;
+}
+
+.students-search-button {
+    height: 43px;
+    border: 0;
+    border-radius: 10px;
+    padding: 0 18px;
+    background: #198754;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.students-clear-button {
+    height: 43px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 15px;
+    border-radius: 10px;
+    background: #eef3f1;
+    color: #49605a;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.students-table-card {
+    background: white;
+    border: 1px solid #e3e9e7;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(18,59,53,.04);
+}
+
+.students-table-header {
+    padding: 17px 19px;
+    border-bottom: 1px solid #edf1f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.students-table-header h2 {
+    margin: 0;
+    font-size: 16px;
+    color: #173f38;
+}
+
+.students-table-header span {
+    color: #829099;
+    font-size: 11px;
+}
+
+.students-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.students-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+.students-table th {
+    background: #f8faf9;
+    color: #71818a;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 13px 15px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.students-table td {
+    padding: 14px 15px;
+    border-top: 1px solid #edf1f0;
+    color: #30443f;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.student-name {
+    font-weight: 700;
+    color: #173f38;
+}
+
+.student-id {
+    color: #198754;
+    font-weight: 700;
+}
+
+.funding-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: #edf8f3;
+    color: #198754;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.view-student {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    background: #edf8f3;
+    color: #198754;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.empty-students {
+    padding: 55px 20px;
+    text-align: center;
+    color: #8a969b;
+}
+
+.empty-students i {
+    display: block;
+    font-size: 34px;
+    margin-bottom: 10px;
+    color: #a8bbb5;
+}
+
+@media (max-width: 700px) {
+
+    .admin-students-page {
+        padding: 20px 14px 35px;
+    }
+
+    .students-header {
+        align-items: flex-start;
+    }
+
+    .students-heading h1 {
+        font-size: 23px;
+    }
+
+    .students-count {
+        font-size: 11px;
+        padding: 9px 11px;
+    }
+
+    .students-search {
+        flex-direction: column;
+    }
+
+    .students-search-input,
+    .students-filter,
+    .students-search-button,
+    .students-clear-button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+}
+
+</style>
+
+
+{% include "components/admin_sidebar.html" %}
+
+
+<main class="admin-main">
+
+    <div class="admin-students-page">
+
+        <div class="students-header">
+
+            <div class="students-heading">
+
+                <h1>Students</h1>
+
+                <p>
+                    View and manage students registered in the clearance system.
+                </p>
+
+            </div>
+
+            <a href="{{ url_for('admin_add_student') }}"
+   style="display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 15px;border-radius:9px;background:#198754;color:white;text-decoration:none;font-size:12px;font-weight:700;margin-right:10px;">
+    <i class="bi bi-person-plus"></i> Add Student
+</a>
+
+<div class="students-count">
+                {{ total_students }} Students
+            </div>
+
+        </div>
+
+
+        <div class="students-toolbar">
+
+            <form
+                method="GET"
+                action="{{ url_for('admin_students') }}"
+                class="students-search"
+            >
+
+                <input
+                    type="text"
+                    name="search"
+                    class="students-search-input"
+                    placeholder="Search by student ID, name or programme..."
+                    value="{{ search }}"
+                >
+
+                <select
+                    name="funding"
+                    class="students-filter"
+                >
+
+                    <option value="">
+                        All Funding Types
+                    </option>
+
+                    <option
+                        value="Self Sponsored"
+                        {% if funding == "Self Sponsored" %}selected{% endif %}
+                    >
+                        Self Sponsored
+                    </option>
+
+                    <option
+                        value="CDF"
+                        {% if funding == "CDF" %}selected{% endif %}
+                    >
+                        CDF
+                    </option>
+
+                    <option
+                        value="Bursary"
+                        {% if funding == "Bursary" %}selected{% endif %}
+                    >
+                        Bursary
+                    </option>
+
+                    <option
+                        value="Other"
+                        {% if funding == "Other" %}selected{% endif %}
+                    >
+                        Other
+                    </option>
+
+                </select>
+
+
+                <button
+                    type="submit"
+                    class="students-search-button"
+                >
+                    <i class="bi bi-search"></i>
+                    Search
+                </button>
+
+
+                {% if search or funding %}
+
+                    <a
+                        href="{{ url_for('admin_students') }}"
+                        class="students-clear-button"
+                    >
+                        Clear
+                    </a>
+
+                {% endif %}
+
+            </form>
+
+        </div>
+
+
+        <section class="students-table-card">
+
+            <div class="students-table-header">
+
+                <h2>Student Records</h2>
+
+                <span>
+                    {{ students|length }} result{% if students|length != 1 %}s{% endif %}
+                </span>
+
+            </div>
+
+
+            {% if students %}
+
+                <div class="students-table-wrapper">
+
+                    <table class="students-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Student ID</th>
+
+                                <th>Name</th>
+
+                                <th>Programme</th>
+
+                                <th>Year</th>
+
+                                <th>Term</th>
+
+                                <th>Funding</th>
+
+                                <th>Accommodation</th>
+
+                                <th>Hostel</th>
+
+                                <th>Room</th>
+
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for student in students %}
+
+                                <tr>
+
+                                    <td>
+                                        <span class="student-id">
+                                            {{ student.student_id }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="student-name">
+                                            {{ student.name }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        {{ student.program }}
+                                    </td>
+
+                                    <td>
+                                        {{ student.year or "—" }}
+                                    </td>
+
+                                    <td>
+                                        {{ student.term or "—" }}
+                                    </td>
+
+                                    <td>
+
+                                        <span class="funding-badge">
+                                            {{ student.funding or "Not specified" }}
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+                                        {{ student.accommodation or "—" }}
+                                    </td>
+
+                                    <td>
+                                        {{ student.hostel or "—" }}
+                                    </td>
+
+                                    <td>
+                                        {{ student.room or "—" }}
+                                    </td>
+
+                                    <td>
+
+                                        <a
+                                            href="{{ url_for('admin_student_details', student_id=student.student_id) }}"
+                                            class="view-student"
+                                        >
+                                            <i class="bi bi-eye"></i>
+                                            View
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-students">
+
+                    <i class="bi bi-people"></i>
+
+                    <div>
+                        No students found.
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+
+</main>
+
+{% endblock %}

@@ -1,0 +1,1116 @@
+{% extends "base.html" %}
+
+{% block title %}
+Clearance Management | ZASTI Clearance System
+{% endblock %}
+
+{% block content %}
+
+{% include "components/admin_sidebar.html" %}
+
+<div class="clearance-management-page">
+
+<style>
+
+.clearance-management-page {
+    margin-left: 270px !important;
+    width: calc(100% - 270px) !important;
+    min-height: 100vh;
+    background: #f5f8f7;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.clearance-management-main {
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto !important;
+    padding: 30px 35px 50px !important;
+    box-sizing: border-box;
+}
+
+/* HEADER */
+
+.clearance-header {
+    width: 100%;
+    margin: 0 0 25px 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.clearance-eyebrow {
+    margin: 0 0 5px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+.clearance-header h1 {
+    margin: 0;
+    color: #12372f;
+    font-size: 28px;
+    line-height: 1.25;
+}
+
+.clearance-header p {
+    margin: 7px 0 0;
+    color: #64748b;
+}
+
+/* SUMMARY */
+
+.clearance-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.clearance-summary-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 19px;
+    box-sizing: border-box;
+}
+
+.clearance-summary-label {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.clearance-summary-number {
+    display: block;
+    margin-top: 5px;
+    color: #12372f;
+    font-size: 28px;
+}
+
+.clearance-summary-card.complete {
+    border-color: #bbf7d0;
+}
+
+.clearance-summary-card.complete .clearance-summary-number {
+    color: #15803d;
+}
+
+.clearance-summary-card.pending {
+    border-color: #fed7aa;
+}
+
+.clearance-summary-card.pending .clearance-summary-number {
+    color: #c2410c;
+}
+
+/* SEARCH */
+
+.clearance-toolbar {
+    width: 100%;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    padding: 18px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.clearance-search {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.clearance-search input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.clearance-search input:focus {
+    border-color: #198754;
+}
+
+.clearance-search button {
+    padding: 12px 18px;
+    border: 0;
+    border-radius: 9px;
+    background: #15803d;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.clearance-clear-search {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 9px;
+    background: #f1f5f3;
+    color: #49605a;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+/* TABLE */
+
+.clearance-table-card {
+    width: 100%;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.clearance-table-header {
+    padding: 19px 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.clearance-table-header h2 {
+    margin: 0;
+    color: #12372f;
+    font-size: 18px;
+}
+
+.clearance-table-header p {
+    margin: 5px 0 0;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.clearance-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.clearance-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+.clearance-table th {
+    padding: 13px 15px;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 11px;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.clearance-table td {
+    padding: 14px 15px;
+    border-top: 1px solid #edf2f0;
+    vertical-align: middle;
+}
+
+.student-name {
+    color: #12372f;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.student-id {
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.student-program {
+    color: #475569;
+    font-size: 12px;
+}
+
+.progress-wrapper {
+    min-width: 135px;
+}
+
+.progress-text {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.progress-bar {
+    height: 7px;
+    background: #e8efec;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #198754;
+    border-radius: 20px;
+}
+
+.clearance-status {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.clearance-status.cleared {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.clearance-status.pending {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.clearance-view {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 11px;
+    border-radius: 8px;
+    background: #e8f6ef;
+    color: #166534;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.clearance-view:hover {
+    background: #d1fae5;
+}
+
+/* DEPARTMENT STATUS */
+
+.department-statuses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 7px;
+}
+
+.department-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f97316;
+}
+
+.department-dot.cleared {
+    background: #22c55e;
+}
+
+/* EMPTY */
+
+.clearance-empty {
+    padding: 45px 20px;
+    text-align: center;
+    color: #64748b;
+}
+
+.clearance-empty i {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 30px;
+    color: #94a3b8;
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+
+    .clearance-management-page {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .clearance-management-main {
+        padding: 24px 18px 40px !important;
+    }
+
+    .clearance-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .clearance-management-main {
+        padding: 20px 14px 35px !important;
+    }
+
+    .clearance-header h1 {
+        font-size: 24px;
+    }
+
+    .clearance-search {
+        flex-wrap: wrap;
+    }
+
+    .clearance-search input {
+        flex-basis: 100%;
+    }
+}
+
+</style>
+
+<style>
+/* =========================================================
+   FINAL CLEARANCE POSITION FIX
+   ========================================================= */
+
+.clearance-management-page {
+    position: relative !important;
+    left: 0 !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.clearance-management-main {
+    position: relative !important;
+    left: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 1300px !important;
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+    box-sizing: border-box !important;
+}
+
+/* Desktop: leave room for the fixed admin sidebar */
+@media (min-width: 901px) {
+
+    .clearance-management-page {
+        margin-left: 270px !important;
+        width: calc(100% - 270px) !important;
+    }
+
+    .clearance-management-main {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
+/* Phone/tablet: content starts at the actual screen edge */
+@media (max-width: 900px) {
+
+    .clearance-management-page {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .clearance-management-main {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .clearance-management-main {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+}
+</style>
+
+
+
+<main class="clearance-management-main">
+
+    <div class="clearance-header">
+
+        <p class="clearance-eyebrow">
+            CLEARANCE
+        </p>
+
+        <h1>
+            Clearance Management
+        </h1>
+
+        <p>
+            Monitor student clearance progress across all clearance departments.
+        </p>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="clearance-summary">
+
+        <div class="clearance-summary-card">
+
+            <div class="clearance-summary-label">
+                TOTAL STUDENTS
+            </div>
+
+            <strong class="clearance-summary-number">
+                {{ total_students }}
+            </strong>
+
+        </div>
+
+
+        <div class="clearance-summary-card complete">
+
+            <div class="clearance-summary-label">
+                FULLY CLEARED
+            </div>
+
+            <strong class="clearance-summary-number">
+                {{ fully_cleared_count }}
+            </strong>
+
+        </div>
+
+
+        <div class="clearance-summary-card pending">
+
+            <div class="clearance-summary-label">
+                PENDING
+            </div>
+
+            <strong class="clearance-summary-number">
+                {{ pending_count }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="clearance-toolbar">
+
+        <form
+            method="GET"
+            action="{{ url_for('admin_clearance_management') }}"
+            class="clearance-search"
+        >
+
+            <input
+                type="search"
+                name="search"
+                value="{{ search }}"
+                placeholder="Search by student ID, name or program..."
+            >
+
+            <button type="submit">
+                <i class="bi bi-search"></i>
+                Search
+            </button>
+
+            {% if search %}
+
+                <a
+                    href="{{ url_for('admin_clearance_management') }}"
+                    class="clearance-clear-search"
+                >
+                    Clear
+                </a>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
+
+    <!-- STUDENTS -->
+
+    <div class="clearance-table-card">
+
+        <div class="clearance-table-header">
+
+            <h2>
+                Student Clearance
+            </h2>
+
+            <p>
+                Clearance status is calculated from the student's actual records.
+            </p>
+
+        </div>
+
+
+        <div class="clearance-table-wrap">
+
+            <table class="clearance-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Student</th>
+
+                        <th>Program</th>
+
+                        <th>Progress</th>
+
+                        <th>Departments</th>
+
+                        <th>Status</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for item in student_clearances %}
+
+                    {% set percentage =
+                        ((item.cleared / item.total) * 100)
+                        if item.total else 0
+                    %}
+
+                    <tr>
+
+                        <td>
+
+                            <div class="student-name">
+                                {{ item.student.name }}
+                            </div>
+
+                            <div class="student-id">
+                                {{ item.student.student_id }}
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="student-program">
+                                {{ item.student.program }}
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="progress-wrapper">
+
+                                <div class="progress-text">
+
+                                    <span>
+                                        {{ item.cleared }}/{{ item.total }}
+                                    </span>
+
+                                    <span>
+                                        {{ "%.0f"|format(percentage) }}%
+                                    </span>
+
+                                </div>
+
+                                <div class="progress-bar">
+
+                                    <div
+                                        class="progress-fill"
+                                        style="width:{{ percentage }}%;"
+                                    ></div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="department-statuses">
+
+                                {% for name, status in item.statuses.items() %}
+
+                                    <span
+                                        class="department-dot {% if status == 'Cleared' %}cleared{% endif %}"
+                                        title="{{ name }}: {{ status }}"
+                                    ></span>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if item.fully_cleared %}
+
+                                <span class="clearance-status cleared">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Fully Cleared
+                                </span>
+
+                            {% else %}
+
+                                <span class="clearance-status pending">
+                                    <i class="bi bi-clock-fill"></i>
+                                    Pending
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            <a
+                                href="{{ url_for(
+                                    'admin_student_view',
+                                    student_id=item.student.student_id
+                                ) }}"
+                                class="clearance-view"
+                            >
+                                <i class="bi bi-eye-fill"></i>
+                                View
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="clearance-empty"
+                        >
+
+                            <i class="bi bi-person-x"></i>
+
+                            No students found.
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</main>
+
+</div>
+
+
+<style id="FORCE-MOBILE-CLEARANCE-HEADER-STACK">
+
+/* =========================================================
+   FORCE CLEARANCE HEADER TO STACK
+   This is intentionally placed LAST so it overrides
+   older/global clearance layout rules.
+   ========================================================= */
+
+.clearance-header {
+    display: block !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+
+    margin: 0 0 25px 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
+
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+}
+
+.clearance-header > * {
+    display: block !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+
+    min-width: 0 !important;
+
+    float: none !important;
+
+    position: static !important;
+
+    box-sizing: border-box !important;
+
+    grid-column: auto !important;
+    grid-row: auto !important;
+
+    flex: none !important;
+    order: initial !important;
+}
+
+.clearance-eyebrow {
+    margin: 0 0 8px 0 !important;
+
+    width: 100% !important;
+
+    color: #64748b !important;
+
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+
+    text-align: left !important;
+}
+
+.clearance-header h1 {
+    display: block !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #12372f !important;
+
+    font-size: 30px !important;
+    line-height: 1.2 !important;
+
+    text-align: left !important;
+
+    white-space: normal !important;
+
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+}
+
+.clearance-header p {
+    display: block !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+
+    margin: 9px 0 0 0 !important;
+    padding: 0 !important;
+
+    color: #64748b !important;
+
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+
+    text-align: left !important;
+
+    white-space: normal !important;
+
+    overflow-wrap: break-word !important;
+}
+
+
+/* =========================================================
+   PHONE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .clearance-header {
+        display: block !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin-bottom: 24px !important;
+    }
+
+    .clearance-eyebrow {
+        width: 100% !important;
+
+        margin-bottom: 7px !important;
+
+        font-size: 12px !important;
+    }
+
+    .clearance-header h1 {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        font-size: 29px !important;
+        line-height: 1.18 !important;
+    }
+
+    .clearance-header p {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin-top: 9px !important;
+
+        font-size: 15px !important;
+        line-height: 1.55 !important;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .clearance-header h1 {
+        font-size: 27px !important;
+    }
+
+    .clearance-header p {
+        font-size: 14px !important;
+    }
+}
+
+</style>
+
+{% endblock %}
+
+
+<style id="FINAL-CLEARANCE-LAYOUT-FIX">
+
+/* =========================================================
+   FINAL ADMIN CLEARANCE LAYOUT
+   ========================================================= */
+
+.clearance-management-page {
+    position: relative !important;
+    margin-left: 270px !important;
+    width: calc(100% - 270px) !important;
+    max-width: none !important;
+    min-height: 100vh !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+}
+
+.clearance-management-main {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 1300px !important;
+    margin: 0 auto !important;
+    padding: 30px 35px 50px !important;
+    box-sizing: border-box !important;
+}
+
+.clearance-header {
+    width: 100% !important;
+    margin: 0 0 25px 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.clearance-summary,
+.clearance-toolbar,
+.clearance-table-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+
+/* =========================================================
+   TABLET + PHONE
+   Hide the fixed sidebar and give the page the FULL SCREEN.
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .clearance-management-page {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .clearance-management-main {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 25px 22px 45px !important;
+    }
+
+    .admin-sidebar {
+        width: 250px !important;
+        transform: translateX(-100%) !important;
+    }
+
+    .admin-sidebar.open {
+        transform: translateX(0) !important;
+    }
+
+    .admin-mobile-menu {
+        display: flex !important;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .clearance-management-page {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .clearance-management-main {
+        width: 100% !important;
+        padding: 20px 14px 35px !important;
+    }
+
+    .clearance-header {
+        width: 100% !important;
+    }
+
+    .clearance-header h1 {
+        font-size: 24px !important;
+    }
+
+    .clearance-summary {
+        grid-template-columns: 1fr !important;
+    }
+
+    .clearance-search {
+        width: 100% !important;
+        flex-wrap: wrap !important;
+    }
+
+    .clearance-search input {
+        width: 100% !important;
+        flex-basis: 100% !important;
+    }
+
+}
+
+</style>
+
+
+<style id="ADMIN-HEADER-ALIGNMENT-FIX">
+
+/* =========================================================
+   ADMIN CLEARANCE HEADER ALIGNMENT
+   The admin sidebar is 270px wide and fixed to the left.
+   Make the global header use the same content area.
+   ========================================================= */
+
+@media (min-width: 901px) {
+
+    body:has(.admin-sidebar) .site-header {
+        margin-left: 270px !important;
+        width: calc(100% - 270px) !important;
+        box-sizing: border-box !important;
+    }
+
+    body:has(.admin-sidebar) .header-inner {
+        width: 100% !important;
+        max-width: 1300px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding-left: 35px !important;
+        padding-right: 35px !important;
+        box-sizing: border-box !important;
+    }
+
+}
+
+@media (max-width: 900px) {
+
+    body:has(.admin-sidebar) .site-header {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    body:has(.admin-sidebar) .header-inner {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+}
+
+</style>
+
+<style>
+/* =========================================================
+   FINAL MOBILE CLEARANCE HEADER FIX
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .clearance-header {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 30px 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .clearance-header .clearance-eyebrow {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 0 10px 0 !important;
+        padding: 0 !important;
+    }
+
+    .clearance-header h1 {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 12px 0 !important;
+        padding: 0 !important;
+        font-size: 28px !important;
+        line-height: 1.2 !important;
+        text-align: left !important;
+        white-space: normal !important;
+        overflow-wrap: break-word !important;
+        box-sizing: border-box !important;
+    }
+
+    .clearance-header p {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 15px !important;
+        line-height: 1.6 !important;
+        text-align: left !important;
+        white-space: normal !important;
+        overflow-wrap: break-word !important;
+        box-sizing: border-box !important;
+    }
+}
+</style>

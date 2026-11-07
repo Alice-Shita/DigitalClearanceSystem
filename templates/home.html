@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}
+ZASTI Digital Clearance System
+{% endblock %}
+
+
+{% block content %}
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="eyebrow">
+            ZASTI STUDENT SERVICES
+        </span>
+
+        <h1>
+            Digital Student
+            <span>Clearance System</span>
+        </h1>
+
+        <p>
+            A secure and streamlined platform for
+            managing student clearance across
+            academic and administrative departments.
+        </p>
+
+        <div class="portal-options">
+
+            <a
+                href="{{ url_for('student_login') }}"
+                class="portal-card"
+            >
+
+                <div class="portal-icon">
+                    →
+                </div>
+
+                <div>
+
+                    <h2>
+                        Student Portal
+                    </h2>
+
+                    <p>
+                        Access your clearance status,
+                        records and student services.
+                    </p>
+
+                    <span class="portal-link">
+                        Student Login
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

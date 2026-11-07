@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Other Documents</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .page-wrapper {
+            max-width: 900px;
+            margin: 25px auto;
+            padding: 0 16px 40px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 3px 14px rgba(0,0,0,.07);
+            margin-bottom: 20px;
+        }
+
+        .page-header h1 {
+            margin: 0 0 8px;
+            color: #166534;
+            font-size: 27px;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .document-list {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .document-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.04);
+        }
+
+        .document-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .document-icon {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .document-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .document-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .document-title {
+            margin: 0 0 5px;
+            color: #1e293b;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .document-type {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #ecfdf5;
+            color: #15803d;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .document-description {
+            margin: 13px 0 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .document-meta {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 18px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .document-actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .view-button,
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 10px 15px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .view-button {
+            background: #166534;
+            color: white;
+        }
+
+        .view-button:hover {
+            background: #14532d;
+        }
+
+        .back-button {
+            background: white;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+
+        .back-button:hover {
+            background: #eff6ff;
+        }
+
+        .view-button svg,
+        .back-button svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .empty-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 35px 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,.04);
+        }
+
+        .empty-icon {
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-icon svg {
+            width: 25px;
+            height: 25px;
+        }
+
+        .empty-card h2 {
+            margin: 0 0 8px;
+            color: #166534;
+            font-size: 19px;
+        }
+
+        .empty-card p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .page-footer {
+            text-align: center;
+            padding: 25px 10px 5px;
+            margin-top: 25px;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+
+            .page-wrapper {
+                margin-top: 15px;
+                padding: 0 10px 30px;
+            }
+
+            .page-header {
+                padding: 19px;
+            }
+
+            .page-header h1 {
+                font-size: 23px;
+            }
+
+            .document-card {
+                padding: 15px;
+            }
+
+            .document-top {
+                gap: 11px;
+            }
+
+            .document-title {
+                font-size: 15px;
+            }
+
+        }
+
+    </style>
+
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+    @media print {
+        .site-header,
+        .student-sidebar,
+        .student-menu-button,
+        .student-menu-overlay {
+            display: none !important;
+        }
+        body {
+            padding-top: 0 !important;
+        }
+        .student-portal-layout,
+        .student-portal-content {
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+    }
+    </style>
+
+</head>
+
+<body>
+
+{% include "components/student_header.html" %}
+<div class="student-portal-layout">
+    {% include "components/sidebar.html" %}
+    <main class="student-portal-content">
+
+
+<div class="page-wrapper">
+
+    <div class="page-header">
+
+        <h1>Other Documents</h1>
+
+        <p>
+            View documents and records that are not part of
+            the clearance forms or accounts documents.
+        </p>
+
+    </div>
+
+
+    {% if other_documents %}
+
+        <div class="document-list">
+
+            {% for document in other_documents %}
+
+                <div class="document-card">
+
+                    <div class="document-top">
+
+                        <div class="document-icon">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="8" y1="13" x2="16" y2="13"/>
+                                <line x1="8" y1="17" x2="14" y2="17"/>
+                            </svg>
+
+                        </div>
+
+
+                        <div class="document-info">
+
+                            <h2 class="document-title">
+                                {{ document["title"] }}
+                            </h2>
+
+                            {% if document["document_type"] %}
+                                <span class="document-type">
+                                    {{ document["document_type"] }}
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    {% if document["description"] %}
+
+                        <div class="document-description">
+                            {{ document["description"] }}
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="document-meta">
+
+                        {% if document["uploaded_at"] %}
+                            <span>
+                                Uploaded:
+                                {{ document["uploaded_at"] }}
+                            </span>
+                        {% endif %}
+
+                        {% if document["source"] %}
+                            <span>
+                                Source:
+                                {{ document["source"] }}
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+
+                    {% if document["filename"] %}
+
+                        <div class="document-actions">
+
+                            <a
+                                href="{{ url_for(
+                                    'student_other_document',
+                                    document_id=document['id']
+                                ) }}"
+                                class="view-button"
+                            >
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+
+                                View Document
+
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-card">
+
+            <div class="empty-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+
+            </div>
+
+            <h2>No Other Documents</h2>
+
+            <p>
+                There are currently no other documents
+                available for your account.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    <div style="text-align:center; margin-top:22px;">
+
+        <a
+            href="{{ url_for('document_history') }}"
+            class="back-button"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M19 12H5"/>
+                <path d="M12 19l-7-7 7-7"/>
+            </svg>
+
+            Back to Document History
+
+        </a>
+
+    </div>
+
+
+    <div class="page-footer">
+
+        © 2026 Zambia Air Services Training Institute
+        <br>
+        All Rights Reserved
+
+    </div>
+
+</div>
+
+
+    </main>
+</div>
+</body>
+
+</html>

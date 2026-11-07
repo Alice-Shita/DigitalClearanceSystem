@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Issue Tool | AME Stores | ZASTI</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        :root {
+            --green: #15803d;
+            --green-dark: #166534;
+            --green-light: #ecfdf5;
+            --blue: #2563eb;
+            --text: #172033;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f8fafc;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 260px;
+            z-index: 1100;
+
+            display: flex;
+            flex-direction: column;
+
+            background: #fff;
+            border-right: 1px solid var(--border);
+            padding: 24px 15px 18px;
+
+            box-shadow: 4px 0 20px rgba(15,23,42,.035);
+
+            overflow-y: auto;
+        }
+
+        .brand {
+            padding: 4px 10px 25px;
+            border-bottom: 1px solid #eef0f2;
+            margin-bottom: 22px;
+        }
+
+        .brand-title {
+            margin: 0;
+            color: var(--green-dark);
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .brand-subtitle {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .nav-title {
+            padding: 0 10px 9px;
+            color: #9ca3af;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav a {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 45px;
+            padding: 10px 12px;
+
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 10px;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .nav a:hover {
+            background: #f3fdf7;
+            color: var(--green-dark);
+        }
+
+        .nav a.active {
+            background: #ecfdf5;
+            color: var(--green-dark);
+        }
+
+        .nav a.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 9px;
+            bottom: 9px;
+            width: 3px;
+            background: var(--green);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-icon {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 9px;
+            background: #f3f4f6;
+            color: #6b7280;
+
+            font-size: 15px;
+        }
+
+        .nav a:hover .nav-icon,
+        .nav a.active .nav-icon {
+            background: #dff7e9;
+            color: var(--green-dark);
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #eef0f2;
+        }
+
+        .staff-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px 13px;
+        }
+
+        .staff-avatar {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            border-radius: 50%;
+            background: #dcfce7;
+            color: var(--green-dark);
+
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .staff-info {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .staff-info strong {
+            color: var(--text);
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .staff-info span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            min-height: 42px;
+            padding: 9px 12px;
+
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 9px;
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .logout:hover {
+            background: #f9fafb;
+            color: var(--text);
+        }
+
+        .main {
+            width: 100%;
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .page-header p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .card {
+            max-width: 760px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(15,23,42,.035);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            background: #fff;
+            color: var(--text);
+            font: inherit;
+            font-size: 13px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(21,128,61,.08);
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            border: 0;
+            border-radius: 9px;
+            padding: 12px 18px;
+
+            background: var(--green);
+            color: white;
+
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: var(--green-dark);
+        }
+
+        .flash {
+            max-width: 760px;
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            border-radius: 9px;
+            background: var(--green-light);
+            color: var(--green-dark);
+            border: 1px solid #bbf7d0;
+            font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    
+        /* AME MOBILE NAVIGATION */
+
+        .mobile-top-header {
+            display: none;
+        }
+
+        .mobile-menu {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid var(--border);
+            border-radius: 9px;
+
+            background: white;
+            color: var(--green-dark);
+
+            cursor: pointer;
+            font-size: 19px;
+
+            box-shadow: 0 2px 6px rgba(15,23,42,.04);
+        }
+
+        .mobile-page-title {
+            min-width: 0;
+        }
+
+        .mobile-page-title h1 {
+            margin: 0;
+            color: var(--text);
+            font-size: 19px;
+            line-height: 1.2;
+            font-weight: 750;
+        }
+
+        .mobile-page-title p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.35;
+        }
+
+        .sidebar-close {
+            display: none;
+        }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        @media (max-width: 1000px) {
+
+            .mobile-top-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1040;
+
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                padding: 11px 15px;
+
+                background: rgba(248, 250, 252, .97);
+                border-bottom: 1px solid var(--border);
+
+                backdrop-filter: blur(9px);
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+                z-index: 1050;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-close {
+                display: flex;
+                position: absolute;
+                top: 12px;
+                right: 12px;
+
+                width: 34px;
+                height: 34px;
+
+                align-items: center;
+                justify-content: center;
+
+                border: 1px solid var(--border);
+                border-radius: 8px;
+
+                background: white;
+                color: var(--text);
+
+                cursor: pointer;
+                font-size: 22px;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 1045;
+
+                background: rgba(15, 23, 42, .38);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            .main {
+                margin-left: 0;
+                padding-top: 78px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header class="mobile-top-header">
+
+    <button
+        class="mobile-menu"
+        onclick="toggleSidebar()"
+        aria-label="Open menu"
+        type="button"
+    >
+        ☰
+    </button>
+
+    <div class="mobile-page-title">
+        <h1>Issue Tool</h1>
+        <p>Assign AME Stores tools to students.</p>
+    </div>
+
+</header>
+
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+    onclick="toggleSidebar()"
+></div>
+
+
+<aside class="sidebar" id="sidebar">
+
+    <button
+        class="sidebar-close"
+        onclick="toggleSidebar()"
+        aria-label="Close menu"
+        type="button"
+    >
+        ×
+    </button>
+
+
+
+    <div class="brand">
+        <h1 class="brand-title">ZASTI</h1>
+        <div class="brand-subtitle">
+            Digital Student Clearance System
+        </div>
+    </div>
+
+    <div class="nav-title">Main Menu</div>
+
+        <nav class="nav">
+
+        <a href="{{ url_for('new_staff_ame_dashboard') }}">
+            <span class="nav-icon">
+                <i class="bi bi-grid-1x2-fill"></i>
+            </span>
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('new_staff_ame_students') }}">
+            <span class="nav-icon">
+                <i class="bi bi-people-fill"></i>
+            </span>
+            Students
+        </a>
+
+        <a href="{{ url_for('new_staff_ame_issue_tool') }}" class="active">
+            <span class="nav-icon">
+                <i class="bi bi-tools"></i>
+            </span>
+            Issue Tool
+        </a>
+
+        <a href="{{ url_for('new_staff_ame_return_tool') }}">
+            <span class="nav-icon">
+                <i class="bi bi-arrow-return-left"></i>
+            </span>
+            Return Tool
+        </a>
+
+        <a href="{{ url_for('new_staff_ame_tool_records') }}">
+            <span class="nav-icon">
+                <i class="bi bi-journal-text"></i>
+            </span>
+            Tool Records
+        </a>
+
+        <a href="{{ url_for('new_staff_ame_announcements') }}">
+            <span class="nav-icon">
+                <i class="bi bi-megaphone-fill"></i>
+            </span>
+            Announcements
+        </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <div class="staff-mini">
+            <div class="staff-avatar">
+                {{ (staff_name or "S")[0]|upper }}
+            </div>
+
+            <div class="staff-info">
+                <strong>{{ staff_name or "AME Staff" }}</strong>
+                <span>{{ department or "AME Stores" }}</span>
+            </div>
+        </div>
+
+        <a href="{{ url_for('staff_change_password') }}" class="logout">
+            <i class="bi bi-key-fill"></i>
+            Change Password
+        </a>
+
+        <a href="{{ url_for('new_staff_login') }}" class="logout">
+            <i class="bi bi-box-arrow-right"></i>
+            Logout
+        </a>
+
+    </div>
+
+</aside>
+
+<main class="main">
+
+    <div class="page-header">
+        <h1>Issue Tool</h1>
+        <p>Assign an AME Stores tool to a student.</p>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+
+        <form method="POST">
+
+            <div class="form-group">
+                <label for="student_id">Student</label>
+
+                <select id="student_id" name="student_id" required>
+                    <option value="">Select student</option>
+
+                    {% for student in students %}
+                        <option value="{{ student.student_id }}">
+                            {{ student.student_id }} — {{ student.name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Tool Name</label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="e.g. Multimeter"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="remarks">Remarks</label>
+
+                <textarea
+                    id="remarks"
+                    name="remarks"
+                    placeholder="Optional remarks about the issued tool..."
+                ></textarea>
+            </div>
+
+            <button type="submit" class="btn">
+                <i class="bi bi-tools"></i>
+                Issue Tool
+            </button>
+
+        </form>
+
+    </div>
+
+</main>
+
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+
+    if (!sidebar || !overlay) {
+        return;
+    }
+
+    sidebar.classList.toggle("open");
+    overlay.classList.toggle("show");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Announcements | ZASTI</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        .tso-main {
+            margin-left: 260px;
+            min-height: 100vh;
+            padding: 35px 35px 45px;
+            width: calc(100% - 260px);
+        }
+
+        .page-header {
+            width: 100%;
+            max-width: none;
+        }
+
+        .announcement {
+            width: 100%;
+            max-width: none;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            margin: 7px 0 0;
+            color: #6b7280;
+        }
+
+        .announcement {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .announcement-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .announcement-title {
+            margin: 0;
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+        .announcement-date {
+            color: #6b7280;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .announcement-message {
+            margin: 0;
+            color: #4b5563;
+            line-height: 1.7;
+            white-space: normal;
+        }
+
+        .audience {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .empty {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 55px 20px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .empty i {
+            display: block;
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+
+        .tso-mobile-header {
+            display: none;
+        }
+
+        .tso-mobile-menu {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e4e9f0;
+            border-radius: 9px;
+            background: #ffffff;
+            color: #166534;
+            cursor: pointer;
+            font-size: 19px;
+            line-height: 1;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, .04);
+        }
+
+        .tso-mobile-title {
+            min-width: 0;
+        }
+
+        .tso-mobile-title h1 {
+            margin: 0;
+            color: #172033;
+            font-size: 19px;
+            line-height: 1.2;
+            font-weight: 750;
+        }
+
+        .tso-mobile-title p {
+            margin: 4px 0 0;
+            color: #6b7280;
+            font-size: 10px;
+            line-height: 1.35;
+        }
+
+        .tso-mobile-overlay {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+
+            .tso-mobile-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1040;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 11px 15px;
+                background: rgba(248, 250, 252, .97);
+                border-bottom: 1px solid #e5e7eb;
+                backdrop-filter: blur(9px);
+            }
+
+            .tso-mobile-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 1050;
+                background: rgba(15, 23, 42, .30);
+                backdrop-filter: blur(2px);
+            }
+
+            .tso-mobile-overlay.show {
+                display: block;
+            }
+
+            .tso-main {
+                margin-left: 0;
+                width: 100%;
+                padding: 80px 15px 30px;
+            }
+
+            .page-header {
+                flex-direction: column;
+            }
+
+            .announcement-header {
+                flex-direction: column;
+            }
+
+            .announcement-date {
+                white-space: normal;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="tso-mobile-header">
+
+    <button
+        class="tso-mobile-menu"
+        type="button"
+        onclick="toggleTSOSidebar()"
+        aria-label="Open menu"
+    >
+        ☰
+    </button>
+
+    <div class="tso-mobile-title">
+        <h1>Announcements</h1>
+        <p>Technical Services Office</p>
+    </div>
+
+</header>
+
+<div
+    class="tso-mobile-overlay"
+    id="tsoMobileOverlay"
+    onclick="toggleTSOSidebar()"
+></div>
+
+{% include "new_staff/tso/_tso_sidebar.html" %}
+
+<main class="tso-main">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Announcements</h1>
+            <p>
+                Important notices and updates from the administration.
+            </p>
+        </div>
+
+    </div>
+
+    {% if announcements %}
+
+        {% for announcement in announcements %}
+
+            <div class="announcement">
+
+                <div class="announcement-header">
+
+                    <h2 class="announcement-title">
+                        {{ announcement.title }}
+                    </h2>
+
+                    <div class="announcement-date">
+                        {{ announcement.created_at }}
+                    </div>
+
+                </div>
+
+                <p class="announcement-message">
+                    {{ announcement.message | trim }}
+                </p>
+
+                <span class="audience">
+                    {% if announcement.audience == "all" %}
+                        All Users
+                    {% else %}
+                        Staff
+                    {% endif %}
+                </span>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+            <i class="bi bi-megaphone"></i>
+
+            <strong>No active announcements</strong>
+
+            <p>
+                There are currently no announcements for staff.
+            </p>
+        </div>
+
+    {% endif %}
+
+</main>
+
+<script>
+function toggleTSOSidebar() {
+    const sidebar = document.getElementById("tsoSidebar");
+    const overlay = document.getElementById("tsoMobileOverlay");
+
+    if (!sidebar) {
+        return;
+    }
+
+    sidebar.classList.toggle("open");
+
+    if (overlay) {
+        overlay.classList.toggle(
+            "show",
+            sidebar.classList.contains("open")
+        );
+    }
+}
+</script>
+
+</body>
+</html>

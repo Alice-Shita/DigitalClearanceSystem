@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Previous Clearance Forms</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 25px 18px 45px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 14px rgba(0,0,0,.06);
+        }
+
+        .header-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ecfdf5;
+            color: #2e7d32;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #1e293b;
+        }
+
+        .subtitle {
+            margin: 6px 0 0;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .history-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.05);
+        }
+
+        .history-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .history-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .document-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eff6ff;
+            color: #2563eb;
+            font-size: 21px;
+            flex-shrink: 0;
+        }
+
+        .document-id {
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+            word-break: break-word;
+        }
+
+        .generated {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: #ecfdf5;
+            color: #166534;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 45px 20px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            color: #64748b;
+            box-shadow: 0 3px 12px rgba(0,0,0,.05);
+        }
+
+        .empty i {
+            font-size: 42px;
+            color: #94a3b8;
+        }
+
+        .empty h3 {
+            color: #334155;
+            margin: 14px 0 7px;
+        }
+
+        .back {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .back a {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 12px 20px;
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            color: #166534;
+            border-radius: 11px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .back a:hover {
+            background: #dcfce7;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 22px;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+
+            .page {
+                padding: 18px 12px 35px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 21px;
+            }
+
+            .history-card {
+                padding: 16px;
+            }
+
+            .history-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .status {
+                margin-left: 58px;
+            }
+
+        }
+
+    </style>
+
+
+<style>
+
+</style>
+
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+    @media print {
+        .site-header,
+        .student-sidebar,
+        .student-menu-button,
+        .student-menu-overlay {
+            display: none !important;
+        }
+        body {
+            padding-top: 0 !important;
+        }
+        .student-portal-layout,
+        .student-portal-content {
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+    }
+    </style>
+
+</head>
+
+<body>
+
+{% include "components/student_header.html" %}
+<div class="student-portal-layout">
+    {% include "components/sidebar.html" %}
+    <main class="student-portal-content">
+
+
+<div class="page">
+
+    <div class="header">
+
+        <div class="header-row">
+
+            <div class="header-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+
+            <div>
+
+                <h1>Previous Clearance Forms</h1>
+
+                <p class="subtitle">
+                    View your previously generated clearance records.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% if history %}
+
+        {% for record in history %}
+
+            <div class="history-card">
+
+                <div class="history-row">
+
+                    <div class="history-info">
+
+                        <div class="document-icon">
+                            <i class="bi bi-file-earmark-check-fill"></i>
+                        </div>
+
+                        <div>
+
+                            <div class="document-id">
+                                {{ record.document_id }}
+                            </div>
+
+                            <div class="generated">
+                                <i class="bi bi-calendar3"></i>
+                                {{ record.generated_time }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="status">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        {{ record.status or "Clearance Form Generated" }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+
+            <i class="bi bi-file-earmark-x"></i>
+
+            <h3>No Previous Clearance Forms</h3>
+
+            <p>
+                You have not generated any clearance forms yet.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="back">
+
+        <a href="{{ url_for('student_clearance') }}">
+
+            <i class="bi bi-arrow-left"></i>
+
+            Back to Clearance Report
+
+        </a>
+
+    </div>
+
+
+    <div class="footer">
+
+        © 2026 Zambia Air Services Training Institute
+
+        <br>
+
+        All Rights Reserved
+
+    </div>
+
+</div>
+
+
+    </main>
+</div>
+</body>
+
+</html>

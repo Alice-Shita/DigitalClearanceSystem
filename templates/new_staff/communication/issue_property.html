@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Issue Property | Communication Skills | ZASTI</title>
+
+    <style>
+        :root {
+            --green: #15803d;
+            --green-dark: #166534;
+            --green-soft: #f0fdf4;
+            --blue: #1d4ed8;
+            --text: #172033;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --danger: #dc2626;
+            --success: #15803d;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        body {
+            min-height: 100vh;
+        }
+        /* SIDEBAR — MASTER DASHBOARD STYLE */
+
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 260px;
+            z-index: 1100;
+
+            display: flex;
+            flex-direction: column;
+
+            background: #fff;
+            border-right: 1px solid var(--border);
+            padding: 24px 15px 18px;
+
+            box-shadow: 4px 0 20px rgba(15, 23, 42, .035);
+
+            overflow-y: auto;
+            scrollbar-width: thin;
+
+            transition: transform .25s ease;
+        }
+
+        .brand {
+            padding: 4px 10px 25px;
+            border-bottom: 1px solid #eef0f2;
+            margin-bottom: 22px;
+        }
+
+        .brand-title {
+            margin: 0;
+            color: var(--green-dark);
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .brand-subtitle {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .nav-title {
+            padding: 0 10px 9px;
+            color: #9ca3af;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav a {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 45px;
+            padding: 10px 12px;
+
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 10px;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            transition:
+                background .18s ease,
+                color .18s ease,
+                transform .18s ease;
+        }
+
+        .nav a:hover {
+            background: #f3fdf7;
+            color: var(--green-dark);
+            transform: translateX(2px);
+        }
+
+        .nav a.active {
+            background: #ecfdf5;
+            color: var(--green-dark);
+        }
+
+        .nav a.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 9px;
+            bottom: 9px;
+            width: 3px;
+            background: var(--green);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-icon {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 9px;
+            background: #f3f4f6;
+            color: #6b7280;
+
+            font-size: 15px;
+            font-weight: 800;
+
+            transition:
+                background .18s ease,
+                color .18s ease;
+        }
+
+        .nav a:hover .nav-icon,
+        .nav a.active .nav-icon {
+            background: #dff7e9;
+            color: var(--green-dark);
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #eef0f2;
+        }
+
+        .staff-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px 13px;
+        }
+
+        .staff-avatar {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+            border-radius: 50%;
+
+            background: #dcfce7;
+            color: var(--green-dark);
+
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .staff-info {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .staff-info strong {
+            color: var(--text);
+            font-size: 12px;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .staff-info span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            min-height: 42px;
+            padding: 9px 12px;
+
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 9px;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            transition:
+                background .18s ease,
+                color .18s ease;
+        }
+
+        .logout:hover {
+            background: #f9fafb;
+            color: var(--text);
+        }
+
+        /* =========================
+           MOBILE HEADER
+        ========================= */
+
+        .mobile-top-header {
+            display: none;
+        }
+
+        .mobile-menu {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: white;
+            color: var(--green-dark);
+            cursor: pointer;
+            font-size: 19px;
+            box-shadow: 0 2px 6px rgba(15,23,42,.04);
+        }
+
+        .mobile-page-title {
+            min-width: 0;
+        }
+
+        .mobile-page-title h1 {
+            margin: 0;
+            color: var(--text);
+            font-size: 19px;
+            line-height: 1.2;
+            font-weight: 750;
+        }
+
+        .mobile-page-title p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.35;
+        }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+            padding: 34px 34px 50px;
+        }
+
+        .page-header {
+            margin-bottom: 26px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 27px;
+            line-height: 1.2;
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+
+        .page-header p {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* =========================
+           CONTENT
+        ========================= */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 360px;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(15, 23, 42, .035);
+        }
+
+        .card-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 750;
+        }
+
+        .card-header p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .card-body {
+            padding: 22px;
+        }
+
+        /* =========================
+           SEARCH
+        ========================= */
+
+        .search-form {
+            display: flex;
+            gap: 9px;
+            margin-bottom: 17px;
+        }
+
+        .search-input {
+            -webkit-appearance: none;
+            appearance: none;
+            flex: 1;
+            min-width: 0;
+            height: 42px;
+            padding: 0 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: white;
+            color: var(--text);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #86efac;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, .10);
+        }
+
+        .search-button {
+            height: 42px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 9px;
+            background: var(--green);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background: var(--green-dark);
+        }
+
+        /* =========================
+           STUDENT LIST
+        ========================= */
+
+        .student-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 520px;
+            overflow-y: auto;
+            padding-right: 3px;
+        }
+
+        .student-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            text-decoration: none;
+            color: inherit;
+            transition:
+                border-color .18s ease,
+                background .18s ease,
+                box-shadow .18s ease;
+        }
+
+        .student-option:hover {
+            border-color: #86efac;
+            background: #f8fff9;
+        }
+
+        .student-option.selected {
+            border-color: #22c55e;
+            background: var(--green-soft);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, .08);
+        }
+
+        .student-info {
+            min-width: 0;
+        }
+
+        .student-name {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 750;
+            color: var(--text);
+        }
+
+        .student-meta {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .select-label {
+            flex-shrink: 0;
+            padding: 6px 9px;
+            border-radius: 7px;
+            background: #eff6ff;
+            color: var(--blue);
+            font-size: 10px;
+            font-weight: 750;
+        }
+
+        .selected .select-label {
+            background: #dcfce7;
+            color: var(--green-dark);
+        }
+
+        .empty-state {
+            padding: 38px 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+        }
+
+        /* =========================
+           ISSUE FORM
+        ========================= */
+
+        .selected-student {
+            padding: 13px 14px;
+            margin-bottom: 20px;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            background: var(--green-soft);
+        }
+
+        .selected-student-label {
+            margin: 0 0 4px;
+            color: var(--green-dark);
+            font-size: 10px;
+            font-weight: 750;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        .selected-student-name {
+            margin: 0;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 750;
+        }
+
+        .selected-student-id {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 7px;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .required {
+            color: var(--danger);
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: white;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+            transition:
+                border-color .18s ease,
+                box-shadow .18s ease;
+        }
+
+        .form-input {
+            height: 44px;
+            padding: 0 13px;
+        }
+
+        .form-textarea {
+            min-height: 105px;
+            padding: 11px 13px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: #86efac;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, .10);
+        }
+
+        .form-help {
+            margin: 6px 0 0;
+            color: #94a3b8;
+            font-size: 10px;
+            line-height: 1.45;
+        }
+
+        .issue-button {
+            width: 100%;
+            min-height: 45px;
+            border: 0;
+            border-radius: 9px;
+            background: var(--green);
+            color: white;
+            font-size: 13px;
+            font-weight: 750;
+            cursor: pointer;
+            transition: background .18s ease;
+        }
+
+        .issue-button:hover {
+            background: var(--green-dark);
+        }
+
+        .issue-button:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            border: 1px solid #bbf7d0;
+            border-radius: 9px;
+            background: #f0fdf4;
+            color: var(--green-dark);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .info-box {
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .info-box h3 {
+            margin: 0 0 8px;
+            font-size: 12px;
+            font-weight: 750;
+            color: var(--text);
+        }
+
+        .info-box p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1050px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: 10px 0 30px rgba(15, 23, 42, .12);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-close {
+                display: flex;
+                position: absolute;
+                top: 18px;
+                right: 15px;
+                width: 34px;
+                height: 34px;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                background: white;
+                color: #374151;
+                cursor: pointer;
+                font-size: 17px;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 1050;
+                background: rgba(15, 23, 42, .30);
+                backdrop-filter: blur(2px);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            .mobile-top-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1040;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 11px 15px;
+                background: rgba(248, 250, 252, .97);
+                border-bottom: 1px solid var(--border);
+                backdrop-filter: blur(9px);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 85px 16px 25px;
+            }
+
+            .page-header {
+                display: none;
+            }
+
+            .content-grid {
+                gap: 16px;
+            }
+
+            .card-header {
+                padding: 17px;
+            }
+
+            .card-body {
+                padding: 17px;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .student-option {
+                align-items: flex-start;
+            }
+
+            .select-label {
+                margin-top: 1px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- MOBILE HEADER -->
+    <header class="mobile-top-header">
+        <button
+            class="mobile-menu"
+            onclick="toggleSidebar()"
+            aria-label="Open menu"
+            type="button"
+        >
+            ☰
+        </button>
+
+        <div class="mobile-page-title">
+            <h1>Issue Property</h1>
+            <p>Communication Skills</p>
+        </div>
+    </header>
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+        onclick="toggleSidebar()"
+    ></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+    <button
+        class="sidebar-close"
+        onclick="toggleSidebar()"
+        aria-label="Close menu"
+        type="button"
+    >
+        ×
+    </button>
+
+    <div class="brand">
+        <h1 class="brand-title">ZASTI</h1>
+        <div class="brand-subtitle">
+            Digital Student Clearance System
+        </div>
+    </div>
+
+    <div class="nav-title">Main Menu</div>
+
+    <nav class="nav">
+
+        <a href="{{ url_for('new_staff_communication_dashboard') }}">
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_communication_students') }}">
+            <span class="nav-icon">♙</span>
+            <span>Students</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_communication_issue_property') }}" class="active">
+            <span class="nav-icon">▣</span>
+            <span>Issue Property</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_communication_return_property') }}">
+            <span class="nav-icon">↩</span>
+            <span>Return Property</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_communication_property_records') }}">
+            <span class="nav-icon">▤</span>
+            <span>Property Records</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_communication_announcements') }}">
+            <span class="nav-icon">▰</span>
+            <span>Announcements</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <div class="staff-mini">
+
+            <div class="staff-avatar">
+                {{ (staff_name or "Staff")[:1]|upper }}
+            </div>
+
+            <div class="staff-info">
+
+                <strong>
+                    {{ staff_name or "Communication Skills Staff" }}
+                </strong>
+
+                <span>
+                    Communication Skills Staff
+                </span>
+
+            </div>
+
+        </div>
+
+        <a
+            href="{{ url_for('staff_change_password') }}"
+            class="logout"
+        >
+            <span class="nav-icon">⚙</span>
+            <span>Change Password</span>
+        </a>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout"
+        >
+            <span class="nav-icon">↪</span>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <div class="page-header">
+            <h1>Issue Property</h1>
+            <p>
+                Issue Communication Skills departmental property
+                or materials to a student.
+            </p>
+        </div>
+
+        {% if success %}
+            <div class="success-message">
+                The property request has been sent to the selected
+                student for confirmation.
+            </div>
+        {% endif %}
+
+        <div class="content-grid">
+
+            <!-- STUDENT SELECTION -->
+            <section class="card">
+
+                <div class="card-header">
+                    <h2>Select Student</h2>
+                    <p>
+                        Search for the student who will receive the
+                        Communication Skills property.
+                    </p>
+                </div>
+
+                <div class="card-body">
+
+                    <form
+                        method="GET"
+                        action="{{ url_for('new_staff_communication_issue_property') }}"
+                        class="search-form"
+                    >
+                        <input
+                            type="text"
+                            name="search"
+                            class="search-input"
+                            placeholder="Search by student ID or name..."
+                            value="{{ search or '' }}"
+                            autocomplete="off"
+                        >
+
+                        <button
+                            type="submit"
+                            class="search-button"
+                        >
+                            Search
+                        </button>
+                    </form>
+
+                    {% if students %}
+
+                        <div class="student-list">
+
+                            {% for student in students %}
+
+                                <a
+                                    href="{{ url_for(
+                                        'new_staff_communication_issue_property',
+                                        student_id=student.student_id,
+                                        search=search
+                                    ) }}"
+                                    class="student-option
+                                    {% if selected_student
+                                        and selected_student.student_id
+                                        == student.student_id %}
+                                        selected
+                                    {% endif %}"
+                                >
+
+                                    <div class="student-info">
+
+                                        <p class="student-name">
+                                            {{ student.name }}
+                                        </p>
+
+                                        <p class="student-meta">
+                                            {{ student.student_id }}
+                                            {% if student.program %}
+                                                · {{ student.program }}
+                                            {% endif %}
+                                        </p>
+
+                                    </div>
+
+                                    <span class="select-label">
+                                        {% if selected_student
+                                            and selected_student.student_id
+                                            == student.student_id %}
+                                            Selected
+                                        {% else %}
+                                            Select
+                                        {% endif %}
+                                    </span>
+
+                                </a>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty-state">
+                            No students were found matching your search.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+            </section>
+
+            <!-- ISSUE FORM -->
+            <section class="card">
+
+                <div class="card-header">
+                    <h2>Property Details</h2>
+                    <p>
+                        Create a property request for the selected
+                        student.
+                    </p>
+                </div>
+
+                <div class="card-body">
+
+                    {% if selected_student %}
+
+                        <div class="selected-student">
+
+                            <p class="selected-student-label">
+                                Selected student
+                            </p>
+
+                            <p class="selected-student-name">
+                                {{ selected_student.name }}
+                            </p>
+
+                            <p class="selected-student-id">
+                                {{ selected_student.student_id }}
+                            </p>
+
+                        </div>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'new_staff_communication_issue_property'
+                            ) }}"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="student_id"
+                                value="{{ selected_student.student_id }}"
+                            >
+
+                            <div class="form-group">
+
+                                <label
+                                    class="form-label"
+                                    for="property_name"
+                                >
+                                    Property or Material Name
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="property_name"
+                                    name="property_name"
+                                    class="form-input"
+                                    placeholder="e.g. English textbook, dictionary, course material"
+                                    maxlength="150"
+                                    required
+                                    autocomplete="off"
+                                >
+
+                                <p class="form-help">
+                                    Enter the name of any material,
+                                    book, equipment or other property
+                                    being issued by Communication Skills.
+                                </p>
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label
+                                    class="form-label"
+                                    for="remarks"
+                                >
+                                    Remarks
+                                </label>
+
+                                <textarea
+                                    id="remarks"
+                                    name="remarks"
+                                    class="form-textarea"
+                                    placeholder="Optional remarks about the property or issue..."
+                                    maxlength="1000"
+                                ></textarea>
+
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="issue-button"
+                            >
+                                Send Property Request
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        <div class="empty-state">
+                            Select a student from the list to continue.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const params = new URLSearchParams(window.location.search);
+            const studentId = params.get("student_id");
+            const formCard = document.querySelector(".content-grid .card:nth-child(2)");
+
+            if (studentId && formCard) {
+                setTimeout(function () {
+                    formCard.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+                }, 150);
+            }
+        });
+
+        function toggleSidebar() {
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const overlay =
+                document.getElementById("sidebarOverlay");
+
+            if (!sidebar || !overlay) {
+                return;
+            }
+
+            sidebar.classList.toggle("open");
+            overlay.classList.toggle("show");
+        }
+
+        document.addEventListener("click", function(event) {
+
+            if (window.innerWidth > 800) {
+                return;
+            }
+
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const overlay =
+                document.getElementById("sidebarOverlay");
+
+            if (!sidebar || !overlay) {
+                return;
+            }
+
+            const clickedLink =
+                event.target.closest(".nav-link");
+
+            if (clickedLink) {
+                sidebar.classList.remove("open");
+                overlay.classList.remove("show");
+            }
+
+        });
+    </script>
+
+</body>
+</html>

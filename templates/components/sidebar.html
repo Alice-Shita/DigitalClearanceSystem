@@ -1,0 +1,568 @@
+<!-- =========================================================
+     ZASTI STUDENT SIDEBAR
+     WHITE SIDEBAR / ADMIN-STYLE OPEN-CLOSE BEHAVIOUR
+     ========================================================= -->
+
+<!-- MOBILE MENU BUTTON -->
+<button
+    type="button"
+    id="studentMenuBtn"
+    class="student-menu-button"
+    aria-label="Open student menu"
+    aria-expanded="false">
+    <i class="bi bi-list"></i>
+</button>
+
+<!-- MOBILE OVERLAY -->
+<div
+    id="studentMenuOverlay"
+    class="student-menu-overlay"
+    aria-hidden="true">
+</div>
+
+<!-- =========================================================
+     STUDENT SIDEBAR
+     ========================================================= -->
+<aside
+    id="studentSideMenu"
+    class="student-sidebar">
+
+    <!-- CLOSE BUTTON - SAME IDEA AS ADMIN SIDEBAR -->
+
+    <!-- BRAND -->
+    <div class="sidebar-brand">
+        <div class="sidebar-logo">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+
+        <div>
+            <strong>ZASTI</strong>
+            <span>Student Portal</span>
+        </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="sidebar-nav">
+
+        <div class="sidebar-section-title">
+            MAIN
+        </div>
+
+        <a
+            href="{{ url_for('student_dashboard') }}"
+            class="sidebar-link">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a
+            href="{{ url_for('student_profile') }}"
+            class="sidebar-link">
+            <i class="bi bi-person-fill"></i>
+            <span>Profile</span>
+        </a>
+
+        <a
+            href="/student/accommodation"
+            class="sidebar-link">
+            <i class="bi bi-house-door-fill"></i>
+            <span>Accommodation</span>
+        </a>
+
+        <a
+            href="{{ url_for('student_clearance') }}"
+            class="sidebar-link">
+            <i class="bi bi-clipboard-check-fill"></i>
+            <span>Clearance Report</span>
+        </a>
+
+        <a
+            href="{{ url_for('upload_proof') }}"
+            class="sidebar-link">
+            <i class="bi bi-cloud-arrow-up-fill"></i>
+            <span>Proof of Payment</span>
+        </a>
+
+        <div class="sidebar-section-title">
+            HISTORY
+        </div>
+
+        <a
+            href="{{ url_for('student_department_history_page', department_slug='library') }}"
+            class="sidebar-link">
+            <i class="bi bi-book-fill"></i>
+            <span>Library History</span>
+        </a>
+
+        <a
+            href="{{ url_for('student_department_history_page', department_slug='sports') }}"
+            class="sidebar-link">
+            <i class="bi bi-trophy-fill"></i>
+            <span>Sports History</span>
+        </a>
+
+        <a
+            href="{{ url_for('student_department_history_page', department_slug='ame-stores') }}"
+            class="sidebar-link">
+            <i class="bi bi-tools"></i>
+            <span>AME Stores History</span>
+        </a>
+
+        <a
+            href="{{ url_for('student_department_history', department='stores') }}"
+            class="sidebar-link">
+            <i class="bi bi-box-seam-fill"></i>
+            <span>Stores History</span>
+        </a>
+
+        <a
+            href="{{ url_for('student_department_history_page', department_slug='hostel') }}"
+            class="sidebar-link">
+            <i class="bi bi-house-fill"></i>
+            <span>Hostel History</span>
+        </a>
+
+        <a
+            href="{{ url_for('student_department_history_page', department_slug='accounts') }}"
+            class="sidebar-link">
+            <i class="bi bi-cash-stack"></i>
+            <span>Accounts History</span>
+        </a>
+
+        <a
+            href="{{ url_for('student_department_history_page', department_slug='communication-skills') }}"
+            class="sidebar-link">
+            <i class="bi bi-chat-square-text-fill"></i>
+            <span>Communication Skills History</span>
+        </a>
+
+        <a
+            href="{{ url_for('student_department_history_page', department_slug='mathematics') }}"
+            class="sidebar-link">
+            <i class="bi bi-calculator-fill"></i>
+            <span>Mathematics History</span>
+        </a>
+
+        <a
+            href="{{ url_for('student_department_history_page', department_slug='human-resource') }}"
+            class="sidebar-link">
+            <i class="bi bi-people-fill"></i>
+            <span>Human Resource History</span>
+        </a>
+
+        <a
+            href="{{ url_for('student_department_history_page', department_slug='training-section') }}"
+            class="sidebar-link">
+            <i class="bi bi-mortarboard-fill"></i>
+            <span>Training Section History</span>
+        </a>
+
+        <a
+            href="{{ url_for('student_department_history_page', department_slug='tso') }}"
+            class="sidebar-link">
+            <i class="bi bi-gear-fill"></i>
+            <span>TSO History</span>
+        </a>
+
+        
+
+        <a
+            href="{{ url_for('document_history') }}"
+            class="sidebar-link"
+        >
+            <i class="bi bi-file-earmark-text-fill"></i>
+            <span>Document History</span>
+        </a>
+
+        <div class="sidebar-section-title">
+            ACCOUNT
+        </div>
+
+        <a href="{{ url_for('reset_password') }}" class="sidebar-link">
+            <i class="bi bi-key-fill"></i>
+            <span>Reset Password</span>
+        </a>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="sidebar-link sidebar-logout">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+
+    </nav>
+
+    <!-- FOOTER -->
+    <div class="sidebar-footer">
+        <strong>ZASTI</strong>
+        <span>Digital Student Clearance System</span>
+    </div>
+
+</aside>
+
+
+<!-- FINAL STUDENT SIDEBAR OPEN CLOSE CONTROLLER -->
+<script>
+(function () {
+
+    function setupStudentSidebar() {
+
+        const sidebar =
+            document.getElementById("studentSideMenu");
+
+        const menuBtn =
+            document.getElementById("studentMenuBtn");
+
+        const overlay =
+            document.getElementById("studentMenuOverlay");
+
+        if (!sidebar || !menuBtn) {
+            return;
+        }
+
+        function openSidebar() {
+
+            sidebar.classList.add("sidebar-open");
+
+            if (overlay) {
+                overlay.classList.add("sidebar-open");
+                overlay.classList.add("menu-overlay-open");
+                overlay.setAttribute("aria-hidden", "false");
+            }
+
+            menuBtn.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+            document.body.classList.add(
+                "student-sidebar-open"
+            );
+
+            document.body.classList.add(
+                "student-menu-open"
+            );
+        }
+
+        function closeSidebar() {
+
+            sidebar.classList.remove(
+                "sidebar-open"
+            );
+
+            if (overlay) {
+                overlay.classList.remove(
+                    "sidebar-open"
+                );
+
+                overlay.classList.remove(
+                    "menu-overlay-open"
+                );
+
+                overlay.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+            }
+
+            menuBtn.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            document.body.classList.remove(
+                "student-sidebar-open"
+            );
+
+            document.body.classList.remove(
+                "student-menu-open"
+            );
+        }
+
+        function toggleSidebar(event) {
+
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            if (
+                sidebar.classList.contains(
+                    "sidebar-open"
+                )
+            ) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        }
+
+        /*
+         * THE SAME HAMBURGER NOW OPENS AND CLOSES
+         */
+        menuBtn.onclick = toggleSidebar;
+
+        /*
+         * Clicking the dark overlay closes the sidebar.
+         */
+        if (overlay) {
+
+            overlay.onclick = function (event) {
+
+                if (
+                    event.target === overlay
+                ) {
+                    closeSidebar();
+                }
+
+            };
+
+        }
+
+        /*
+         * ESCAPE ALSO CLOSES THE SIDEBAR.
+         */
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape" &&
+                    sidebar.classList.contains(
+                        "sidebar-open"
+                    )
+                ) {
+                    closeSidebar();
+                }
+
+            }
+        );
+
+    }
+
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            setupStudentSidebar
+        );
+
+    } else {
+
+        setupStudentSidebar();
+
+    }
+
+})();
+</script>
+
+
+
+<!-- =========================================================
+     STUDENT SIDEBAR CONTROL
+     ADMIN-STYLE OPEN / CLOSE BEHAVIOUR
+     ========================================================= -->
+
+<style>
+/* =========================================================
+   STUDENT SIDEBAR — WHITE
+   ========================================================= */
+
+.student-sidebar {
+    background: #ffffff !important;
+    color: #173f38 !important;
+}
+
+/* Brand */
+.student-sidebar .sidebar-brand {
+    background: #ffffff !important;
+    color: #173f38 !important;
+}
+
+/* Brand text */
+.student-sidebar .sidebar-brand strong {
+    color: #173f38 !important;
+}
+
+.student-sidebar .sidebar-brand span {
+    color: #6f807c !important;
+}
+
+/* Logo */
+.student-sidebar .sidebar-logo {
+    background: #198754 !important;
+    color: #ffffff !important;
+}
+
+/* Section titles */
+.student-sidebar .sidebar-section-title {
+    color: #71837f !important;
+}
+
+/* Links */
+.student-sidebar .sidebar-link {
+    color: #40534f !important;
+    background: transparent !important;
+}
+
+.student-sidebar .sidebar-link i {
+    color: #198754 !important;
+}
+
+.student-sidebar .sidebar-link:hover {
+    background: rgba(25, 135, 84, 0.08) !important;
+    color: #173f38 !important;
+}
+
+.student-sidebar .sidebar-link:hover i {
+    color: #198754 !important;
+}
+
+/* Logout */
+.student-sidebar .sidebar-logout {
+    color: #b42323 !important;
+}
+
+.student-sidebar .sidebar-logout i {
+    color: #b42323 !important;
+}
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+.student-sidebar .sidebar-close {
+    display: none;
+
+    position: absolute;
+    top: 14px;
+    right: 14px;
+
+    width: 40px;
+    height: 40px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: #f1f5f3 !important;
+    color: #173f38 !important;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+    cursor: pointer;
+
+    z-index: 20;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    z-index: 2200 !important;
+}
+
+.student-sidebar .sidebar-close:hover {
+    background: #e5ece9 !important;
+    color: #198754 !important;
+}
+
+
+/* =========================================================
+   MOBILE OPEN/CLOSE
+   SAME PRINCIPLE AS ADMIN SIDEBAR
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .student-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+
+        width: 270px !important;
+
+        transform: translateX(-100%) !important;
+        transition: transform 0.25s ease !important;
+
+        z-index: 2000 !important;
+
+        overflow-y: auto !important;
+        box-shadow: 4px 0 20px rgba(0,0,0,.12) !important;
+    }
+
+    .student-sidebar.sidebar-open {
+        transform: translateX(0) !important;
+    }
+
+    /* X appears only while sidebar is open */
+    .student-sidebar.sidebar-open .sidebar-close {
+        display: flex !important;
+    }
+
+    /* Hamburger */
+    .student-menu-button {
+        display: flex !important;
+
+        align-items: center;
+        justify-content: center;
+
+        position: fixed !important;
+        top: 14px !important;
+        left: 14px !important;
+
+        width: 44px;
+        height: 44px;
+
+        border: 0;
+        border-radius: 11px;
+
+        background: #198754 !important;
+        color: #ffffff !important;
+
+        font-size: 22px;
+        cursor: pointer;
+
+        z-index: 2100;
+    }
+
+    /* Hide hamburger when sidebar is open */
+
+
+    /* Overlay */
+    .student-menu-overlay {
+        display: none;
+
+        position: fixed !important;
+        inset: 0 !important;
+
+        background: rgba(0,0,0,.40) !important;
+
+        z-index: 1900 !important;
+    }
+
+    .student-menu-overlay.menu-overlay-open {
+        display: block !important;
+    }
+
+    body.student-menu-open {
+        overflow: hidden;
+    }
+}
+
+/* Desktop */
+@media (min-width: 801px) {
+
+    .student-menu-button,
+    .student-menu-overlay,
+    .student-sidebar .sidebar-close {
+        display: none !important;
+    }
+}
+</style>
+
+
+
+
+
+

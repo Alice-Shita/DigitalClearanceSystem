@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Accounts Documents</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .page {
+            max-width: 950px;
+            margin: 30px auto;
+            padding: 0 16px 40px;
+        }
+
+        .header {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 14px rgba(0,0,0,.06);
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+            color: #166534;
+            font-size: 27px;
+        }
+
+        .header p {
+            margin: 4px 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .document-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .document-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.04);
+        }
+
+        .document-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .document-icon {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            border-radius: 11px;
+            background: #ecfdf5;
+            color: #166534;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .document-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .document-info {
+            flex: 1;
+        }
+
+        .document-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .document-meta {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .view-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 10px 15px;
+            border-radius: 9px;
+            background: #166534;
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .view-button:hover {
+            background: #14532d;
+        }
+
+        .view-button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .empty {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 45px 20px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .empty strong {
+            display: block;
+            color: #334155;
+            font-size: 17px;
+            margin-bottom: 7px;
+        }
+
+        .back {
+            margin-top: 22px;
+            text-align: center;
+        }
+
+        .back a {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 16px;
+            border-radius: 9px;
+            border: 1px solid #bfdbfe;
+            background: white;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+
+            .page {
+                margin-top: 15px;
+                padding: 0 10px 30px;
+            }
+
+            .header {
+                padding: 18px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+
+            .document-top {
+                align-items: flex-start;
+            }
+
+            .view-button {
+                padding: 9px 11px;
+                font-size: 12px;
+            }
+
+        }
+
+    </style>
+
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+    @media print {
+        .site-header,
+        .student-sidebar,
+        .student-menu-button,
+        .student-menu-overlay {
+            display: none !important;
+        }
+        body {
+            padding-top: 0 !important;
+        }
+        .student-portal-layout,
+        .student-portal-content {
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+    }
+    </style>
+
+</head>
+
+<body>
+
+{% include "components/student_header.html" %}
+<div class="student-portal-layout">
+    {% include "components/sidebar.html" %}
+    <main class="student-portal-content">
+
+
+<div class="page">
+
+    <div class="header">
+
+        <h1>Accounts Documents</h1>
+
+        <p>
+            Payment and account documents for
+            <strong>{{ student.name }}</strong>
+        </p>
+
+        <p>
+            Student ID: {{ student.student_id }}
+        </p>
+
+    </div>
+
+
+    {% if payments %}
+
+        <div class="document-list">
+
+            {% for payment in payments %}
+
+                <div class="document-card">
+
+                    <div class="document-top">
+
+                        <div class="document-icon">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+
+                                <rect
+                                    x="3"
+                                    y="5"
+                                    width="18"
+                                    height="14"
+                                    rx="2"
+                                />
+
+                                <path d="M3 10h18"/>
+
+                                <path d="M7 15h3"/>
+
+                            </svg>
+
+                        </div>
+
+
+                        <div class="document-info">
+
+                            <div class="document-title">
+
+                                Payment Document
+
+                            </div>
+
+                            <div class="document-meta">
+
+                                {% if payment.amount is defined %}
+                                    Amount:
+                                    {{ payment.amount|money }}
+                                    <br>
+                                {% endif %}
+
+                                {% if payment.payment_date is defined %}
+                                    Date:
+                                    {{ payment.payment_date }}
+                                    <br>
+                                {% endif %}
+
+                                {% if payment.reference is defined %}
+                                    Reference:
+                                    {{ payment.reference }}
+                                    <br>
+                                {% endif %}
+
+                                Payment ID:
+                                {{ payment.id }}
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="{{ url_for(
+                                'student_payment_document',
+                                payment_id=payment.id
+                            ) }}"
+                            target="_blank"
+                            class="view-button"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+
+                                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+
+                                <circle cx="12" cy="12" r="3"/>
+
+                            </svg>
+
+                            View Document
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty">
+
+            <strong>No Accounts Documents</strong>
+
+            There are currently no payment or account documents
+            available for your account.
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="back">
+
+        <a href="{{ url_for('document_history') }}">
+
+            ← Back to Document History
+
+        </a>
+
+    </div>
+
+</div>
+
+
+    </main>
+</div>
+</body>
+
+</html>

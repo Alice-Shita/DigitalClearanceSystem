@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}
+Accommodation | ZASTI Clearance System
+{% endblock %}
+
+{% block content %}
+
+<div class="student-portal-layout">
+    {% include "components/sidebar.html" %}
+    <main class="student-portal-content">
+
+
+<!-- STUDENT BOTTOM DASHBOARD BUTTON STYLE -->
+<style>
+.student-bottom-dashboard {
+    display: flex;
+    justify-content: center;
+    margin: 35px 0 10px 0;
+}
+
+.student-bottom-dashboard a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 16px;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #173f38;
+    border: 1px solid #d9e3df;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.student-bottom-dashboard a:hover {
+    background: #198754;
+    color: #ffffff;
+    border-color: #198754;
+    text-decoration: none;
+}
+
+.student-bottom-dashboard i {
+    font-size: 15px;
+}
+</style>
+
+
+<style>
+.student-bottom-dashboard {
+    display: flex;
+    justify-content: center;
+    margin: 35px 0 10px 0;
+}
+
+.student-bottom-dashboard a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 18px;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #173f38;
+    border: 1px solid #d9e3df;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.student-bottom-dashboard a:hover {
+    background: #198754;
+    color: #ffffff;
+    border-color: #198754;
+    text-decoration: none;
+}
+
+.student-bottom-dashboard i {
+    font-size: 15px;
+}
+</style>
+
+<div class="container dashboard-container">
+
+    <!-- PAGE HEADER -->
+
+    <section class="dashboard-welcome">
+
+        <div>
+
+            <div class="dashboard-greeting">
+                Accommodation
+            </div>
+
+            <div class="dashboard-date">
+                Student accommodation information
+            </div>
+
+            <h1>
+                {{ student.name }}
+            </h1>
+
+            <p>
+                View your accommodation and hostel information.
+            </p>
+
+        </div>
+
+        <div class="dashboard-profile-placeholder">
+            <i class="bi bi-house-door-fill"></i>
+        </div>
+
+    </section>
+
+
+    <!-- ACCOMMODATION DETAILS -->
+
+    <section class="card">
+
+        <h2 class="card-title">
+            Accommodation Details
+        </h2>
+
+        <p>
+            Your current accommodation information.
+        </p>
+
+        <div class="student-info-grid">
+
+            <div class="info-box">
+
+                <span>
+                    Accommodation Type
+                </span>
+
+                <strong>
+                    {{ student.accommodation or "Not specified" }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    Hostel
+                </span>
+
+                <strong>
+                    {{ student.hostel or "Not specified" }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    Room
+                </span>
+
+                <strong>
+                    {{ student.room or "Not specified" }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    Student ID
+                </span>
+
+                <strong>
+                    {{ student.student_id }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- HOSTEL ITEMS -->
+
+    {% if student.accommodation != "Day Scholar" %}
+
+    <section class="card">
+
+        <h2 class="card-title">
+            Hostel Items
+        </h2>
+
+        <p>
+            Items currently recorded under your accommodation.
+        </p>
+
+
+        {% if hostel_items %}
+
+        <div class="pending-list">
+
+            {% for item in hostel_items %}
+
+            <div class="pending-item">
+
+                {% if item.status == "Returned" %}
+
+                <i class="bi bi-check-circle-fill"></i>
+
+                {% else %}
+
+                <i class="bi bi-box-seam-fill"></i>
+
+                {% endif %}
+
+
+                <div>
+
+                    <strong>
+                        {{ item.item }}
+                    </strong>
+
+                    <br>
+
+                    <small>
+                        Status:
+                        {{ item.status }}
+                    </small>
+
+                    {% if item.reference %}
+
+                    <br>
+
+                    <small>
+                        Reference:
+                        {{ item.reference }}
+                    </small>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="all-cleared">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            <div>
+
+                <strong>
+                    No hostel items recorded
+                </strong>
+
+                <p>
+                    There are currently no hostel items
+                    assigned to your accommodation record.
+                </p>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- INFORMATION NOTICE -->
+
+    <section class="physical-clearance">
+
+        <div class="physical-icon">
+
+            <i class="bi bi-info-circle-fill"></i>
+
+        </div>
+
+        <div>
+
+            <h2>
+                Accommodation Information
+            </h2>
+
+            <p>
+                Accommodation records are maintained by
+                the relevant ZASTI offices. If any information
+                is incorrect, contact the appropriate office
+                for assistance.
+            </p>
+
+        </div>
+
+    </section>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- STUDENT BOTTOM BACK TO DASHBOARD -->
+<div class="student-bottom-dashboard">
+    <a href="{{ url_for('student_dashboard') }}">
+        <i class="bi bi-arrow-left"></i>
+        <span>Back to Dashboard</span>
+    </a>
+</div>
+
+    </main>
+</div>
+
+{% endblock %}

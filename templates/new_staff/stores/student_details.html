@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Stores Record | ZASTI</title>
+
+<style>
+
+:root {
+    --green: #15803d;
+    --green-dark: #166534;
+    --green-light: #ecfdf5;
+    --text: #172033;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+
+    background: var(--bg);
+    color: var(--text);
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+}
+
+.main {
+    min-height: 100vh;
+
+    max-width: 1000px;
+
+    margin: 0 auto;
+
+    padding: 38px 25px 50px;
+}
+
+.back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    margin-bottom: 24px;
+
+    color: var(--green-dark);
+
+    text-decoration: none;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.student-header {
+    background: white;
+
+    border: 1px solid var(--border);
+    border-radius: 15px;
+
+    padding: 23px;
+
+    margin-bottom: 20px;
+}
+
+.student-header h1 {
+    margin: 0;
+
+    font-size: 22px;
+}
+
+.student-header p {
+    margin: 6px 0 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+.summary {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 13px;
+
+    margin-bottom: 20px;
+}
+
+.summary-card {
+    background: white;
+
+    border: 1px solid var(--border);
+    border-radius: 13px;
+
+    padding: 17px;
+}
+
+.summary-card span {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+.summary-card strong {
+    display: block;
+
+    margin-top: 7px;
+
+    font-size: 22px;
+}
+
+.summary-card.owing strong {
+    color: var(--red);
+}
+
+.section {
+    background: white;
+
+    border: 1px solid var(--border);
+    border-radius: 15px;
+
+    overflow: hidden;
+
+    margin-bottom: 18px;
+}
+
+.section-header {
+    padding: 17px 20px;
+
+    border-bottom: 1px solid #eef0f2;
+}
+
+.section-header h2 {
+    margin: 0;
+
+    font-size: 15px;
+}
+
+.item {
+    padding: 17px 20px;
+
+    border-bottom: 1px solid #eef0f2;
+}
+
+.item:last-child {
+    border-bottom: 0;
+}
+
+.item-top {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.item-name {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.status {
+    padding: 5px 8px;
+
+    border-radius: 6px;
+
+    background: var(--red-light);
+
+    color: var(--red);
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.item-meta {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 8px;
+
+    margin-top: 11px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+.item-meta strong {
+    color: #374151;
+}
+
+.remarks {
+    margin-top: 9px;
+
+    color: #4b5563;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.empty {
+    padding: 35px 20px;
+
+    color: var(--muted);
+
+    text-align: center;
+
+    font-size: 12px;
+}
+
+@media (max-width: 650px) {
+
+    .main {
+        padding: 20px 13px 35px;
+    }
+
+    .summary {
+        grid-template-columns: 1fr;
+    }
+
+    .student-header {
+        padding: 18px;
+    }
+
+    .item-top {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .item-meta {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<main class="main">
+
+    <a
+        href="{{ url_for('new_staff_stores_students') }}"
+        class="back"
+    >
+        ← Back to Students
+    </a>
+
+
+    <section class="student-header">
+
+        <h1>
+            {{ student.name }}
+        </h1>
+
+        <p>
+            Student ID: {{ student.student_id }}
+        </p>
+
+    </section>
+
+
+    <div class="summary">
+
+        <div class="summary-card">
+
+            <span>Total Records</span>
+
+            <strong>
+                {{ store_properties|length }}
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card owing">
+
+            <span>Currently Owing</span>
+
+            <strong>
+                {{ outstanding|length }}
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span>Returned</span>
+
+            <strong>
+                {{ returned|length }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <section class="section">
+
+        <div class="section-header">
+            <h2>Currently Owing</h2>
+        </div>
+
+
+        {% if outstanding %}
+
+            {% for item in outstanding %}
+
+                <div class="item">
+
+                    <div class="item-top">
+
+                        <div class="item-name">
+                            {{ item.name }}
+                        </div>
+
+                        <span class="status">
+                            NOT RETURNED
+                        </span>
+
+                    </div>
+
+
+                    <div class="item-meta">
+
+                        <div>
+                            Issued:
+                            <strong>
+                                {{ item.issued_at.strftime("%d %B %Y, %H:%M")
+                                   if item.issued_at else "—" }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            Status:
+                            <strong>
+                                {{ item.status or "—" }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    {% if item.remarks %}
+
+                        <div class="remarks">
+                            Remarks: {{ item.remarks }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty">
+                This student currently owes no Stores property.
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <section class="section">
+
+        <div class="section-header">
+            <h2>Returned Property</h2>
+        </div>
+
+
+        {% if returned %}
+
+            {% for item in returned %}
+
+                <div class="item">
+
+                    <div class="item-top">
+
+                        <div class="item-name">
+                            {{ item.name }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="item-meta">
+
+                        <div>
+                            Issued:
+                            <strong>
+                                {{ item.issued_at.strftime("%d %B %Y, %H:%M")
+                                   if item.issued_at else "—" }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            Returned:
+                            <strong>
+                                {{ item.returned_at.strftime("%d %B %Y, %H:%M")
+                                   if item.returned_at else "—" }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="item-meta">
+
+                        <div>
+                            Status:
+                            <strong>
+                                {{ item.status or "—" }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    {% if item.remarks %}
+
+                        <div class="remarks">
+                            Remarks: {{ item.remarks }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty">
+                No returned Stores property recorded.
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</main>
+
+</body>
+</html>

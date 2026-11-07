@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Stores Dashboard | ZASTI</title>
+
+<style>
+:root {
+    --green: #15803d;
+    --green-dark: #166534;
+    --green-light: #ecfdf5;
+    --text: #172033;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --sidebar: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+}
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.layout {
+    min-height: 100vh;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 260px;
+    z-index: 1100;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+
+    padding: 24px 15px 18px;
+
+    box-shadow: 4px 0 20px rgba(15, 23, 42, .035);
+
+    overflow-y: auto;
+    scrollbar-width: thin;
+
+    transition: transform .25s ease;
+}
+
+/* Brand */
+
+.brand {
+    padding: 4px 10px 25px;
+
+    border-bottom: 1px solid #eef0f2;
+
+    margin-bottom: 22px;
+}
+
+.brand-title {
+    margin: 0;
+
+    color: var(--green-dark);
+
+    font-size: 26px;
+    font-weight: 800;
+
+    letter-spacing: .5px;
+}
+
+.brand-subtitle {
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+/* Menu heading */
+
+.nav-title {
+    padding: 0 10px 9px;
+
+    color: #9ca3af;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+/* Navigation */
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.nav a {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 45px;
+
+    padding: 10px 12px;
+
+    color: #4b5563;
+
+    text-decoration: none;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition:
+        background .18s ease,
+        color .18s ease,
+        transform .18s ease;
+}
+
+.nav a:hover {
+    background: #f3fdf7;
+
+    color: var(--green-dark);
+
+    transform: translateX(2px);
+}
+
+.nav a.active {
+    background: #ecfdf5;
+
+    color: var(--green-dark);
+}
+
+.nav a.active::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 9px;
+    bottom: 9px;
+
+    width: 3px;
+
+    background: var(--green);
+
+    border-radius: 0 4px 4px 0;
+}
+
+/* Icons */
+
+.nav-icon {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #f3f4f6;
+
+    color: #6b7280;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    transition:
+        background .18s ease,
+        color .18s ease;
+}
+
+.nav a:hover .nav-icon,
+.nav a.active .nav-icon {
+    background: #dff7e9;
+
+    color: var(--green-dark);
+}
+
+/* Sidebar bottom */
+
+.sidebar-bottom {
+    margin-top: auto;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #eef0f2;
+}
+
+.staff-mini {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 9px 10px 13px;
+}
+
+.staff-avatar {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #dcfce7;
+
+    color: var(--green-dark);
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.staff-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.staff-info strong {
+    color: var(--text);
+
+    font-size: 12px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.staff-info span {
+    color: var(--muted);
+
+    font-size: 10px;
+}
+
+.logout {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    min-height: 42px;
+
+    padding: 9px 12px;
+
+    color: #4b5563;
+
+    text-decoration: none;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    transition:
+        background .18s ease,
+        color .18s ease;
+}
+
+.logout:hover {
+    background: #f9fafb;
+
+    color: var(--text);
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+    margin-left: 260px;
+
+    min-height: 100vh;
+
+    padding: 38px 42px 45px;
+}
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.page-header {
+    max-width: 1050px;
+
+    margin: 0 auto 27px;
+}
+
+.page-header h1 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 27px;
+    font-weight: 750;
+
+    letter-spacing: -.3px;
+}
+
+.page-header p {
+    margin: 7px 0 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.dashboard-container {
+    max-width: 1050px;
+
+    margin: 0 auto;
+}
+
+/* Welcome */
+
+.welcome-card {
+    position: relative;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: 15px;
+
+    padding: 24px 25px;
+
+    margin-bottom: 18px;
+
+    box-shadow:
+        0 2px 7px rgba(15, 23, 42, .035);
+
+    overflow: hidden;
+}
+
+.welcome-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 4px;
+
+    background: var(--green);
+}
+
+.welcome-card h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 19px;
+    font-weight: 750;
+}
+
+.welcome-card p {
+    margin: 7px 0 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+/* Stats */
+
+.stats-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 15px;
+
+    margin-bottom: 18px;
+}
+
+.stat-card {
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    padding: 19px;
+
+    box-shadow:
+        0 2px 7px rgba(15, 23, 42, .035);
+}
+
+.stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+.stat-label {
+    color: var(--muted);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.stat-icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: var(--green-light);
+
+    color: var(--green-dark);
+
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.stat-number {
+    margin-top: 13px;
+
+    color: var(--text);
+
+    font-size: 27px;
+    font-weight: 800;
+}
+
+/* Quick links */
+
+.quick-card {
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: 15px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 2px 7px rgba(15, 23, 42, .035);
+}
+
+.quick-header {
+    padding: 20px 22px;
+
+    border-bottom: 1px solid #eef0f2;
+}
+
+.quick-header h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 17px;
+    font-weight: 750;
+}
+
+.quick-header p {
+    margin: 6px 0 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+.quick-links {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    padding: 18px;
+}
+
+.quick-link {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px;
+
+    background: #fafbfc;
+
+    border: 1px solid #edf0f3;
+
+    border-radius: 11px;
+
+    color: var(--text);
+
+    text-decoration: none;
+
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease;
+}
+
+.quick-link:hover {
+    background: #f3fdf7;
+
+    border-color: #d7e7dc;
+
+    transform: translateY(-1px);
+}
+
+.quick-icon {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: var(--green-light);
+
+    color: var(--green-dark);
+
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.quick-text strong {
+    display: block;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.quick-text span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: 10px;
+}
+
+/* =========================================================
+   MOBILE HEADER
+========================================================= */
+
+.mobile-top-header {
+    display: none;
+}
+
+.mobile-menu {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--border);
+
+    border-radius: 9px;
+
+    background: white;
+
+    color: var(--green-dark);
+
+    cursor: pointer;
+
+    font-size: 19px;
+
+    box-shadow:
+        0 2px 6px rgba(15,23,42,.04);
+}
+
+.mobile-page-title {
+    min-width: 0;
+}
+
+.mobile-page-title h1 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 19px;
+
+    line-height: 1.2;
+
+    font-weight: 750;
+}
+
+.mobile-page-title p {
+    margin: 4px 0 0;
+
+    color: var(--muted);
+
+    font-size: 10px;
+
+    line-height: 1.35;
+}
+
+/* Close */
+
+.sidebar-close {
+    display: none;
+}
+
+/* Overlay */
+
+.sidebar-overlay {
+    display: none;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .main {
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+
+        transition:
+            transform .25s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-close {
+        display: flex;
+
+        position: absolute;
+
+        top: 18px;
+        right: 15px;
+
+        width: 34px;
+        height: 34px;
+
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid var(--border);
+
+        border-radius: 8px;
+
+        background: white;
+
+        color: #374151;
+
+        cursor: pointer;
+
+        font-size: 17px;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 1050;
+
+        background: rgba(15, 23, 42, .30);
+
+        backdrop-filter: blur(2px);
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+
+    .mobile-top-header {
+        position: fixed;
+
+        top: 0;
+        left: 0;
+        right: 0;
+
+        z-index: 1040;
+
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        padding: 11px 15px;
+
+        background:
+            rgba(248, 250, 252, .97);
+
+        border-bottom: 1px solid var(--border);
+
+        backdrop-filter: blur(9px);
+    }
+
+    .main {
+        margin-left: 0;
+
+        padding:
+            80px
+            15px
+            30px;
+    }
+
+    .page-header {
+        display: none;
+    }
+
+    .welcome-card {
+        padding: 19px 18px;
+    }
+
+    .welcome-card h2 {
+        font-size: 17px;
+    }
+
+    .welcome-card p {
+        font-size: 12px;
+    }
+
+    .stats-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 15px;
+    }
+
+    .stat-number {
+        font-size: 23px;
+    }
+
+    .quick-card {
+        border-radius: 13px;
+    }
+
+    .quick-header {
+        padding: 17px;
+    }
+
+    .quick-links {
+        grid-template-columns: 1fr;
+
+        padding: 14px;
+    }
+
+}
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 430px) {
+
+    .main {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .mobile-top-header {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-card {
+        border-radius: 13px;
+    }
+
+    .quick-link {
+        padding: 13px;
+    }
+
+}
+</style>
+
+
+<style id="stores-dashboard-mirror-css">
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --stores-green: #15803d;
+    --stores-green-dark: #166534;
+    --stores-green-soft: #f0fdf4;
+    --stores-text: #1f2937;
+    --stores-muted: #64748b;
+    --stores-border: #e2e8f0;
+    --stores-bg: #f8fafc;
+}
+
+body {
+    background: var(--stores-bg);
+}
+
+.main {
+    width: 100%;
+    margin-left: 250px;
+    padding: 30px;
+}
+
+.staff-mini-calendar {
+    width: 220px;
+    margin-left: auto;
+    margin-bottom: 18px;
+    background: #fff;
+    border: 1px solid #e1e9e6;
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 15px rgba(18,59,53,.05);
+}
+
+.staff-calendar-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.staff-calendar-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #eaf7f1;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+.staff-calendar-weekday {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    color: #198754;
+    text-transform: uppercase;
+}
+
+.staff-calendar-date {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #173f38;
+}
+
+.staff-calendar-month {
+    margin-top: 2px;
+    font-size: 11px;
+    color: #71818a;
+}
+
+.staff-calendar-divider {
+    height: 1px;
+    background: #edf1f0;
+    margin: 10px 0;
+}
+
+.staff-calendar-academic {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
+    font-size: 10px;
+}
+
+.staff-calendar-academic span {
+    color: #829099;
+}
+
+.staff-calendar-academic strong {
+    color: #173f38;
+}
+
+.staff-calendar-time {
+    margin-top: 9px;
+    font-size: 14px;
+    font-weight: 750;
+    letter-spacing: .4px;
+    color: #198754;
+}
+
+.welcome-banner {
+    position: relative;
+    overflow: hidden;
+    margin-top: 18px;
+    margin-bottom: 24px;
+    padding: 26px 28px;
+    border-radius: 16px;
+    background: linear-gradient(135deg,#f7fdf9,#f0faf3);
+    color: var(--stores-green-dark);
+    box-shadow: 0 8px 24px rgba(22,101,52,.16);
+}
+
+.welcome-banner h2 {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    font-size: 22px;
+}
+
+.welcome-banner p {
+    position: relative;
+    z-index: 1;
+    margin: 8px 0 0;
+    color: #4b6354;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.welcome-icon {
+    position: absolute;
+    right: 28px;
+    bottom: 18px;
+    font-size: 58px;
+    color: rgba(21,128,61,.10);
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--stores-border);
+    border-radius: 13px;
+    padding: 20px;
+    transition: transform .18s ease,box-shadow .18s ease;
+}
+
+.stat-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--stores-green);
+}
+
+.stat-card:nth-child(2)::before {
+    background: #16a34a;
+}
+
+.stat-card:nth-child(3)::before {
+    background: #d97706;
+}
+
+.stat-card:nth-child(4)::before {
+    background: #2563eb;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(15,23,42,.07);
+}
+
+.stat-label {
+    color: var(--stores-muted);
+    font-size: 12px;
+}
+
+.stat-value {
+    margin-top: 8px;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.dashboard-enhancements {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.dashboard-two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.section {
+    background: #fff;
+    border: 1px solid var(--stores-border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.section-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--stores-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 17px;
+}
+
+.section-header p {
+    margin: 6px 0 0;
+    color: var(--stores-muted);
+    font-size: 12px;
+}
+
+.section-link {
+    color: var(--stores-green-dark);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.activity-table-wrap {
+    overflow-x: auto;
+}
+
+.activity-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.activity-table th {
+    padding: 13px 20px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: #6b7280;
+    background: #f8fafc;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.activity-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.activity-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.activity-student {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.activity-student strong {
+    color: #111827;
+    font-size: 13px;
+}
+
+.activity-student span {
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.property-cell {
+    font-weight: 600;
+    color: #374151;
+}
+
+.date-cell {
+    color: #6b7280;
+    white-space: nowrap;
+    font-size: 11px !important;
+}
+
+.activity-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.activity-status.issued,
+.activity-status.assigned {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.activity-status.returned,
+.activity-status.cleared {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.activity-status.declined {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.activity-status.recorded {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.property-list,
+.return-list {
+    padding: 5px 20px 20px;
+}
+
+.property-row,
+.return-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.property-row:last-child,
+.return-row:last-child {
+    border-bottom: 0;
+}
+
+.property-main,
+.return-main {
+    min-width: 0;
+}
+
+.property-main strong,
+.return-main strong {
+    display: block;
+    color: #111827;
+    font-size: 13px;
+}
+
+.property-main span,
+.return-main span {
+    display: block;
+    margin-top: 4px;
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.property-status {
+    flex-shrink: 0;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.return-date {
+    flex-shrink: 0;
+    color: #166534;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.clearance-progress {
+    padding: 20px;
+}
+
+.progress-summary {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 14px;
+}
+
+.progress-number {
+    font-size: 32px;
+    line-height: 1;
+    font-weight: 800;
+    color: #166534;
+}
+
+.progress-label {
+    margin-left: 5px;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.progress-summary strong {
+    font-size: 20px;
+    color: #111827;
+}
+
+.progress-track {
+    width: 100%;
+    height: 10px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #16a34a;
+    border-radius: inherit;
+}
+
+.progress-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 11px;
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.activity-chart-section {
+    padding-bottom: 20px;
+}
+
+.chart-period {
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.stores-chart {
+    min-height: 190px;
+    padding: 20px 30px 5px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 14px;
+}
+
+.chart-column {
+    flex: 1;
+    max-width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 150px;
+}
+
+.chart-values {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 7px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.issued-value {
+    color: #b45309;
+}
+
+.returned-value {
+    color: #166534;
+}
+
+.chart-bar-area {
+    height: 95px;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.chart-bar {
+    width: 14px;
+    min-height: 8px;
+    max-height: 95px;
+    border-radius: 5px 5px 2px 2px;
+}
+
+.issued-bar {
+    background: #f59e0b;
+}
+
+.returned-bar {
+    background: #16a34a;
+}
+
+.chart-day {
+    margin-top: 8px;
+    color: #6b7280;
+    font-size: 10px;
+}
+
+.latest-announcement-list {
+    padding: 0 20px;
+}
+
+.latest-announcement {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.latest-announcement:last-child {
+    border-bottom: 0;
+}
+
+.announcement-main {
+    min-width: 0;
+}
+
+.announcement-main strong {
+    display: block;
+    color: #111827;
+    font-size: 13px;
+}
+
+.announcement-main p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.announcement-date {
+    flex-shrink: 0;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.empty-dashboard {
+    padding: 25px 20px;
+    color: #9ca3af;
+    font-size: 13px;
+    text-align: center;
+}
+
+@media (max-width:1000px) {
+    .stats {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .dashboard-two-column {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width:800px) {
+    .main {
+        margin-left: 0;
+        padding: 85px 16px 25px;
+    }
+
+    .staff-mini-calendar {
+        width: 100%;
+        max-width: 240px;
+        margin-left: 0;
+    }
+
+    .activity-table th,
+    .activity-table td {
+        padding-left: 13px;
+        padding-right: 13px;
+    }
+
+    .stores-chart {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+@media (max-width:500px) {
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-banner {
+        padding: 22px;
+    }
+
+    .welcome-banner h2 {
+        font-size: 19px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     MOBILE HEADER
+===================================================== -->
+
+<header class="mobile-top-header">
+
+    <button
+        class="mobile-menu"
+        onclick="toggleSidebar()"
+        aria-label="Open menu"
+        type="button"
+    >
+        ☰
+    </button>
+
+    <div class="mobile-page-title">
+
+        <h1>
+            Dashboard
+        </h1>
+
+        <p>
+            Stores staff dashboard
+        </p>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     MOBILE OVERLAY
+===================================================== -->
+
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+    onclick="toggleSidebar()"
+></div>
+
+
+<div class="layout">
+
+<!-- =====================================================
+     STORES SIDEBAR
+===================================================== -->
+
+<aside class="sidebar" id="sidebar">
+
+    <button
+        class="sidebar-close"
+        onclick="toggleSidebar()"
+        aria-label="Close menu"
+        type="button"
+    >
+        ×
+    </button>
+
+
+    <div class="brand">
+
+        <h1 class="brand-title">
+            ZASTI
+        </h1>
+
+        <div class="brand-subtitle">
+            Digital Student Clearance System
+        </div>
+
+    </div>
+
+
+    <div class="nav-title">
+        Main Menu
+    </div>
+
+
+    <nav class="nav">
+
+        <a
+            href="#"
+            class="active"
+        >
+
+            <span class="nav-icon">
+                ⌂
+            </span>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('new_staff_stores_students') }}"
+        >
+
+            <span class="nav-icon">
+                ♙
+            </span>
+
+            <span>
+                Students
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('new_staff_stores_issue_property') }}"
+        >
+
+            <span class="nav-icon">
+                ▣
+            </span>
+
+            <span>
+                Issue Property
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('new_staff_stores_return_property') }}"
+        >
+
+            <span class="nav-icon">
+                ↩
+            </span>
+
+            <span>
+                Return Property
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('new_staff_stores_property_records') }}"
+        >
+
+            <span class="nav-icon">
+                ▤
+            </span>
+
+            <span>
+                Property Records
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('new_staff_stores_announcements') }}"
+        >
+
+            <span class="nav-icon">
+                ▰
+            </span>
+
+            <span>
+                Announcements
+            </span>
+
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <div class="staff-mini">
+
+            <div class="staff-avatar">
+                {{ (staff_name or "Staff")[:1]|upper }}
+            </div>
+
+            <div class="staff-info">
+
+                <strong>
+                    {{ staff_name or "Stores Staff" }}
+                </strong>
+
+                <span>
+                    Stores Staff
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('staff_change_password') }}"
+            class="logout"
+        >
+
+            <span class="nav-icon">
+                ⚙
+            </span>
+
+            <span>
+                Change Password
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout"
+        >
+
+            <span class="nav-icon">
+                ↪
+            </span>
+
+            <span>
+                Logout
+            </span>
+
+        </a>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<main class="main">
+
+<div class="staff-mini-calendar" aria-label="Current date and academic term">
+    <div class="staff-calendar-top">
+        <div class="staff-calendar-icon">
+            <span>▣</span>
+        </div>
+
+        <div>
+            <div class="staff-calendar-weekday" id="staffDashboardWeekday">---</div>
+            <div class="staff-calendar-date" id="staffDashboardDay">--</div>
+            <div class="staff-calendar-month" id="staffDashboardMonth">---</div>
+        </div>
+    </div>
+
+    <div class="staff-calendar-divider"></div>
+
+    <div class="staff-calendar-academic">
+        <span>Academic Year</span>
+        <strong>{{ settings.get('academic_year', '—') }}</strong>
+
+        <span>Academic Term</span>
+        <strong>{{ settings.get('academic_term', '—') }}</strong>
+
+        <span>Academic Week</span>
+        <strong id="staffDashboardAcademicWeek">—</strong>
+    </div>
+
+    <div class="staff-calendar-time" id="staffDashboardClock">
+        --:--:--
+    </div>
+</div>
+
+<section class="welcome-banner">
+    <h2>
+        Welcome back,
+        {{ staff_name or "Stores Staff" }}
+    </h2>
+
+    <p>
+        Here's an overview of student property,
+        issued items, returns and Stores clearance activity.
+    </p>
+
+    <div class="welcome-icon">▣</div>
+</section>
+
+<section class="stats">
+
+    <div class="stat-card">
+        <div class="stat-label">Total Students</div>
+        <div class="stat-value">{{ total_students }}</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-label">Items Currently Issued</div>
+        <div class="stat-value">{{ issued_properties }}</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-label">Items Returned</div>
+        <div class="stat-value">{{ returned_properties }}</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-label">Mattresses Assigned</div>
+        <div class="stat-value">{{ mattress_assigned }}</div>
+    </div>
+
+</section>
+
+<div class="dashboard-enhancements">
+
+<section class="section">
+
+    <div class="section-header">
+        <div>
+            <h2>Recent Stores Activity</h2>
+            <p>
+                Latest property issued and recorded by the Stores Office.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('new_staff_stores_property_records') }}"
+            class="section-link">
+            View all
+        </a>
+    </div>
+
+    {% if recent_properties %}
+
+    <div class="activity-table-wrap">
+
+        <table class="activity-table">
+
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Property</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for record in recent_properties %}
+
+                <tr>
+
+                    <td>
+                        <div class="activity-student">
+
+                            {% set student =
+                                record.student
+                                if record.student is defined
+                                else none
+                            %}
+
+                            <strong>
+                                {{ student.name
+                                   if student
+                                   else record.student_id }}
+                            </strong>
+
+                            <span>
+                                {{ record.student_id }}
+                            </span>
+
+                        </div>
+                    </td>
+
+                    <td class="property-cell">
+                        {{ record.name or "Property" }}
+                    </td>
+
+                    <td>
+
+                        {% set status =
+                            (record.status or "Recorded")|lower
+                        %}
+
+                        <span class="activity-status
+                            {% if status == 'issued' %}
+                                issued
+                            {% elif status == 'assigned' %}
+                                assigned
+                            {% elif status == 'returned' %}
+                                returned
+                            {% elif status == 'cleared' %}
+                                cleared
+                            {% elif status == 'declined' %}
+                                declined
+                            {% else %}
+                                recorded
+                            {% endif %}">
+
+                            {{ record.status or "Recorded" }}
+
+                        </span>
+
+                    </td>
+
+                    <td class="date-cell">
+
+                        {% if record.issued_at %}
+
+                            {{ record.issued_at.strftime(
+                                "%d %b %Y, %H:%M"
+                            ) }}
+
+                        {% elif record.returned_at %}
+
+                            {{ record.returned_at.strftime(
+                                "%d %b %Y, %H:%M"
+                            ) }}
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+        <div class="empty-dashboard">
+            No Stores activity has been recorded yet.
+        </div>
+
+    {% endif %}
+
+</section>
+
+<div class="dashboard-two-column">
+
+<section class="section">
+
+    <div class="section-header">
+        <div>
+            <h2>Outstanding Property</h2>
+            <p>Items currently held by students.</p>
+        </div>
+    </div>
+
+    {% if outstanding_items %}
+
+    <div class="property-list">
+
+        {% for item in outstanding_items %}
+
+        <div class="property-row">
+
+            <div class="property-main">
+
+                <strong>
+                    {{ item.name or "Property" }}
+                </strong>
+
+                <span>
+                    {{ item.student_id }}
+
+                    {% if item.issued_at %}
+                        · Issued
+                        {{ item.issued_at.strftime("%d %b %Y") }}
+                    {% endif %}
+                </span>
+
+            </div>
+
+            <span class="property-status">
+                {{ item.status or "Outstanding" }}
+            </span>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+        <div class="empty-dashboard">
+            No outstanding property.
+        </div>
+
+    {% endif %}
+
+</section>
+
+<section class="section">
+
+    <div class="section-header">
+        <div>
+            <h2>Recent Returns</h2>
+            <p>Property recently returned by students.</p>
+        </div>
+    </div>
+
+    {% if recent_returns %}
+
+    <div class="return-list">
+
+        {% for item in recent_returns %}
+
+        <div class="return-row">
+
+            <div class="return-main">
+
+                <strong>
+                    {{ item.name or "Property" }}
+                </strong>
+
+                <span>
+                    {{ item.student_id }}
+                </span>
+
+            </div>
+
+            <span class="return-date">
+
+                {% if item.returned_at %}
+
+                    {{ item.returned_at.strftime("%d %b %Y") }}
+
+                {% else %}
+
+                    —
+
+                {% endif %}
+
+            </span>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+        <div class="empty-dashboard">
+            No returned property has been recorded yet.
+        </div>
+
+    {% endif %}
+
+</section>
+
+</div>
+
+<section class="section">
+
+    <div class="section-header">
+        <div>
+            <h2>Stores Clearance Progress</h2>
+            <p>
+                Students with no outstanding Stores property.
+            </p>
+        </div>
+    </div>
+
+    <div class="clearance-progress">
+
+        <div class="progress-summary">
+
+            <div>
+                <span class="progress-number">
+                    {{ students_with_no_outstanding }}
+                </span>
+
+                <span class="progress-label">
+                    of {{ total_students }} cleared
+                </span>
+            </div>
+
+            <strong>
+                {{ clearance_percentage }}%
+            </strong>
+
+        </div>
+
+        <div class="progress-track">
+            <div
+                class="progress-fill"
+                style="width: {{ clearance_percentage }}%;">
+            </div>
+        </div>
+
+        <div class="progress-footer">
+
+            <span>
+                Cleared:
+                {{ students_with_no_outstanding }}
+            </span>
+
+            <span>
+                Outstanding:
+                {{ total_students - students_with_no_outstanding }}
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="section activity-chart-section">
+
+    <div class="section-header">
+
+        <div>
+            <h2>Stores Activity</h2>
+
+            <p>
+                Property issued and returned during the last 7 days.
+            </p>
+        </div>
+
+        <span class="chart-period">
+            Last 7 days
+        </span>
+
+    </div>
+
+    <div class="stores-chart">
+
+        {% for day in store_activity %}
+
+        {% set issued_height =
+            8 if day.issued == 0
+            else [day.issued * 18, 95]|min
+        %}
+
+        {% set returned_height =
+            8 if day.returned == 0
+            else [day.returned * 18, 95]|min
+        %}
+
+        <div class="chart-column">
+
+            <div class="chart-values">
+
+                <span class="issued-value">
+                    {{ day.issued }}
+                </span>
+
+                <span>/</span>
+
+                <span class="returned-value">
+                    {{ day.returned }}
+                </span>
+
+            </div>
+
+            <div class="chart-bar-area">
+
+                <div
+                    class="chart-bar issued-bar"
+                    style="height: {{ issued_height }}px;">
+                </div>
+
+                <div
+                    class="chart-bar returned-bar"
+                    style="height: {{ returned_height }}px;">
+                </div>
+
+            </div>
+
+            <div class="chart-day">
+                {{ day.date }}
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="section latest-announcements">
+
+    <div class="section-header">
+
+        <div>
+            <h2>Latest Announcements</h2>
+
+            <p>
+                Important information from the Administration.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('new_staff_stores_announcements') }}"
+            class="section-link">
+            View all
+        </a>
+
+    </div>
+
+    {% if announcements %}
+
+    <div class="latest-announcement-list">
+
+        {% for announcement in announcements[:5] %}
+
+        <div class="latest-announcement">
+
+            <div class="announcement-main">
+
+                <strong>
+                    {{ announcement.title }}
+                </strong>
+
+                <p>
+                    {{ announcement.message }}
+                </p>
+
+            </div>
+
+            <span class="announcement-date">
+
+                {{ announcement.created_at.strftime("%d %b %Y")
+                   if announcement.created_at
+                   else "" }}
+
+            </span>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+        <div class="empty-dashboard">
+            No active announcements.
+        </div>
+
+    {% endif %}
+
+</section>
+
+</div>
+
+</main>
+
+</div>
+
+
+<script>
+
+function toggleSidebar() {
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const overlay =
+        document.getElementById("sidebarOverlay");
+
+    if (!sidebar) {
+        return;
+    }
+
+    sidebar.classList.toggle("open");
+
+    if (overlay) {
+
+        overlay.classList.toggle(
+            "show",
+            sidebar.classList.contains("open")
+        );
+
+    }
+
+}
+
+
+/* Close sidebar after selecting a mobile link */
+
+document.querySelectorAll(".sidebar a").forEach(function(link) {
+
+    link.addEventListener("click", function() {
+
+        if (window.innerWidth <= 800) {
+
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const overlay =
+                document.getElementById("sidebarOverlay");
+
+            if (sidebar) {
+                sidebar.classList.remove("open");
+            }
+
+            if (overlay) {
+                overlay.classList.remove("show");
+            }
+
+        }
+
+    });
+
+});
+
+
+/* Escape key closes mobile sidebar */
+
+document.addEventListener("keydown", function(event) {
+
+    if (event.key === "Escape") {
+
+        const sidebar =
+            document.getElementById("sidebar");
+
+        const overlay =
+            document.getElementById("sidebarOverlay");
+
+        if (sidebar) {
+            sidebar.classList.remove("open");
+        }
+
+        if (overlay) {
+            overlay.classList.remove("show");
+        }
+
+    }
+
+});
+
+</script>
+
+
+<!-- STORES DASHBOARD CALENDAR FIX -->
+<script>
+(function () {
+
+    function updateStoresCalendar() {
+
+        const now = new Date();
+
+        const formatter = new Intl.DateTimeFormat(
+            "en-GB",
+            {
+                timeZone: "Africa/Lusaka",
+                weekday: "long",
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false
+            }
+        );
+
+        const parts = formatter.formatToParts(now);
+        const values = {};
+
+        parts.forEach(function (part) {
+            if (part.type !== "literal") {
+                values[part.type] = part.value;
+            }
+        });
+
+        const weekday =
+            document.getElementById("staffDashboardWeekday");
+
+        const day =
+            document.getElementById("staffDashboardDay");
+
+        const month =
+            document.getElementById("staffDashboardMonth");
+
+        const clock =
+            document.getElementById("staffDashboardClock");
+
+        if (weekday) {
+            weekday.textContent =
+                values.weekday || "---";
+        }
+
+        if (day) {
+            day.textContent =
+                values.day || "--";
+        }
+
+        if (month) {
+            month.textContent =
+                (values.month || "---") +
+                " " +
+                (values.year || "");
+        }
+
+        if (clock) {
+            clock.textContent =
+                (values.hour || "--") +
+                ":" +
+                (values.minute || "--") +
+                ":" +
+                (values.second || "--");
+        }
+
+        updateStoresAcademicWeek();
+    }
+
+
+    function updateStoresAcademicWeek() {
+
+        const academicWeek =
+            document.getElementById(
+                "staffDashboardAcademicWeek"
+            );
+
+        if (!academicWeek) {
+            return;
+        }
+
+        const startDateString =
+            "{{ settings.get('term_start_date', '') }}";
+
+        const endDateString =
+            "{{ settings.get('term_end_date', '') }}";
+
+        if (!startDateString) {
+            academicWeek.textContent = "Not set";
+            return;
+        }
+
+        const startDate =
+            new Date(startDateString + "T00:00:00");
+
+        const endDate =
+            endDateString
+                ? new Date(endDateString + "T23:59:59")
+                : null;
+
+        if (isNaN(startDate.getTime())) {
+            academicWeek.textContent = "Not set";
+            return;
+        }
+
+        const now = new Date();
+
+        if (now < startDate) {
+            academicWeek.textContent = "Not started";
+            return;
+        }
+
+        if (endDate && now > endDate) {
+            academicWeek.textContent = "Term ended";
+            return;
+        }
+
+        const difference =
+            now.getTime() - startDate.getTime();
+
+        const daysElapsed =
+            Math.floor(
+                difference /
+                (1000 * 60 * 60 * 24)
+            );
+
+        const week =
+            Math.floor(daysElapsed / 7) + 1;
+
+        academicWeek.textContent =
+            "Week " + week;
+    }
+
+
+    updateStoresCalendar();
+
+    setInterval(
+        updateStoresCalendar,
+        1000
+    );
+
+})();
+</script>
+
+</body>
+</html>

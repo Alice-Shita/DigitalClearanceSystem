@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}
+Terms & Conditions | ZASTI
+{% endblock %}
+
+{% block content %}
+
+<!-- STUDENT BOTTOM DASHBOARD BUTTON STYLE -->
+<style>
+.student-bottom-dashboard {
+    display: flex;
+    justify-content: center;
+    margin: 35px 0 10px 0;
+}
+
+.student-bottom-dashboard a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 16px;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #173f38;
+    border: 1px solid #d9e3df;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.student-bottom-dashboard a:hover {
+    background: #198754;
+    color: #ffffff;
+    border-color: #198754;
+    text-decoration: none;
+}
+
+.student-bottom-dashboard i {
+    font-size: 15px;
+}
+</style>
+
+
+<style>
+.student-bottom-dashboard {
+    display: flex;
+    justify-content: center;
+    margin: 35px 0 10px 0;
+}
+
+.student-bottom-dashboard a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 18px;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #173f38;
+    border: 1px solid #d9e3df;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.student-bottom-dashboard a:hover {
+    background: #198754;
+    color: #ffffff;
+    border-color: #198754;
+    text-decoration: none;
+}
+
+.student-bottom-dashboard i {
+    font-size: 15px;
+}
+</style>
+
+<section class="terms-page">
+
+    <div class="terms-container">
+
+        <div class="terms-heading">
+
+            <div class="terms-icon">
+                <i class="bi bi-file-earmark-check"></i>
+            </div>
+
+            <h1>Terms & Conditions</h1>
+
+            <p>
+                Please read the following conditions carefully
+                before continuing.
+            </p>
+
+        </div>
+
+
+        <div class="terms-list">
+
+            <article class="terms-item">
+
+                <h3>1. Clearance Requirements</h3>
+
+                <p>
+                    Every student is required to complete clearance
+                    with all assigned departments before final approval
+                    is granted.
+                </p>
+
+            </article>
+
+
+            <article class="terms-item">
+
+                <h3>2. Verification</h3>
+
+                <p>
+                    Clearance statuses are subject to verification
+                    by the responsible department.
+                </p>
+
+            </article>
+
+
+            <article class="terms-item">
+
+                <h3>3. Institutional Property</h3>
+
+                <p>
+                    Students are responsible for returning all
+                    institutional property issued to them during
+                    the academic period.
+                </p>
+
+            </article>
+
+
+            <article class="terms-item">
+
+                <h3>4. Unreturned Property</h3>
+
+                <p>
+                    Failure to return items issued by Stores, Hostel,
+                    or the Technical Services Office (TSO) may result
+                    in penalties or replacement charges.
+                </p>
+
+            </article>
+
+
+            <article class="terms-item">
+
+                <h3>5. Current Penalty Fee</h3>
+
+                <p>
+                    The current penalty amount is:
+                </p>
+
+                <strong class="penalty-amount">
+                    {{ (penalty_fee or 0)|money }}
+                </strong>
+
+            </article>
+
+
+            <article class="terms-item">
+
+                <h3>6. Final Clearance</h3>
+
+                <p>
+                    The institution reserves the right to withhold
+                    final clearance where verification is incomplete
+                    or disputed.
+                </p>
+
+            </article>
+
+
+            <article class="terms-item">
+
+                <h3>7. False Information</h3>
+
+                <p>
+                    Submission of false information or fraudulent
+                    documents may lead to disciplinary action.
+                </p>
+
+            </article>
+
+
+            <article class="terms-item">
+
+                <h3>8. Auditing</h3>
+
+                <p>
+                    Clearance records may be audited and verified
+                    by administration at any time.
+                </p>
+
+            </article>
+
+        </div>
+
+
+        <form method="POST" class="terms-confirm">
+
+            <label class="terms-checkbox">
+
+                <input
+                    type="checkbox"
+                    name="agree"
+                    value="yes"
+                    required
+                >
+
+                <span>
+                    I have read and agree to the Terms & Conditions.
+                </span>
+
+            </label>
+
+
+            <button
+                type="submit"
+                class="terms-continue"
+            >
+
+                <i class="bi bi-check2-circle"></i>
+
+                Continue
+
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+<!-- STUDENT BOTTOM BACK TO DASHBOARD -->
+<div class="student-bottom-dashboard">
+    
+</div>
+
+{% endblock %}

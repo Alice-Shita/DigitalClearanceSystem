@@ -1,0 +1,414 @@
+/* =====================================================
+   ZASTI DIGITAL CLEARANCE SYSTEM
+   STUDENT PORTAL — CLEAN CSS
+   PART 1: FOUNDATION + SIDEBAR
+   ===================================================== */
+
+:root {
+    --primary: #0f3d75;
+    --primary-dark: #0a2d59;
+    --primary-light: #eaf2fb;
+
+    --white: #ffffff;
+    --background: #f5f7fb;
+
+    --text: #172033;
+    --muted: #64748b;
+
+    --border: #e2e8f0;
+
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #ea580c;
+
+    --sidebar-width: 255px;
+}
+
+
+/* =====================================================
+   RESET
+   ===================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+
+    background: var(--background);
+
+    color: var(--text);
+
+    min-height: 100vh;
+}
+
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+.site-header {
+    height: 90px;
+
+    background: var(--white);
+
+    border-bottom: 1px solid var(--border);
+
+    display: flex;
+    align-items: center;
+
+    position: relative;
+
+    z-index: 1100;
+}
+
+.header-inner {
+    width: 100%;
+
+    padding: 0 30px;
+}
+
+.header-brand h1 {
+    color: var(--primary);
+
+    font-size: 24px;
+
+    font-weight: 800;
+}
+
+.header-brand p {
+    margin-top: 4px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   STUDENT PORTAL LAYOUT
+   ===================================================== */
+
+.student-portal-layout {
+    min-height: calc(100vh - 90px);
+}
+
+
+/* =====================================================
+   SIDEBAR
+   ===================================================== */
+
+.student-sidebar {
+    position: fixed;
+
+    top: 90px;
+    left: 0;
+
+    width: var(--sidebar-width);
+
+    height: calc(100vh - 90px);
+
+    background: var(--white);
+
+    border-right: 1px solid var(--border);
+
+    display: flex;
+    flex-direction: column;
+
+    z-index: 1000;
+
+    overflow: hidden;
+}
+
+
+/* =====================================================
+   SIDEBAR BRAND
+   ===================================================== */
+
+.sidebar-brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 22px 20px;
+
+    border-bottom: 1px solid var(--border);
+
+    flex-shrink: 0;
+}
+
+.sidebar-logo {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: var(--primary-light);
+
+    color: var(--primary);
+
+    font-size: 20px;
+}
+
+.sidebar-brand strong {
+    display: block;
+
+    color: var(--primary);
+
+    font-size: 18px;
+}
+
+.sidebar-brand span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   SIDEBAR NAVIGATION
+   ===================================================== */
+
+.sidebar-nav {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 20px 13px;
+}
+
+
+/* SECTION TITLE */
+
+.sidebar-section-title {
+    padding: 8px 12px;
+
+    margin-top: 5px;
+    margin-bottom: 8px;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+
+/* LINKS */
+
+.sidebar-link {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    width: 100%;
+
+    padding: 12px 13px;
+
+    margin-bottom: 4px;
+
+    border-radius: 10px;
+
+    color: var(--text);
+
+    background: transparent;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.sidebar-link i {
+    width: 21px;
+
+    text-align: center;
+
+    color: var(--primary);
+
+    font-size: 18px;
+
+    flex-shrink: 0;
+}
+
+.sidebar-link:hover {
+    background: var(--primary-light);
+
+    color: var(--primary);
+}
+
+.sidebar-link:hover i {
+    color: var(--primary);
+}
+
+
+/* =====================================================
+   LOGOUT
+   ===================================================== */
+
+.sidebar-logout {
+    color: #64748b;
+}
+
+.sidebar-logout i {
+    color: #64748b;
+}
+
+.sidebar-logout:hover {
+    background: #fef2f2;
+
+    color: var(--danger);
+}
+
+.sidebar-logout:hover i {
+    color: var(--danger);
+}
+
+
+/* =====================================================
+   MAIN CONTENT
+   ===================================================== */
+
+.student-portal-content {
+    margin-left: var(--sidebar-width);
+
+    width: calc(100% - var(--sidebar-width));
+
+    min-height: calc(100vh - 90px);
+
+    padding: 30px;
+}
+
+
+/* =====================================================
+   MOBILE MENU BUTTON
+   ===================================================== */
+
+.sidebar-toggle {
+    display: none;
+
+    position: fixed;
+
+    top: 105px;
+    left: 15px;
+
+    width: 44px;
+    height: 44px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: var(--primary);
+
+    color: var(--white);
+
+    font-size: 22px;
+
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    z-index: 1200;
+}
+
+
+/* =====================================================
+   MOBILE OVERLAY
+   ===================================================== */
+
+.sidebar-overlay {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(15, 23, 42, 0.45);
+
+    z-index: 900;
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 800px) {
+
+    .student-sidebar {
+        transform: translateX(-100%);
+
+        transition: transform 0.25s ease;
+    }
+
+    .student-sidebar.sidebar-open {
+        transform: translateX(0);
+    }
+
+    .sidebar-toggle {
+        display: flex;
+    }
+
+    .sidebar-overlay.overlay-visible {
+        display: block;
+    }
+
+    .student-portal-content {
+        width: 100%;
+
+        margin-left: 0;
+
+        padding: 20px 15px;
+    }
+
+}
+
+
+/* =====================================================
+   SMALL PHONES
+   ===================================================== */
+
+@media (max-width: 480px) {
+
+    .header-inner {
+        padding: 0 18px;
+    }
+
+    .header-brand h1 {
+        font-size: 21px;
+    }
+
+    .header-brand p {
+        font-size: 12px;
+    }
+
+}

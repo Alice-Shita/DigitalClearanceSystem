@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Day Scholars | ZASTI</title>
+
+    <style>
+
+        :root {
+            --green-dark: #075e54;
+            --green: #0b806f;
+            --green-light: #e8f5f2;
+            --text: #17202a;
+            --muted: #69757e;
+            --border: #e5e9ec;
+            --background: #f4f7f8;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            background: white;
+            border-right: 1px solid var(--border);
+            padding: 24px 16px;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .brand {
+            padding: 5px 12px 25px;
+        }
+
+        .brand-title {
+            margin: 0;
+            color: var(--green-dark);
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        .brand-subtitle {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.35;
+        }
+
+        .nav-title {
+            margin: 0 12px 8px;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav a,
+        .nav-disabled {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .nav a:hover {
+            background: var(--green-light);
+            color: var(--green-dark);
+        }
+
+        .nav a.active {
+            background: var(--green-light);
+            color: var(--green-dark);
+        }
+
+        .nav-disabled {
+            color: #9aa3a8;
+        }
+
+        .nav-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-close {
+            display: none;
+        }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        .mobile-top-header {
+            display: none;
+        }
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+            padding: 32px;
+        }
+
+        .page-heading {
+            margin-bottom: 24px;
+        }
+
+        .page-heading h1 {
+            margin: 0;
+            font-size: 27px;
+        }
+
+        .page-heading p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            margin: 0 0 6px;
+            font-size: 17px;
+        }
+
+        .card-description {
+            margin: 0 0 18px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 9px;
+        }
+
+        .search-form input {
+            flex: 1;
+            min-width: 0;
+            padding: 11px 13px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .search-form input:focus {
+            border-color: var(--green);
+        }
+
+        .search-form button {
+            padding: 10px 17px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--green-dark);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .student-list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .student-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+        }
+
+        .student-info {
+            min-width: 0;
+        }
+
+        .student-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .student-id {
+            margin-top: 4px;
+            color: var(--green-dark);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .student-program {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .day-scholar-button {
+            flex-shrink: 0;
+            padding: 9px 13px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--green-dark);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .day-scholar-button:hover {
+            background: var(--green);
+        }
+
+        .empty {
+            padding: 35px 15px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-close {
+                display: flex;
+                position: absolute;
+                top: 18px;
+                right: 15px;
+                width: 36px;
+                height: 36px;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                background: white;
+                color: var(--text);
+                font-size: 22px;
+                cursor: pointer;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(15,23,42,.38);
+                z-index: 950;
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .mobile-top-header {
+                display: flex;
+                position: sticky;
+                top: 0;
+                align-items: center;
+                gap: 12px;
+                padding: 13px 16px;
+                background: white;
+                border-bottom: 1px solid var(--border);
+                z-index: 900;
+            }
+
+            .menu-button {
+                width: 38px;
+                height: 38px;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                background: white;
+                color: var(--text);
+                font-size: 20px;
+                cursor: pointer;
+            }
+
+            .mobile-title {
+                color: var(--green-dark);
+                font-size: 16px;
+                font-weight: 800;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 22px 16px;
+            }
+
+            .page-heading h1 {
+                font-size: 23px;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-form button {
+                width: 100%;
+            }
+
+            .student-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .day-scholar-button {
+                width: 100%;
+            }
+        }
+
+    </style>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+</head>
+
+<body>
+
+    {% include "new_staff/hostel/_sidebar.html" %}
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+        onclick="toggleSidebar()"
+    ></div>
+
+    <header class="mobile-top-header">
+
+        <button
+            class="menu-button"
+            onclick="toggleSidebar()"
+            type="button"
+        >
+            ☰
+        </button>
+
+        <div class="mobile-title">
+            Hostel Department
+        </div>
+
+    </header>
+
+    <main class="main">
+
+        <div class="page-heading">
+
+            <h1>
+                Day Scholars
+            </h1>
+
+            <p>
+                Add students who will attend ZASTI as day scholars.
+            </p>
+
+        </div>
+
+        <section class="card">
+
+            <h2>
+                Add Day Scholar
+            </h2>
+
+            <p class="card-description">
+                Search for a student and add them as a Day Scholar.
+                No hostel or room will be assigned.
+            </p>
+
+            <form
+                method="GET"
+                action="{{ url_for('hostel_day_scholars') }}"
+                class="search-form"
+            >
+
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search by Student ID or name..."
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+
+            </form>
+
+        </section>
+
+        <section class="card">
+
+            <h2>
+                Students Without Accommodation
+            </h2>
+
+            <p class="card-description">
+                Select a student below to add them as a Day Scholar.
+            </p>
+
+            <div class="student-list">
+
+                {% if students %}
+
+                    {% for student in students %}
+
+                    <div class="student-row">
+
+                        <div class="student-info">
+
+                            <div class="student-name">
+                                {{ student.name }}
+                            </div>
+
+                            <div class="student-id">
+                                {{ student.student_id }}
+                            </div>
+
+                            <div class="student-program">
+                                {{ student.program }}
+                            </div>
+
+                        </div>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('hostel_day_scholars') }}"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="student_id"
+                                value="{{ student.student_id }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="day-scholar-button"
+                            >
+                                Add as Day Scholar
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty">
+
+                        {% if search %}
+                            No students found for "{{ search }}".
+                        {% else %}
+                            No students are currently available to add.
+                        {% endif %}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+
+        function toggleSidebar() {
+
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const overlay =
+                document.getElementById("sidebarOverlay");
+
+            sidebar.classList.toggle("open");
+
+            overlay.classList.toggle("open");
+        }
+
+    </script>
+
+</body>
+
+</html>

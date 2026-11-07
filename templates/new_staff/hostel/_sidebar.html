@@ -1,0 +1,479 @@
+<style>
+/* =========================================================
+   SHARED HOSTEL SIDEBAR
+========================================================= */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 260px;
+    z-index: 1100;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+
+    padding: 24px 15px 18px;
+
+    box-shadow: 4px 0 20px rgba(15, 23, 42, .035);
+
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.sidebar *,
+.sidebar *::before,
+.sidebar *::after {
+    box-sizing: border-box;
+}
+
+.sidebar-close {
+    display: none;
+
+    position: absolute;
+    top: 14px;
+    right: 14px;
+
+    width: 36px;
+    height: 36px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: #f3f4f6;
+    color: #4b5563;
+
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.brand {
+    padding: 4px 10px 22px;
+    margin-bottom: 20px;
+
+    border-bottom: 1px solid #eef0f2;
+}
+
+.brand-title {
+    margin: 0;
+
+    color: #166534;
+    font-size: 26px;
+    font-weight: 800;
+
+    letter-spacing: .5px;
+}
+
+.brand-subtitle {
+    margin-top: 5px;
+
+    color: #6b7280;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.nav-title {
+    padding: 0 10px 9px;
+
+    color: #9ca3af;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sidebar a {
+    text-decoration: none;
+}
+
+.nav a,
+.nav-disabled,
+.sidebar-bottom .logout {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    min-height: 45px;
+    padding: 10px 12px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition:
+        background .18s ease,
+        color .18s ease;
+}
+
+.nav a {
+    color: #4b5563;
+}
+
+.nav a:hover {
+    background: #f5f7f8;
+    color: #172033;
+}
+
+.nav a.active {
+    background: #ecfdf5;
+    color: #166534;
+}
+
+.nav a.active::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+
+    width: 3px;
+
+    border-radius: 0 4px 4px 0;
+
+    background: #15803d;
+}
+
+.nav-icon {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #f3f4f6;
+    color: #6b7280;
+
+    font-size: 15px;
+}
+
+.nav a:hover .nav-icon,
+.nav a.active .nav-icon {
+    background: #dff7e9;
+    color: #166534;
+}
+
+.nav-disabled {
+    color: #9ca3af;
+
+    background: transparent;
+
+    cursor: not-allowed;
+}
+
+.nav-disabled .nav-icon {
+    background: #f3f4f6;
+    color: #9ca3af;
+}
+
+/* =========================================================
+   ACCOUNT / PROFILE
+========================================================= */
+
+.sidebar-bottom {
+    margin-top: auto;
+
+    padding-top: 18px;
+
+    border-top: 1px solid #eef0f2;
+}
+
+.staff-mini {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 9px 10px 13px;
+}
+
+.staff-avatar {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #dcfce7;
+    color: #166534;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.staff-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.staff-info strong {
+    display: block;
+
+    color: #172033;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.staff-info span {
+    display: block;
+
+    color: #6b7280;
+
+    font-size: 10px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   CHANGE PASSWORD / LOGOUT
+========================================================= */
+
+.sidebar-bottom .logout {
+    color: #4b5563;
+}
+
+.sidebar-bottom .logout:hover {
+    background: #f5f7f8;
+    color: #172033;
+}
+
+.sidebar-bottom .logout.active {
+    background: #ecfdf5;
+    color: #166534;
+}
+
+.sidebar-bottom .logout.active .nav-icon {
+    background: #dff7e9;
+    color: #166534;
+}
+
+.sidebar-bottom .logout .nav-icon {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-close {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+    }
+
+}
+</style>
+
+<aside class="sidebar" id="sidebar">
+
+    <button
+        class="sidebar-close"
+        onclick="toggleSidebar()"
+        type="button"
+        aria-label="Close menu"
+    >
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="brand">
+        <h1 class="brand-title">ZASTI</h1>
+
+        <div class="brand-subtitle">
+            Digital Student Clearance System
+        </div>
+    </div>
+
+    <div class="nav-title">
+        Main Menu
+    </div>
+
+    <nav class="nav">
+
+        <a
+            href="{{ url_for('hostel_dashboard') }}"
+            class="{% if request.endpoint == 'hostel_dashboard' %}active{% endif %}"
+        >
+            <span class="nav-icon">
+                <i class="fa-solid fa-gauge-high"></i>
+            </span>
+            <span>Dashboard</span>
+        </a>
+
+        <a
+            href="{{ url_for('hostel_students') }}"
+            class="{% if request.endpoint == 'hostel_students' %}active{% endif %}"
+        >
+            <span class="nav-icon">
+                <i class="fa-solid fa-users"></i>
+            </span>
+            <span>Students</span>
+        </a>
+
+        <a
+            href="{{ url_for('new_staff_hostels') }}"
+            class="{% if request.endpoint in ['new_staff_hostels', 'new_staff_hostel_detail'] %}active{% endif %}"
+        >
+            <span class="nav-icon">
+                <i class="fa-solid fa-building"></i>
+            </span>
+            <span>Hostels</span>
+        </a>
+
+        <a
+            href="{{ url_for('staff_rooms_assignment') }}"
+            class="{% if request.endpoint == 'staff_rooms_assignment' %}active{% endif %}"
+        >
+            <span class="nav-icon">
+                <i class="fa-solid fa-bed"></i>
+            </span>
+            <span>Assign Room</span>
+        </a>
+
+        <a
+            href="{{ url_for('hostel_vacate_room') }}"
+            class="{% if request.endpoint in ['hostel_vacate_room', 'hostel_vacate_student'] %}active{% endif %}"
+        >
+            <span class="nav-icon">
+                <i class="fa-solid fa-door-open"></i>
+            </span>
+            <span>Vacate Room</span>
+        </a>
+
+        <a
+            href="{{ url_for('hostel_day_scholars') }}"
+            class="{% if request.endpoint == 'hostel_day_scholars' %}active{% endif %}"
+        >
+            <span class="nav-icon">
+                <i class="fa-solid fa-user"></i>
+            </span>
+            <span>Day Scholars</span>
+        </a>
+
+        <a
+            href="{{ url_for('hostel_accommodation_records') }}"
+            class="{% if request.endpoint == 'hostel_accommodation_records' %}active{% endif %}"
+        >
+            <span class="nav-icon">
+                <i class="fa-solid fa-clipboard-list"></i>
+            </span>
+            <span>Accommodation Records</span>
+        </a>
+
+        <a
+            href="{{ url_for('hostel_clearance') }}"
+            class="{% if request.endpoint == 'hostel_clearance' %}active{% endif %}"
+        >
+            <span class="nav-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </span>
+            <span>Clearance</span>
+        </a>
+
+        <a
+            href="{{ url_for('hostel_announcements') }}"
+            class="{% if request.endpoint == 'hostel_announcements' %}active{% endif %}"
+        >
+            <span class="nav-icon">
+                <i class="fa-solid fa-bullhorn"></i>
+            </span>
+            <span>Announcements</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <div class="staff-mini">
+
+            <div class="staff-avatar">
+                {{ (session.get("name") or "Staff")[:1]|upper }}
+            </div>
+
+            <div class="staff-info">
+                <strong>
+                    {{ session.get("name") or "Staff" }}
+                </strong>
+
+                <span>
+                    {{ session.get("department") or "Hostel Department" }}
+                </span>
+            </div>
+
+        </div>
+
+        <a
+            href="{{ url_for('staff_change_password') }}"
+            class="logout {% if request.endpoint == 'staff_change_password' %}active{% endif %}"
+        >
+            <span class="nav-icon">
+                <i class="fa-solid fa-key"></i>
+            </span>
+            <span>Change Password</span>
+        </a>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout"
+        >
+            <span class="nav-icon">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </span>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>

@@ -1,0 +1,418 @@
+{% extends "base.html" %}
+
+{% block title %}
+Student Profile | ZASTI Clearance System
+{% endblock %}
+
+{% block content %}
+
+<div class="student-portal-layout">
+    {% include "components/sidebar.html" %}
+    <main class="student-portal-content">
+
+
+<!-- STUDENT BOTTOM DASHBOARD BUTTON STYLE -->
+<style>
+.student-bottom-dashboard {
+    display: flex;
+    justify-content: center;
+    margin: 35px 0 10px 0;
+}
+
+.student-bottom-dashboard a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 16px;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #173f38;
+    border: 1px solid #d9e3df;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.student-bottom-dashboard a:hover {
+    background: #198754;
+    color: #ffffff;
+    border-color: #198754;
+    text-decoration: none;
+}
+
+.student-bottom-dashboard i {
+    font-size: 15px;
+}
+</style>
+
+
+<style>
+.student-bottom-dashboard {
+    display: flex;
+    justify-content: center;
+    margin: 35px 0 10px 0;
+}
+
+.student-bottom-dashboard a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 18px;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #173f38;
+    border: 1px solid #d9e3df;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.student-bottom-dashboard a:hover {
+    background: #198754;
+    color: #ffffff;
+    border-color: #198754;
+    text-decoration: none;
+}
+
+.student-bottom-dashboard i {
+    font-size: 15px;
+}
+</style>
+
+
+<style>
+.profile-extra-section {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid #e5ece8;
+}
+.profile-extra-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.profile-extra-heading i {
+    color: #198754;
+    font-size: 19px;
+}
+.profile-extra-heading h3 {
+    margin: 0;
+    color: #173f38;
+    font-size: 16px;
+    font-weight: 700;
+}
+.profile-extra-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+}
+.profile-extra-detail {
+    min-width: 0;
+    padding: 13px;
+    border: 1px solid #e5ece8;
+    border-radius: 9px;
+    background: #fbfdfc;
+}
+.profile-extra-detail span {
+    display: block;
+    margin-bottom: 6px;
+    color: #718078;
+    font-size: 12px;
+    font-weight: 600;
+}
+.profile-extra-detail strong {
+    display: block;
+    color: #173f38;
+    font-size: 14px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+</style>
+
+<div class="profile-page">
+
+    <section class="profile-card">
+
+        <!-- PROFILE HEADER -->
+        <div class="profile-header">
+
+            <div class="profile-picture-area">
+
+                <form
+                    method="POST"
+                    enctype="multipart/form-data"
+                    id="profile-picture-form"
+                >
+
+                    <label
+                        for="profile_pic"
+                        class="profile-picture-label"
+                        title="Change profile picture"
+                    >
+
+                        {% if student.profile_pic %}
+
+                            <img
+                                src="{{ url_for(
+                                    'serve_profile_picture',
+                                    filename=student.profile_pic.split('/')[-1]
+                                ) }}"
+                                class="profile-picture"
+                                alt="Student profile picture"
+                            >
+
+                        {% else %}
+
+                            <div class="profile-picture-placeholder">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+
+                        {% endif %}
+
+                        <span class="profile-camera-button">
+                            <i class="bi bi-camera-fill"></i>
+                        </span>
+
+                    </label>
+
+                    <input
+                        type="file"
+                        id="profile_pic"
+                        name="profile_pic"
+                        accept="image/png,image/jpeg,image/jpg"
+                        hidden
+                        onchange="document.getElementById('profile-picture-form').submit();"
+                    >
+
+                </form>
+
+            </div>
+
+
+            <div class="profile-heading">
+
+                <h1>
+                    {{ student.name }}
+                </h1>
+
+                <p>
+                    <i class="bi bi-person-badge-fill"></i>
+                    {{ student.student_id }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- PROFILE INFORMATION -->
+
+        <div class="profile-body">
+
+            <div class="profile-section-title">
+
+                <div class="profile-section-icon">
+                    <i class="bi bi-person-vcard-fill"></i>
+                </div>
+
+                <div>
+                    <h2>Student Profile</h2>
+                    <p>Your registered academic information</p>
+                </div>
+
+            </div>
+
+
+            <div class="profile-details">
+
+                <div class="profile-detail">
+
+                    <span>Student ID</span>
+
+                    <strong>
+                        {{ student.student_id }}
+                    </strong>
+
+                </div>
+
+
+                <div class="profile-detail">
+
+                    <span>Program</span>
+
+                    <strong>
+                        {{ student.program or "N/A" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="profile-detail">
+
+                    <span>Year</span>
+
+                    <strong>
+                        {{ student.year or "N/A" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="profile-detail">
+
+                    <span>Term</span>
+
+                    <strong>
+                        {{ student.term or "N/A" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="profile-detail">
+
+                    <span>Funding</span>
+
+                    <strong>
+                        {{ student.funding or "N/A" }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            
+            <!-- PERSONAL INFORMATION -->
+            <section class="profile-extra-section">
+                <div class="profile-extra-heading">
+                    <i class="bi bi-person-vcard-fill"></i>
+                    <h3>Personal Information</h3>
+                </div>
+                <div class="profile-extra-details">
+                    <div class="profile-extra-detail">
+                        <span>Full Name</span>
+                        <strong>{{ student.name or "N/A" }}</strong>
+                    </div>
+                    <div class="profile-extra-detail">
+                        <span>Gender</span>
+                        <strong>{{ student.gender or "N/A" }}</strong>
+                    </div>
+                    <div class="profile-extra-detail">
+                        <span>Date of Birth</span>
+                        <strong>{{ student.date_of_birth.strftime('%d %B %Y') if student.date_of_birth else "N/A" }}</strong>
+                    </div>
+                    <div class="profile-extra-detail">
+                        <span>Nationality</span>
+                        <strong>{{ student.nationality or "N/A" }}</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CONTACT INFORMATION -->
+            <section class="profile-extra-section">
+                <div class="profile-extra-heading">
+                    <i class="bi bi-telephone-fill"></i>
+                    <h3>Contact Information</h3>
+                </div>
+                <div class="profile-extra-details">
+                    <div class="profile-extra-detail">
+                        <span>Phone Number</span>
+                        <strong>{{ student.phone_number or "N/A" }}</strong>
+                    </div>
+                    <div class="profile-extra-detail">
+                        <span>Alternative Phone</span>
+                        <strong>{{ student.alternative_phone or "N/A" }}</strong>
+                    </div>
+                    <div class="profile-extra-detail">
+                        <span>Email Address</span>
+                        <strong>{{ student.email or "N/A" }}</strong>
+                    </div>
+                    <div class="profile-extra-detail">
+                        <span>Residential Address</span>
+                        <strong>{{ student.residential_address or "N/A" }}</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEXT OF KIN -->
+            <section class="profile-extra-section">
+                <div class="profile-extra-heading">
+                    <i class="bi bi-people-fill"></i>
+                    <h3>Next of Kin</h3>
+                </div>
+                <div class="profile-extra-details">
+                    <div class="profile-extra-detail">
+                        <span>Full Name</span>
+                        <strong>{{ student.next_of_kin_name or "N/A" }}</strong>
+                    </div>
+                    <div class="profile-extra-detail">
+                        <span>Relationship</span>
+                        <strong>{{ student.next_of_kin_relationship or "N/A" }}</strong>
+                    </div>
+                    <div class="profile-extra-detail">
+                        <span>Phone Number</span>
+                        <strong>{{ student.next_of_kin_phone or "N/A" }}</strong>
+                    </div>
+                    <div class="profile-extra-detail">
+                        <span>Alternative Phone</span>
+                        <strong>{{ student.next_of_kin_alternative_phone or "N/A" }}</strong>
+                    </div>
+                    <div class="profile-extra-detail">
+                        <span>Address</span>
+                        <strong>{{ student.next_of_kin_address or "N/A" }}</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ACCOMMODATION INFORMATION -->
+            <section class="profile-extra-section">
+                <div class="profile-extra-heading">
+                    <i class="bi bi-house-door-fill"></i>
+                    <h3>Accommodation Information</h3>
+                </div>
+                <div class="profile-extra-details">
+                    <div class="profile-extra-detail">
+                        <span>Accommodation Type</span>
+                        <strong>{{ student.accommodation or "N/A" }}</strong>
+                    </div>
+                    <div class="profile-extra-detail">
+                        <span>Hostel</span>
+                        <strong>{{ student.hostel or "N/A" }}</strong>
+                    </div>
+                    <div class="profile-extra-detail">
+                        <span>Room</span>
+                        <strong>{{ student.room or "N/A" }}</strong>
+                    </div>
+                </div>
+            </section>
+
+<div class="profile-photo-hint">
+
+                <i class="bi bi-camera"></i>
+
+                Tap your profile picture to upload or change it.
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+
+
+
+
+
+
+
+    </main>
+</div>
+
+{% endblock %}

@@ -1,0 +1,1134 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ student.name }} | Student Details
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.student-details-page {
+    min-height: calc(100vh - 68px);
+    background: #f5f8f7;
+    padding: 28px 24px 50px;
+    box-sizing: border-box;
+}
+
+/* HEADER */
+
+.student-details-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.student-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.student-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 15px;
+    background: #e8f6ef;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.student-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.student-header-text h1 {
+    margin: 0;
+    color: #173f38;
+    font-size: 25px;
+    font-weight: 750;
+}
+
+.student-header-text p {
+    margin: 5px 0 0;
+    color: #71818a;
+    font-size: 12px;
+}
+
+.back-students {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: white;
+    border: 1px solid #dfe8e5;
+    color: #49605a;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* CARDS */
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.details-card {
+    background: white;
+    border: 1px solid #e3e9e7;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(18,59,53,.04);
+}
+
+.details-card.full {
+    grid-column: 1 / -1;
+}
+
+.details-card-header {
+    padding: 16px 18px;
+    border-bottom: 1px solid #edf1f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.details-card-header h2 {
+    margin: 0;
+    color: #173f38;
+    font-size: 15px;
+}
+
+.details-card-header i {
+    color: #198754;
+    margin-right: 6px;
+}
+
+.details-card-body {
+    padding: 18px;
+}
+
+/* PERSONAL INFORMATION */
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 17px;
+}
+
+.info-item label {
+    display: block;
+    color: #8a969b;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 4px;
+}
+
+.info-item strong {
+    color: #30443f;
+    font-size: 13px;
+}
+
+.student-id-value {
+    color: #198754 !important;
+}
+
+/* STATUS */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.status-cleared,
+.status-returned,
+.status-paid {
+    background: #e8f7ef;
+    color: #198754;
+}
+
+.status-pending {
+    background: #fff5df;
+    color: #a46b00;
+}
+
+.status-rejected {
+    background: #fdecec;
+    color: #c43d3d;
+}
+
+.status-other {
+    background: #eef2f1;
+    color: #60706c;
+}
+
+/* CLEARANCE */
+
+.clearance-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.clearance-item {
+    border: 1px solid #edf1f0;
+    border-radius: 11px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.clearance-name {
+    color: #30443f;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.clearance-reason {
+    margin-top: 5px;
+    color: #8a969b;
+    font-size: 10px;
+}
+
+/* TABLES */
+
+.details-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.details-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.details-table th {
+    background: #f8faf9;
+    color: #71818a;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 12px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.details-table td {
+    padding: 12px;
+    border-top: 1px solid #edf1f0;
+    color: #30443f;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.empty-records {
+    padding: 30px;
+    text-align: center;
+    color: #8a969b;
+    font-size: 12px;
+}
+
+.empty-records i {
+    display: block;
+    font-size: 27px;
+    margin-bottom: 7px;
+    color: #a8bbb5;
+}
+
+/* ACCOUNT SUMMARY */
+
+.account-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.account-box {
+    background: #f8faf9;
+    border-radius: 11px;
+    padding: 13px;
+}
+
+.account-box label {
+    display: block;
+    color: #8a969b;
+    font-size: 9px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.account-box strong {
+    color: #173f38;
+    font-size: 16px;
+}
+
+/* MOBILE */
+
+@media (max-width: 850px) {
+
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .details-card.full {
+        grid-column: auto;
+    }
+
+    .clearance-list {
+        grid-template-columns: 1fr;
+    }
+
+    .account-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .student-details-page {
+        padding: 20px 14px 40px;
+    }
+
+    .student-details-header {
+        align-items: flex-start;
+    }
+
+    .student-header-text h1 {
+        font-size: 21px;
+    }
+
+    .student-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+    }
+
+    .back-students {
+        padding: 9px 11px;
+        font-size: 11px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 13px;
+    }
+
+}
+
+</style>
+
+
+{% include "components/admin_sidebar.html" %}
+
+
+<main class="admin-main">
+
+<div class="student-details-page">
+
+
+    <!-- HEADER -->
+
+    <div class="student-details-header">
+
+        <div class="student-header-left">
+
+            <div class="student-avatar">
+
+                {% if student.profile_pic %}
+
+                    <img
+                        src="{{ url_for('static', filename=student.profile_pic) }}"
+                        alt="{{ student.name }}"
+                    >
+
+                {% else %}
+
+                    <i class="bi bi-person-fill"></i>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="student-header-text">
+
+                <h1>{{ student.name }}</h1>
+
+                <p>
+                    Student ID:
+                    <strong>{{ student.student_id }}</strong>
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('admin_students') }}"
+            class="back-students"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Students
+        </a>
+
+    </div>
+
+
+
+    <!-- PERSONAL INFORMATION -->
+
+    <div class="details-grid">
+
+
+        <section class="details-card">
+
+            <div class="details-card-header">
+
+                <h2>
+                    <i class="bi bi-person-vcard"></i>
+                    Personal Information
+                </h2>
+
+            </div>
+
+
+            <div class="details-card-body">
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+                        <label>Student ID</label>
+                        <strong class="student-id-value">
+                            {{ student.student_id }}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Full Name</label>
+                        <strong>
+                            {{ student.name }}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Programme</label>
+                        <strong>
+                            {{ student.program }}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Year</label>
+                        <strong>
+                            {{ student.year or "—" }}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Term</label>
+                        <strong>
+                            {{ student.term or "—" }}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Funding</label>
+                        <strong>
+                            {{ student.funding or "Not specified" }}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ACCOMMODATION -->
+
+        <section class="details-card">
+
+            <div class="details-card-header">
+
+                <h2>
+                    <i class="bi bi-house-door"></i>
+                    Accommodation
+                </h2>
+
+            </div>
+
+
+            <div class="details-card-body">
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+                        <label>Accommodation</label>
+                        <strong>
+                            {{ student.accommodation or "—" }}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Hostel</label>
+                        <strong>
+                            {{ student.hostel or "—" }}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Room</label>
+                        <strong>
+                            {{ student.room or "—" }}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- DEPARTMENT CLEARANCE -->
+
+        <section class="details-card full">
+
+            <div class="details-card-header">
+
+                <h2>
+                    <i class="bi bi-check2-square"></i>
+                    Department Clearance
+                </h2>
+
+                <span>
+                    {{ clearances|length }} record{% if clearances|length != 1 %}s{% endif %}
+                </span>
+
+            </div>
+
+
+            <div class="details-card-body">
+
+                {% if clearances %}
+
+                    <div class="clearance-list">
+
+                        {% for item in clearances %}
+
+                            <div class="clearance-item">
+
+                                <div>
+
+                                    <div class="clearance-name">
+                                        {{ item.department }}
+                                    </div>
+
+                                    {% if item.reason %}
+
+                                        <div class="clearance-reason">
+                                            {{ item.reason }}
+                                        </div>
+
+                                    {% endif %}
+
+                                    {% if item.remarks %}
+
+                                        <div class="clearance-reason">
+                                            {{ item.remarks }}
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                {% set status = (item.status or "Pending")|lower %}
+
+                                {% if status in ["cleared", "approved", "returned", "paid"] %}
+
+                                    <span class="status-badge status-cleared">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        {{ item.status }}
+                                    </span>
+
+                                {% elif status in ["pending", "not cleared"] %}
+
+                                    <span class="status-badge status-pending">
+                                        <i class="bi bi-hourglass-split"></i>
+                                        {{ item.status }}
+                                    </span>
+
+                                {% elif status in ["rejected", "denied"] %}
+
+                                    <span class="status-badge status-rejected">
+                                        <i class="bi bi-x-circle-fill"></i>
+                                        {{ item.status }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status-badge status-other">
+                                        {{ item.status or "Pending" }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="empty-records">
+
+                        <i class="bi bi-clipboard-x"></i>
+
+                        No department clearance records found.
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ACCOUNT -->
+
+        <section class="details-card full">
+
+            <div class="details-card-header">
+
+                <h2>
+                    <i class="bi bi-wallet2"></i>
+                    Accounts
+                </h2>
+
+            </div>
+
+
+            <div class="details-card-body">
+
+                {% if account %}
+
+                    <div class="account-summary">
+
+                        <div class="account-box">
+
+                            <label>Total Fee</label>
+
+                            <strong>
+                                {{ (account.total_fee or 0)|money }}
+                            </strong>
+
+                        </div>
+
+                        <div class="account-box">
+
+                            <label>Paid</label>
+
+                            <strong>
+                                {{ (account.paid or 0)|money }}
+                            </strong>
+
+                        </div>
+
+                        <div class="account-box">
+
+                            <label>Minimum Required</label>
+
+                            <strong>
+                                {{ (account.minimum_required or 0)|money }}
+                            </strong>
+
+                        </div>
+
+                        <div class="account-box">
+
+                            <label>Status</label>
+
+                            <strong>
+                                {{ account.status or "Pending" }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if account.reason or account.remarks %}
+
+                        <div style="margin-top:15px;color:#71818a;font-size:11px;">
+
+                            {% if account.reason %}
+                                <strong>Reason:</strong>
+                                {{ account.reason }}
+                            {% endif %}
+
+                            {% if account.remarks %}
+                                <br>
+                                <strong>Remarks:</strong>
+                                {{ account.remarks }}
+                            {% endif %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <div class="empty-records">
+
+                        <i class="bi bi-wallet2"></i>
+
+                        No account record found.
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+
+        <!-- PAYMENTS -->
+
+        <section class="details-card full">
+
+            <div class="details-card-header">
+
+                <h2>
+                    <i class="bi bi-credit-card"></i>
+                    Payment Records
+                </h2>
+
+            </div>
+
+
+            {% if payments %}
+
+                <div class="details-table-wrapper">
+
+                    <table class="details-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Reason</th>
+                                <th>Remarks</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for payment in payments %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ (payment.amount or 0)|money }}
+                                    </td>
+
+                                    <td>
+                                        {{ payment.status or "Pending" }}
+                                    </td>
+
+                                    <td>
+                                        {{ payment.reason or "—" }}
+                                    </td>
+
+                                    <td>
+                                        {{ payment.remarks or "—" }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-records">
+                    No payment records found.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+
+        <!-- LIBRARY -->
+
+        <section class="details-card full">
+
+            <div class="details-card-header">
+
+                <h2>
+                    <i class="bi bi-book"></i>
+                    Library Books
+                </h2>
+
+            </div>
+
+
+            {% if library_books %}
+
+                <div class="details-table-wrapper">
+
+                    <table class="details-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Book</th>
+                                <th>Borrowed</th>
+                                <th>Status</th>
+                                <th>Returned At</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for book in library_books %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ book.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ book.borrowed_at or "—" }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if book.returned %}
+
+                                            <span class="status-badge status-returned">
+                                                <i class="bi bi-check-circle-fill"></i>
+                                                Returned
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="status-badge status-pending">
+                                                <i class="bi bi-hourglass-split"></i>
+                                                Not Returned
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+                                        {{ book.returned_at or "—" }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-records">
+                    No library records found.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+
+        <!-- SPORTS -->
+
+        <section class="details-card full">
+
+            <div class="details-card-header">
+
+                <h2>
+                    <i class="bi bi-trophy"></i>
+                    Sports Items
+                </h2>
+
+            </div>
+
+
+            {% if sports_items %}
+
+                <div class="details-table-wrapper">
+
+                    <table class="details-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Sport</th>
+                                <th>Item</th>
+                                <th>Status</th>
+                                <th>Remarks</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for item in sports_items %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ item.sport }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.item or "—" }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.status or "Pending" }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.remarks or "—" }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-records">
+                    No sports records found.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+
+        <!-- AME TOOLS -->
+
+        <section class="details-card full">
+
+            <div class="details-card-header">
+
+                <h2>
+                    <i class="bi bi-tools"></i>
+                    AME Tools
+                </h2>
+
+            </div>
+
+
+            {% if ame_tools %}
+
+                <div class="details-table-wrapper">
+
+                    <table class="details-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Tool</th>
+                                <th>Status</th>
+                                <th>Returned At</th>
+                                <th>Remarks</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for item in ame_tools %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ item.name }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if item.returned %}
+
+                                            <span class="status-badge status-returned">
+                                                <i class="bi bi-check-circle-fill"></i>
+                                                Returned
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="status-badge status-pending">
+                                                Not Returned
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+                                        {{ item.returned_at or "—" }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.remarks or "—" }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-records">
+                    No AME tool records found.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+
+        <!-- STORES -->
+
+        <section class="details-card full">
+
+            <div class="details-card-header">
+
+                <h2>
+                    <i class="bi bi-box-seam"></i>
+                    Store Properties
+                </h2>
+
+            </div>
+
+
+            {% if store_properties %}
+
+                <div class="details-table-wrapper">
+
+                    <table class="details-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Property</th>
+                                <th>Status</th>
+                                <th>Remarks</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for item in store_properties %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ item.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.status or "Pending" }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.remarks or "—" }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-records">
+                    No store property records found.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+    </div>
+
+</div>
+
+</main>
+
+{% endblock %}

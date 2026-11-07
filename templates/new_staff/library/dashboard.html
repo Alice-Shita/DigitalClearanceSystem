@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ZASTI | Library Dashboard</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f7f9f8;
+            color: #1f2937;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 250px;
+            background: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            position: fixed;
+            inset: 0 auto 0 0;
+            padding: 22px 15px;
+            z-index: 100;
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-sizing: border-box;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .brand {
+            padding: 5px 12px 24px;
+            border-bottom: 1px solid #edf0ee;
+            margin-bottom: 18px;
+        }
+
+        .brand-title {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            color: #14532d;
+        }
+
+        .brand-subtitle {
+            margin-top: 4px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .department-label {
+            padding: 0 12px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+            color: #9ca3af;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 13px;
+            margin-bottom: 4px;
+            border-radius: 9px;
+            text-decoration: none;
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.3;
+            white-space: nowrap;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        .nav-item span {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+        }
+
+        .nav-item i {
+            width: 18px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .nav-item.active {
+            font-weight: 700;
+        }
+
+        .nav-item.active i {
+            color: #166534;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid #edf0ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .staff-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px 13px;
+        }
+
+        .profile-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f0fdf4;
+            color: #166534;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .profile-department {
+            margin-top: 2px;
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            width: calc(100% - 250px);
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            height: 74px;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 21px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .header-subtitle {
+            margin: 4px 0 0;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .content {
+            padding: 28px 30px 40px;
+        }
+
+        /* WELCOME CARD */
+
+        .welcome {
+            position: relative;
+            overflow: hidden;
+
+            margin: 8px 0 25px;
+            padding: 24px 26px;
+
+            background: linear-gradient(
+                135deg,
+                #ecfdf5,
+                #f0fdf4
+            );
+
+            border: 1px solid #bbf7d0;
+            border-radius: 16px;
+
+            box-shadow: 0 5px 16px rgba(22, 101, 52, 0.07);
+        }
+
+        .welcome::after {
+            content: "";
+            position: absolute;
+
+            width: 140px;
+            height: 140px;
+
+            right: -45px;
+            top: -55px;
+
+            border-radius: 50%;
+
+            background: rgba(34, 197, 94, 0.07);
+        }
+
+        .welcome h1 {
+            position: relative;
+            z-index: 1;
+
+            margin: 0;
+
+            color: #166534;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .welcome p {
+            position: relative;
+            z-index: 1;
+
+            margin: 7px 0 0;
+
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           STAT CARDS
+        ========================= */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+        }
+
+        .stat-card {
+            min-height: 120px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-label {
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .stat-value {
+            font-size: 27px;
+            font-weight: 750;
+            color: #111827;
+        }
+
+        .stat-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0fdf4;
+            color: #166534;
+            font-size: 17px;
+        }
+
+        /* =========================
+           SECONDARY STATS
+        ========================= */
+
+        .secondary-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .secondary-card {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .secondary-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: #f9fafb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4b5563;
+        }
+
+        .secondary-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .secondary-value {
+            margin-top: 3px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        /* =========================
+           SECTIONS
+        ========================= */
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: 1.55fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-card {
+            overflow: hidden;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+        }
+
+        .section-header {
+            padding: 17px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #edf0ee;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 16px;
+            color: #111827;
+        }
+
+        .section-header span {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .section-body {
+            padding: 20px;
+        }
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 11px 14px;
+            text-align: left;
+            background: #f9fafb;
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 13px 14px;
+            border-top: 1px solid #f0f2f1;
+            font-size: 13px;
+            color: #374151;
+        }
+
+        .student-name {
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .student-id {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #fff7ed;
+            color: #9a3412;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* =========================
+           ANNOUNCEMENTS
+        ========================= */
+
+        .announcement {
+            padding: 14px 0;
+            border-bottom: 1px solid #edf0ee;
+        }
+
+        .announcement:first-child {
+            padding-top: 0;
+        }
+
+        .announcement:last-child {
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+
+        .announcement-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .announcement-message {
+            margin-top: 5px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #6b7280;
+        }
+
+        .announcement-date {
+            margin-top: 7px;
+            font-size: 10px;
+            color: #9ca3af;
+        }
+
+        .empty {
+            padding: 25px 10px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .empty i {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 22px;
+        }
+
+        .sidebar-close {
+            display: none;
+            position: absolute;
+            top: 18px;
+            right: 15px;
+            width: 34px;
+            height: 34px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #374151;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .sidebar-close:hover {
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .nav-item {
+            white-space: nowrap;
+            min-width: 0;
+        }
+
+        .nav-item span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 1100px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .sidebar {
+                width: 250px;
+                box-sizing: border-box;
+                padding: 22px 15px;
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 11px 13px;
+                min-height: 42px;
+                width: 100%;
+                box-sizing: border-box;
+                font-size: 14px;
+                white-space: nowrap;
+            }
+
+            .nav-item i {
+                flex: 0 0 20px;
+                width: 20px;
+                min-width: 20px;
+                text-align: center;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-close {
+                display: flex;
+            }
+
+            .brand {
+                padding-right: 45px;
+            }
+
+            .nav-item span {
+                display: block;
+                flex: 0 0 auto;
+                white-space: nowrap;
+                overflow: visible;
+            }
+
+            .main {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .top-header {
+                padding: 0 18px;
+            }
+
+            .mobile-menu {
+                display: flex;
+                width: 38px;
+                height: 38px;
+                margin-right: 12px;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                background: #ffffff;
+                color: #374151;
+            }
+
+            .content {
+                padding: 22px 18px 35px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-value {
+                font-size: 23px;
+            }
+
+            .stat-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .secondary-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome h1 {
+                font-size: 22px;
+            }
+
+            .header-title {
+                font-size: 18px;
+            }
+        }
+
+            .nav-item {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                white-space: nowrap;
+                min-height: 42px;
+            }
+
+            .nav-item i {
+                flex: 0 0 18px;
+            }
+
+            .nav-item span {
+                flex: 1 1 auto;
+                min-width: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .sidebar-bottom {
+                width: auto;
+                min-width: 0;
+            }
+
+            .staff-profile {
+                min-width: 0;
+            }
+
+            .profile-name {
+                min-width: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+        }
+
+    
+        /* RESPONSIVE SIDEBAR */
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+                width: 250px;
+                min-width: 250px;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                flex-wrap: nowrap;
+                white-space: nowrap;
+                min-width: 0;
+            }
+
+            .nav-item i {
+                flex: 0 0 18px;
+            }
+
+            .nav-item span {
+                min-width: 0;
+                flex: 1 1 auto;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .sidebar-bottom {
+                min-width: 0;
+            }
+
+            .staff-profile {
+                min-width: 0;
+            }
+
+            .profile-name {
+                min-width: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+        }
+
+    
+        /* SIDEBAR BOTTOM RESPONSIVENESS */
+
+        .sidebar-bottom {
+            min-width: 0;
+        }
+
+        .staff-profile {
+            min-width: 0;
+        }
+
+        .profile-name {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .sidebar-bottom .nav-item {
+            min-width: 0;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+        }
+
+        .sidebar-bottom .nav-item span {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 800px) {
+
+            .sidebar-bottom {
+                left: 15px;
+                right: 15px;
+                min-width: 0;
+            }
+
+            .staff-profile {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .profile-name {
+                min-width: 0;
+                max-width: 150px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .sidebar-bottom .nav-item {
+                width: 100%;
+                min-width: 0;
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+            }
+
+            .sidebar-bottom .nav-item i {
+                flex: 0 0 18px;
+            }
+
+            .sidebar-bottom .nav-item span {
+                flex: 1 1 auto;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+    </style>
+
+<style>
+
+/* =========================================================
+   STAFF LIBRARY DASHBOARD — SOFT GREEN + BLUE ACCENTS
+   Professional white-first design
+   ========================================================= */
+
+.card,
+.section-card {
+    position: relative;
+    overflow: hidden;
+}
+
+/* =========================================================
+   MAIN STAT CARDS
+   ========================================================= */
+
+.stat-card {
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #f8fcf9 100%
+    );
+
+    border: 1px solid #dcebe2;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    border-color: #c5dfd0;
+}
+
+/* Soft top accent */
+
+.stat-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #8bc9a3;
+}
+
+/* Alternate cards with soft blue */
+
+.stat-card:nth-child(2)::before,
+.stat-card:nth-child(4)::before {
+    background: #8db9df;
+}
+
+.stat-card:nth-child(2),
+.stat-card:nth-child(4) {
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #f8fbfe 100%
+    );
+
+    border-color: #d9e7f4;
+}
+
+/* =========================================================
+   STAT ICONS
+   ========================================================= */
+
+.stat-card .stat-icon {
+    background: #edf8f1;
+    color: #438b60;
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:nth-child(2) .stat-icon,
+.stat-card:nth-child(4) .stat-icon {
+    background: #edf5fb;
+    color: #477fae;
+}
+
+.stat-card:hover .stat-icon {
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   STAT TEXT
+   ========================================================= */
+
+.stat-card .stat-label {
+    color: #66756d;
+}
+
+.stat-card .stat-value {
+    color: #263b32;
+}
+
+/* =========================================================
+   SECONDARY CARDS
+   ========================================================= */
+
+.secondary-card {
+    background: #ffffff;
+    border: 1px solid #dfe9e4;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.secondary-card:nth-child(odd) {
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #f9fcfa 100%
+    );
+}
+
+.secondary-card:nth-child(even) {
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #f9fbfd 100%
+    );
+
+    border-color: #dce8f1;
+}
+
+.secondary-card:hover {
+    transform: translateY(-1px);
+    border-color: #cbded5;
+}
+
+/* =========================================================
+   SECTION CARDS
+   ========================================================= */
+
+.section-card {
+    background: #ffffff;
+    border: 1px solid #e0e9e4;
+}
+
+.section-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: #8bc9a3;
+}
+
+.section-card:nth-of-type(even)::before {
+    background: #8db9df;
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.status {
+    border-radius: 999px;
+}
+
+/* =========================================================
+   SUBTLE INTERACTION
+   ========================================================= */
+
+.card {
+    box-shadow: 0 4px 14px rgba(34, 62, 49, 0.04);
+}
+
+.card:hover {
+    box-shadow: 0 7px 20px rgba(34, 62, 49, 0.07);
+}
+
+/* =========================================================
+   KEEP THE DESIGN WHITE AND PROFESSIONAL
+   ========================================================= */
+
+.secondary-card,
+.section-card {
+    color: #34483e;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar" id="sidebar">
+        <button class="sidebar-close"
+                onclick="toggleSidebar()"
+                aria-label="Close menu">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="brand">
+            <h1 class="brand-title">ZASTI</h1>
+            <div class="brand-subtitle">
+                Digital Student Clearance System
+            </div>
+        </div>
+
+        <div class="department-label">
+            Library Department
+        </div>
+
+        <a href="{{ url_for('new_staff_library_dashboard') }}"
+           class="nav-item active">
+            <i class="fa-solid fa-gauge-high"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_library_pending') }}" class="nav-item">
+            <i class="fa-solid fa-user-clock"></i>
+            <span>Pending Clearance</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_library_cleared') }}" class="nav-item">
+            <i class="fa-solid fa-user-check"></i>
+            <span>Cleared Students</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_library_assign_books') }}" class="nav-item">
+            <i class="fa-solid fa-book-medical"></i>
+            <span>Assign Books</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_library_return_books') }}" class="nav-item">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+            <span>Return Books</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_library_book_records') }}" class="nav-item">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Book Records</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_library_announcements') }}" class="nav-item">
+            <i class="fa-solid fa-bullhorn"></i>
+            <span>Announcements</span>
+        </a>
+
+        
+            <a href="{{ url_for('staff_change_password') }}" class="nav-item">
+                <i class="fa-solid fa-key"></i>
+                <span>Change Password</span>
+            </a>
+
+<div class="sidebar-bottom">
+
+            <div class="staff-profile">
+                <div class="profile-icon">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div>
+                    <div class="profile-name">
+                        {{ staff_name }}
+                    </div>
+
+                    <div class="profile-department">
+                        {{ department }}
+                    </div>
+                </div>
+            </div>
+
+            <a href="{{ url_for('logout') }}" class="nav-item">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    
+<style>
+/* =========================================================
+   STAFF MINI ACADEMIC CALENDAR
+   ========================================================= */
+
+.staff-mini-calendar {
+    width: 220px;
+    flex-shrink: 0;
+    background: #ffffff;
+    border: 1px solid #e1e9e6;
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 15px rgba(18,59,53,.05);
+    box-sizing: border-box;
+    margin-left: auto;
+}
+
+.staff-calendar-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.staff-calendar-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #eaf7f1;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+.staff-calendar-weekday {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    color: #198754;
+    text-transform: uppercase;
+}
+
+.staff-calendar-date {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #173f38;
+}
+
+.staff-calendar-month {
+    margin-top: 2px;
+    font-size: 11px;
+    color: #71818a;
+}
+
+.staff-calendar-divider {
+    height: 1px;
+    background: #edf1f0;
+    margin: 10px 0;
+}
+
+.staff-calendar-academic {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
+    font-size: 10px;
+}
+
+.staff-calendar-academic span {
+    color: #829099;
+}
+
+.staff-calendar-academic strong {
+    color: #173f38;
+    font-weight: 700;
+}
+
+.staff-calendar-time {
+    margin-top: 9px;
+    font-size: 14px;
+    font-weight: 750;
+    letter-spacing: .4px;
+    color: #198754;
+}
+
+@media (max-width: 700px) {
+    .staff-mini-calendar {
+        width: 100%;
+        max-width: 240px;
+        margin-left: 0;
+    }
+}
+</style>
+
+
+<main class="main">
+
+        <header class="top-header">
+
+            <button class="mobile-menu"
+                    onclick="toggleSidebar()"
+                    aria-label="Open menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div>
+                <h2 class="header-title">
+                    Library Department
+                </h2>
+
+                <p class="header-subtitle">
+                    Student clearance and library management
+                </p>
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+
+<!-- STAFF MINI ACADEMIC CALENDAR -->
+<div class="staff-mini-calendar" aria-label="Current date and academic term">
+
+    <div class="staff-calendar-top">
+
+        <div class="staff-calendar-icon">
+            <span>▣</span>
+        </div>
+
+        <div>
+            <div class="staff-calendar-weekday" id="staffDashboardWeekday">---</div>
+
+            <div class="staff-calendar-date" id="staffDashboardDay">--</div>
+
+            <div class="staff-calendar-month" id="staffDashboardMonth">---</div>
+        </div>
+
+    </div>
+
+    <div class="staff-calendar-divider"></div>
+
+    <div class="staff-calendar-academic">
+
+        <span>Academic Year</span>
+        <strong>{{ settings.get('academic_year', '—') }}</strong>
+
+        <span>Academic Term</span>
+        <strong>{{ settings.get('academic_term', '—') }}</strong>
+
+        <span>Academic Week</span>
+        <strong id="staffDashboardAcademicWeek">—</strong>
+
+    </div>
+
+    <div class="staff-calendar-time" id="staffDashboardClock">
+        --:--:--
+    </div>
+
+</div>
+
+
+            <!-- WELCOME -->
+
+            <div class="welcome">
+                <h1>
+                    Welcome, {{ staff_name }}
+                </h1>
+
+                <p>
+                    Here's an overview of the Library Department today.
+                </p>
+            </div>
+
+
+            <!-- MAIN STAT CARDS -->
+
+            <div class="cards">
+
+                <div class="card stat-card">
+                    <div>
+                        <div class="stat-label">
+                            Total Students
+                        </div>
+
+                        <div class="stat-value">
+                            {{ total_students }}
+                        </div>
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+
+
+                <div class="card stat-card">
+                    <div>
+                        <div class="stat-label">
+                            Pending Students
+                        </div>
+
+                        <div class="stat-value">
+                            {{ pending_students }}
+                        </div>
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-user-clock"></i>
+                    </div>
+                </div>
+
+
+                <div class="card stat-card">
+                    <div>
+                        <div class="stat-label">
+                            Cleared Students
+                        </div>
+
+                        <div class="stat-value">
+                            {{ cleared_students }}
+                        </div>
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                </div>
+
+
+                <div class="card stat-card">
+                    <div>
+                        <div class="stat-label">
+                            Announcements
+                        </div>
+
+                        <div class="stat-value">
+                            {{ announcement_count }}
+                        </div>
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- LIBRARY STATISTICS -->
+
+            <div class="secondary-cards">
+
+                <div class="card secondary-card">
+
+                    <div class="secondary-icon">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+
+                    <div>
+                        <div class="secondary-label">
+                            Books Currently Issued
+                        </div>
+
+                        <div class="secondary-value">
+                            {{ books_issued }}
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="card secondary-card">
+
+                    <div class="secondary-icon">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+
+                    <div>
+                        <div class="secondary-label">
+                            Books Returned
+                        </div>
+
+                        <div class="secondary-value">
+                            {{ books_returned }}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PENDING + ANNOUNCEMENTS -->
+
+            <div class="section-grid">
+
+                <!-- PENDING STUDENTS -->
+
+                <div class="section-card">
+
+                    <div class="section-header">
+
+                        <h2>
+                            Pending Clearance
+                        </h2>
+
+                        <span>
+                            Latest 10
+                        </span>
+
+                    </div>
+
+                    <div class="section-body">
+
+                        {% if pending_list %}
+
+                        <div class="table-wrapper">
+
+                            <table>
+
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Programme</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                {% for student in pending_list %}
+
+                                    <tr>
+
+                                        <td>
+                                            <div class="student-name">
+                                                {{ student["name"] }}
+                                            </div>
+
+                                            <div class="student-id">
+                                                {{ student["student_id"] }}
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            {{ student["program"] or "—" }}
+                                        </td>
+
+                                        <td>
+                                            <span class="status">
+                                                Pending
+                                            </span>
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        {% else %}
+
+                        <div class="empty">
+                            <i class="fa-solid fa-circle-check"></i>
+                            No students are currently pending Library clearance.
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- ANNOUNCEMENTS -->
+
+                <div class="section-card">
+
+                    <div class="section-header">
+
+                        <h2>
+                            Announcements
+                        </h2>
+
+                        <span>
+                            Latest 5
+                        </span>
+
+                    </div>
+
+                    <div class="section-body">
+
+                        {% if announcements %}
+
+                            {% for announcement in announcements %}
+
+                            <div class="announcement">
+
+                                <div class="announcement-title">
+                                    {{ announcement["title"] }}
+                                </div>
+
+                                <div class="announcement-message">
+                                    {{ announcement["message"] }}
+                                </div>
+
+                                <div class="announcement-date">
+                                    <i class="fa-regular fa-clock"></i>
+                                    {{ announcement["created_at"] }}
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                        <div class="empty">
+                            <i class="fa-regular fa-bell-slash"></i>
+                            No active announcements.
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+    function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+    }
+</script>
+
+
+<script>
+(function () {
+
+    function updateStaffDashboardCalendar() {
+
+        const now = new Date();
+
+        const formatter = new Intl.DateTimeFormat("en-GB", {
+            timeZone: "Africa/Lusaka",
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        });
+
+        const parts = formatter.formatToParts(now);
+        const values = {};
+
+        parts.forEach(function (part) {
+            if (part.type !== "literal") {
+                values[part.type] = part.value;
+            }
+        });
+
+        const weekday =
+            document.getElementById("staffDashboardWeekday");
+
+        const day =
+            document.getElementById("staffDashboardDay");
+
+        const month =
+            document.getElementById("staffDashboardMonth");
+
+        const clock =
+            document.getElementById("staffDashboardClock");
+
+        if (weekday) {
+            weekday.textContent = values.weekday || "---";
+        }
+
+        if (day) {
+            day.textContent = values.day || "--";
+        }
+
+        if (month) {
+            month.textContent =
+                (values.month || "---") + " " +
+                (values.year || "");
+        }
+
+        if (clock) {
+            clock.textContent =
+                (values.hour || "--") + ":" +
+                (values.minute || "--") + ":" +
+                (values.second || "--");
+        }
+
+        updateStaffAcademicWeek();
+    }
+
+
+    function updateStaffAcademicWeek() {
+
+        const academicWeek =
+            document.getElementById(
+                "staffDashboardAcademicWeek"
+            );
+
+        if (!academicWeek) {
+            return;
+        }
+
+        const startDateString =
+            "{{ settings.get('term_start_date', '') }}";
+
+        const endDateString =
+            "{{ settings.get('term_end_date', '') }}";
+
+        if (!startDateString) {
+            academicWeek.textContent = "Not set";
+            return;
+        }
+
+        const now = new Date();
+
+        const startDate =
+            new Date(startDateString + "T00:00:00");
+
+        const endDate =
+            endDateString
+                ? new Date(endDateString + "T23:59:59")
+                : null;
+
+        if (isNaN(startDate.getTime())) {
+            academicWeek.textContent = "Not set";
+            return;
+        }
+
+        if (now < startDate) {
+            academicWeek.textContent = "Not started";
+            return;
+        }
+
+        if (endDate && now > endDate) {
+            academicWeek.textContent = "Term ended";
+            return;
+        }
+
+        const difference =
+            now.getTime() - startDate.getTime();
+
+        const daysElapsed =
+            Math.floor(
+                difference /
+                (1000 * 60 * 60 * 24)
+            );
+
+        const week =
+            Math.floor(daysElapsed / 7) + 1;
+
+        academicWeek.textContent =
+            "Week " + week;
+    }
+
+
+    updateStaffDashboardCalendar();
+
+    setInterval(
+        updateStaffDashboardCalendar,
+        1000
+    );
+
+})();
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,1698 @@
+
+<style id="dashboard-account-styles">
+
+/* ==================================================
+   ACCOUNT DETAILS
+   ================================================== */
+
+.dashboard-account-card {
+    margin-top: 28px;
+}
+
+.dashboard-account-heading {
+    margin-bottom: 22px;
+}
+
+.dashboard-account-heading > i {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    background: #f0fdf4;
+    color: #2e7d32;
+
+    font-size: 19px;
+}
+
+
+/* ==================================================
+   ACCOUNT SUMMARY
+   ================================================== */
+
+.account-summary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 14px;
+
+    margin-bottom: 26px;
+}
+
+.account-summary-item {
+    padding: 17px 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+}
+
+.account-summary-item span {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+.account-summary-item strong {
+    display: block;
+
+    color: #1e293b;
+
+    font-size: 18px;
+}
+
+.account-summary-item .paid-amount {
+    color: #166534;
+}
+
+.account-summary-item .balance-amount {
+    color: #b45309;
+}
+
+.account-summary-item .account-status {
+    font-size: 16px;
+}
+
+.account-summary-item .account-status.cleared {
+    color: #166534;
+}
+
+.account-summary-item .account-status.pending {
+    color: #b45309;
+}
+
+
+/* ==================================================
+   LATEST TRANSACTIONS
+   ================================================== */
+
+.account-transactions {
+    border-top: 1px solid #e2e8f0;
+
+    padding-top: 22px;
+}
+
+.account-transactions-header {
+    margin-bottom: 15px;
+}
+
+.account-transactions-header h3 {
+    margin: 0 0 5px;
+
+    color: #334155;
+
+    font-size: 16px;
+}
+
+.account-transactions-header p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+.transaction-list {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.transaction-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 15px 0;
+
+    border-top: 1px solid #f1f5f9;
+}
+
+
+.transaction-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background: #f0fdf4;
+
+    color: #2e7d32;
+
+    font-size: 16px;
+}
+
+
+.transaction-info {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.transaction-info strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #334155;
+
+    font-size: 14px;
+}
+
+
+.transaction-info span {
+    display: block;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+.transaction-amount {
+    text-align: right;
+
+    flex-shrink: 0;
+}
+
+
+.transaction-amount strong {
+    display: block;
+
+    color: #166534;
+
+    font-size: 14px;
+}
+
+
+.transaction-status {
+    display: inline-block;
+
+    margin-top: 4px;
+
+    padding: 3px 8px;
+
+    border-radius: 20px;
+
+    background: #f0fdf4;
+
+    color: #166534;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/* ==================================================
+   EMPTY TRANSACTIONS
+   ================================================== */
+
+.transactions-empty {
+    min-height: 90px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    padding: 20px;
+
+    border: 1px dashed #cbd5e1;
+
+    border-radius: 11px;
+
+    background: #f8fafc;
+
+    color: #64748b;
+
+    font-size: 14px;
+}
+
+.transactions-empty i {
+    color: #94a3b8;
+
+    font-size: 17px;
+}
+
+
+/* ==================================================
+   MOBILE
+   ================================================== */
+
+@media (max-width: 800px) {
+
+    .account-summary-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .dashboard-account-card {
+        margin-top: 22px;
+    }
+
+    .dashboard-account-heading > i {
+        width: 38px;
+        height: 38px;
+
+        font-size: 17px;
+    }
+
+    .account-summary-grid {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+    }
+
+    .account-summary-item {
+        padding: 15px 16px;
+    }
+
+    .transaction-item {
+        align-items: flex-start;
+    }
+
+    .transaction-amount {
+        max-width: 120px;
+    }
+
+    .transaction-amount strong {
+        font-size: 13px;
+    }
+
+}
+
+</style>
+
+
+<style>
+/* ==================================================
+   ANNOUNCEMENTS - CLEAN PROFESSIONAL CARD
+   ================================================== */
+
+.dashboard-announcements {
+    margin-top: 28px;
+}
+
+.dashboard-announcements .announcement-heading {
+    margin-bottom: 22px;
+}
+
+.announcement-header-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    background: #f0fdf4;
+    color: #2e7d32;
+
+    font-size: 19px;
+}
+
+/* Announcement list */
+.announcement-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.announcement-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    padding: 17px 18px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+
+    background: #ffffff;
+}
+
+/* Icon for actual announcements */
+.announcement-item .announcement-icon {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #f8fafc;
+    color: #2e7d32;
+}
+
+.announcement-item strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #334155;
+}
+
+.announcement-item div {
+    color: #64748b;
+    line-height: 1.5;
+}
+
+/* Empty announcement state */
+.announcement-empty {
+    min-height: 100px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    padding: 22px;
+
+    border: 1px dashed #cbd5e1;
+    border-radius: 13px;
+
+    background: #f8fafc;
+
+    color: #64748b;
+}
+
+.announcement-empty i {
+    font-size: 18px;
+    color: #94a3b8;
+}
+
+.announcement-empty p {
+    margin: 0;
+    font-size: 15px;
+}
+
+/* Phone */
+@media (max-width: 600px) {
+
+    .dashboard-announcements {
+        margin-top: 22px;
+    }
+
+    .announcement-header-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 17px;
+    }
+
+    .announcement-empty {
+        min-height: 90px;
+        padding: 18px;
+    }
+
+}
+</style>
+
+<style id="library-confirmation-styles">
+
+.library-confirmation-card {
+    margin-bottom: 24px;
+}
+
+.library-confirmation-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px 0;
+    border-top: 1px solid #e5e7eb;
+}
+
+.library-book-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.library-book-info strong {
+    font-size: 16px;
+}
+
+.library-book-info span {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.library-confirmation-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.library-confirmation-actions form {
+    margin: 0;
+}
+
+.btn-confirm,
+.btn-decline {
+    border: none;
+    padding: 9px 15px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-confirm {
+    background: #198754;
+    color: white;
+}
+
+.btn-decline {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-confirm:hover,
+.btn-decline:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+
+    .library-confirmation-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .library-confirmation-actions {
+        width: 100%;
+    }
+
+    .library-confirmation-actions form {
+        flex: 1;
+    }
+
+    .btn-confirm,
+    .btn-decline {
+        width: 100%;
+    }
+}
+
+</style>
+
+
+
+
+<style>
+/* ==================================================
+   DEPARTMENT STATUS - SPACED PROFESSIONAL LAYOUT
+   ================================================== */
+
+.dashboard-department-status {
+    margin-top: 28px;
+}
+
+.dashboard-department-status .section-heading {
+    margin-bottom: 24px;
+}
+
+.dashboard-department-status .section-heading p {
+    margin-top: 7px;
+    color: #64748b;
+}
+
+/* Department cards */
+.department-status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 10px;
+}
+
+/* Individual department */
+.department-status-item {
+    min-height: 88px;
+    padding: 18px 20px;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.department-status-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    border-color: #cbd5e1;
+}
+
+/* Professional icons */
+.department-status-item i {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #f0fdf4;
+    color: #2e7d32;
+
+    font-size: 19px;
+}
+
+/* Department name */
+.department-status-item span {
+    flex: 1;
+
+    font-size: 15px;
+    line-height: 1.35;
+    font-weight: 600;
+    color: #334155;
+}
+
+/* Status */
+.department-status-item strong {
+    flex-shrink: 0;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    padding: 6px 10px;
+    border-radius: 8px;
+
+    background: #ecfdf5;
+    color: #166534;
+
+    white-space: nowrap;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+
+    .department-status-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+}
+
+/* Phone */
+@media (max-width: 600px) {
+
+    .dashboard-department-status {
+        margin-top: 22px;
+    }
+
+    .department-status-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .department-status-item {
+        min-height: 76px;
+        padding: 15px 16px;
+    }
+
+    .department-status-item i {
+        width: 38px;
+        height: 38px;
+        font-size: 17px;
+    }
+
+    .department-status-item span {
+        font-size: 14px;
+    }
+
+    .department-status-item strong {
+        font-size: 12px;
+        padding: 5px 8px;
+    }
+
+}
+</style>
+
+{% extends "base.html" %}
+
+{% block title %}
+Student Dashboard | ZASTI Clearance System
+{% endblock %}
+
+{% block content %}
+
+<div class="student-portal-layout">
+
+    {% include "components/sidebar.html" %}
+
+    <main class="student-portal-content">
+
+        <div class="container dashboard-container">
+
+            <!-- =====================================================
+                 WELCOME
+            ====================================================== -->
+
+            <section class="dashboard-welcome">
+
+                <div>
+
+                    <div class="dashboard-greeting">
+                        {{ greeting }}
+                    </div>
+
+                    <div class="dashboard-date">
+                        {{ today }}
+                    </div>
+
+                    <h1>
+                        {{ student.name }}
+                    </h1>
+
+                    <p>
+                        Welcome to the ZASTI Digital Clearance Portal.
+                    </p>
+
+                </div>
+
+                {% if student.profile_pic %}
+    <img
+        src="{{ url_for(
+            'serve_profile_picture',
+            filename=student.profile_pic.split('/')[-1]
+        ) }}"
+        class="dashboard-profile"
+        alt="Student profile picture"
+        onerror="this.style.display='none';"
+    >
+{% else %}
+    <div class="dashboard-profile-placeholder">
+        <i class="bi bi-person"></i>
+    </div>
+{% endif %}
+
+            </section>
+
+
+            <!-- =====================================================
+                 OVERALL CLEARANCE
+            ====================================================== -->
+
+            <section class="card dashboard-clearance-card">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2 class="card-title">
+                            Overall Clearance
+                        </h2>
+
+                        <p>
+                            Your current digital clearance progress.
+                        </p>
+
+                    </div>
+
+                    <div class="clearance-percentage">
+                        {{ percentage }}%
+                    </div>
+
+                </div>
+
+
+                <div class="progress-track">
+
+                    <div
+                        class="progress-fill"
+                        style="width: {{ percentage }}%;"
+                    ></div>
+
+                </div>
+
+
+                <div class="progress-info">
+
+                    <span>
+                        {{ cleared }} of {{ total }}
+                        digital departments cleared
+                    </span>
+
+                    {% if percentage == 100 %}
+
+                        <strong class="status status-cleared">
+
+                            <i class="bi bi-check-circle-fill"></i>
+
+                            Complete
+
+                        </strong>
+
+                    {% else %}
+
+                        <strong class="status status-info">
+
+                            <i class="bi bi-clock"></i>
+
+                            In Progress
+
+                        </strong>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================================================
+                 PENDING DEPARTMENTS
+            ====================================================== -->
+
+            <section class="card dashboard-pending-card">
+
+                <h2 class="card-title">
+                    Pending Departments
+                </h2>
+
+                {% if pending_departments %}
+
+                    <div class="pending-list">
+
+                        {% for department in pending_departments %}
+
+                            <div class="pending-item">
+
+                                <i class="bi bi-clock-history"></i>
+
+                                <span>
+                                    {{ department }}
+                                </span>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="all-cleared">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        <div>
+
+                            <strong>
+                                All departments cleared
+                            </strong>
+
+                            <p>
+                                Congratulations! You have completed
+                                all digital clearance requirements.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- =====================================================
+     PENDING ITEM REQUESTS
+===================================================== -->
+
+{% if pending_item_requests %}
+
+<section class="card dashboard-item-requests">
+
+    <div class="section-heading">
+
+        <div>
+
+            <h2 class="card-title">
+                Item Requests
+            </h2>
+
+            <p>
+                Your clearance department wants to assign
+                the following item to you. Please accept or
+                decline the request.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% for item in pending_item_requests %}
+
+    <div class="pending-item">
+
+        <div style="display:flex; align-items:flex-start; gap:14px; width:100%;">
+
+            <i class="bi bi-box-seam"
+               style="font-size:1.4rem; margin-top:3px;"></i>
+
+            <div style="flex:1;">
+
+                <div style="font-weight:600; font-size:1rem; margin-bottom:6px;">
+                    {{ item.item }}
+                </div>
+
+                <div style="font-size:.9rem; margin-bottom:4px;">
+                    <strong>Department:</strong>
+
+                    {% if item.department|lower in ["training", "training section", "head of training section"] %}
+                        Training Section
+                    {% elif item.department %}
+                        {{ item.department }}
+                    {% else %}
+                        Department
+                    {% endif %}
+                </div>
+
+                {% if item.item_type %}
+                <div style="font-size:.9rem; margin-bottom:4px;">
+                    <strong>Item type:</strong>
+                    {{ item.item_type }}
+                </div>
+                {% endif %}
+
+                <div style="font-size:.9rem; margin-bottom:4px;">
+                    <strong>Assigned by:</strong>
+
+                    {% if item.assigned_by %}
+                        {{ item.assigned_by }}
+                    {% else %}
+                        Staff
+                    {% endif %}
+                </div>
+
+                {% if item.assigned_at %}
+                <div style="font-size:.85rem; margin-bottom:4px;">
+                    <strong>Requested:</strong>
+                    {{ item.assigned_at.strftime('%d %b %Y, %H:%M') }}
+                </div>
+                {% endif %}
+
+                {% if item.remarks %}
+                <div style="font-size:.85rem; margin-top:6px;">
+                    <strong>Remarks:</strong>
+                    {{ item.remarks }}
+                </div>
+                {% endif %}
+
+
+                <!-- ACTION BUTTONS -->
+
+                <div style="
+                    display:flex;
+                    gap:10px;
+                    margin-top:15px;
+                    flex-wrap:wrap;
+                ">
+
+                    <form method="POST"
+                          action="{{ url_for('accept_item', item_id=item.id) }}"
+                          style="margin:0;">
+
+                        <button type="submit"
+                                class="btn btn-success"
+                                style="min-width:100px;">
+
+                            <i class="bi bi-check-circle"></i>
+                            Accept
+
+                        </button>
+
+                    </form>
+
+
+                    <form method="POST"
+                          action="{{ url_for('decline_item', item_id=item.id) }}"
+                          style="margin:0;">
+
+                        <button type="submit"
+                                class="btn btn-outline-danger"
+                                style="min-width:100px;">
+
+                            <i class="bi bi-x-circle"></i>
+                            Decline
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</section>
+
+{% endif %}
+
+
+<!-- =====================================================
+                 DEPARTMENT STATUS
+            ====================================================== -->
+
+            <section class="card dashboard-department-status">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2 class="card-title">
+                            Department Status
+                        </h2>
+
+                        <p>
+                            Overview of your clearance departments.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                
+{% if pending_library_books %}
+
+<div class="dashboard-card library-confirmation-card">
+
+    <div class="card-header">
+        <div>
+            <h3>
+                <i class="bi bi-book"></i>
+                Library Book Confirmation
+            </h3>
+
+            <p>
+                The following book has been assigned to you.
+                Please confirm that you received it.
+            </p>
+        </div>
+    </div>
+
+    {% for book in pending_library_books %}
+
+    <div class="library-confirmation-item">
+
+        <div class="library-book-info">
+
+            <strong>
+                {{ book["name"] }}
+            </strong>
+
+            <span>
+                Awaiting your confirmation
+            </span>
+
+        </div>
+
+        <div class="library-confirmation-actions">
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'confirm_library_book',
+                    book_id=book['id']
+                ) }}"
+            >
+
+                <button
+                    type="submit"
+                    class="btn-confirm"
+                >
+                    <i class="bi bi-check-circle"></i>
+                    Confirm
+                </button>
+
+            </form>
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'decline_library_book',
+                    book_id=book['id']
+                ) }}"
+            >
+
+                <button
+                    type="submit"
+                    class="btn-decline"
+                >
+                    <i class="bi bi-x-circle"></i>
+                    Decline
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+<div class="department-status-grid">
+
+                    <div class="department-status-item">
+
+                        <i class="bi bi-book-fill"></i>
+
+                        <span>Library</span>
+
+                        <strong>
+                            {{ library_status }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="department-status-item">
+
+                        <i class="bi bi-trophy-fill"></i>
+
+                        <span>Sports</span>
+
+                        <strong>
+                            {{ sports_status }}
+                        </strong>
+
+                    </div>
+
+                    
+{% if pending_sports_items %}
+
+<section class="card sports-assignments-card">
+
+    <div class="section-heading">
+
+        <div>
+            <h2 class="card-title">
+                <i class="bi bi-trophy-fill"></i>
+                Sports Assignments
+            </h2>
+
+            <p>
+                You have new sports item assignments awaiting your response.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="sports-assignments-list">
+
+        {% for item in pending_sports_items %}
+
+        <div class="sports-assignment-item">
+
+            <div class="sports-assignment-info">
+
+                <div class="sports-assignment-sport">
+                    {{ item.sport|capitalize }}
+                </div>
+
+                <div class="sports-assignment-name">
+                    {{ item.item }}
+                </div>
+
+                <span class="sports-assignment-status">
+                    Awaiting your response
+                </span>
+
+            </div>
+
+            <div class="sports-assignment-actions">
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'student_accept_sports_item',
+                        item_id=item.id
+                    ) }}"
+                >
+                    <button
+                        type="submit"
+                        class="sports-accept-btn"
+                    >
+                        <i class="bi bi-check-circle"></i>
+                        Accept
+                    </button>
+                </form>
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'student_decline_sports_item',
+                        item_id=item.id
+                    ) }}"
+                >
+                    <button
+                        type="submit"
+                        class="sports-decline-btn"
+                    >
+                        <i class="bi bi-x-circle"></i>
+                        Decline
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endif %}
+
+{% if sports_items %}
+
+                        <div class="sports-items-section">
+
+                            <h3>Sports Items</h3>
+
+                            {% for item in sports_items %}
+
+                                <div class="sports-item">
+
+                                    <div>
+                                        <strong>
+                                            {{ item.sport|capitalize }}
+                                        </strong>
+
+                                        <div>
+                                            {{ item.item }}
+                                        </div>
+                                    </div>
+
+                                    {% if item.status|lower == "pending" %}
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for(
+                                                'student_confirm_sports_item',
+                                                item_id=item.id
+                                            ) }}"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="confirm-btn"
+                                                onclick="return confirm('Confirm that you have received this sports item?');"
+                                            >
+                                                Confirm Item
+                                            </button>
+
+                                        </form>
+
+                                    {% elif item.status|lower == "confirmed" %}
+
+                                        <span class="status confirmed">
+                                            Confirmed
+                                        </span>
+
+                                    {% elif item.status|lower == "returned" %}
+
+                                        <span class="status returned">
+                                            Returned
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="department-status-item">
+
+                        <i class="bi bi-cash-stack"></i>
+
+                        <span>Accounts</span>
+
+                        <strong>
+                            {{ accounts_status }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="department-status-item">
+
+                        <i class="bi bi-box-seam-fill"></i>
+
+                        <span>Stores</span>
+
+                        <strong>
+                            {{ stores_status }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="department-status-item">
+
+                        <i class="bi bi-chat-square-text-fill"></i>
+
+                        <span>Communication Skills</span>
+
+                        <strong>
+                            {{ communication_status }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="department-status-item">
+
+                        <i class="bi bi-calculator-fill"></i>
+
+                        <span>Mathematics</span>
+
+                        <strong>
+                            {{ mathematics_status }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="department-status-item">
+
+                        <i class="bi bi-people-fill"></i>
+
+                        <span>Human Resource</span>
+
+                        <strong>
+                            {{ hr_status }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="department-status-item">
+
+                        <i class="bi bi-mortarboard-fill"></i>
+
+                        <span>Training</span>
+
+                        <strong>
+                            {{ training_status }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="department-status-item">
+
+                        <i class="bi bi-tools"></i>
+
+                        <span>AME Stores</span>
+
+                        <strong>
+                            {{ ame_status }}
+                        </strong>
+
+                    </div>
+
+                    <div class="department-status-item">
+                        <i class="bi bi-clipboard-check-fill"></i>
+                        <span>TSO</span>
+                        <strong>{{ tso_status }}</strong>
+                    </div>
+
+                    <div class="department-status-item">
+                        <i class="bi bi-house-door-fill"></i>
+                        <span>Hostel</span>
+                        <strong>{{ hostel_status }}</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================================================
+                 ACCOUNT DETAILS
+            ====================================================== -->
+
+            <section class="card dashboard-account-card">
+
+                <div class="section-heading dashboard-account-heading">
+
+                    <div>
+                        <h2 class="card-title">
+                            Account Details
+                        </h2>
+
+                        <p>
+                            Your current fee balance and latest account transactions.
+                        </p>
+                    </div>
+
+                    <i class="bi bi-wallet2"></i>
+
+                </div>
+
+
+                {% if account %}
+
+                    {% set total_fee = account.total_fee or 0 %}
+                    {% set paid_amount = account.paid or 0 %}
+                    {% set outstanding = total_fee - paid_amount %}
+
+
+                    <div class="account-summary-grid">
+
+                        <div class="account-summary-item">
+
+                            <span>Total Fees</span>
+
+                            <strong>
+                                {{ total_fee|money }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="account-summary-item">
+
+                            <span>Amount Paid</span>
+
+                            <strong class="paid-amount">
+                                {{ paid_amount|money }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="account-summary-item">
+
+                            <span>Outstanding Balance</span>
+
+                            <strong class="balance-amount">
+                                {{ [outstanding, 0]|max|money }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="account-summary-item">
+    <span>Credit / Overpayment</span>
+    <strong class="paid-amount">
+        {{ [paid_amount - total_fee, 0]|max|money }}
+    </strong>
+</div>
+
+<div class="account-summary-item">
+
+                            <span>Account Status</span>
+
+                            {% if accounts_status|lower == "cleared" %}
+
+                                <strong class="account-status cleared">
+                                    Cleared
+                                </strong>
+
+                            {% else %}
+
+                                <strong class="account-status pending">
+                                    Pending
+                                </strong>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="account-transactions">
+
+                        <div class="account-transactions-header">
+
+                            <div>
+                                <h3>
+                                    Latest Transactions
+                                </h3>
+
+                                <p>
+                                    Recent approved account transactions.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        {% if account_history %}
+
+                            <div class="transaction-list">
+
+                                {% for record in account_history %}
+
+                                    <div class="transaction-item">
+
+                                        <div class="transaction-icon">
+                                            <i class="bi bi-arrow-down-circle-fill"></i>
+                                        </div>
+
+
+                                        <div class="transaction-info">
+
+                                            <strong>
+                                                {{ record.reason or "Account Transaction" }}
+                                            </strong>
+
+                                            <span>
+                                                {% if record.created_at %}
+                                                    {{ record.created_at.strftime("%d %b %Y, %H:%M") }}
+                                                {% else %}
+                                                    —
+                                                {% endif %}
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="transaction-amount">
+
+                                            <strong>
+                                                + {{ record.amount or 0|money }}
+                                            </strong>
+
+                                            {% if record.status %}
+
+                                                <span class="transaction-status">
+                                                    {{ record.status }}
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="transactions-empty">
+
+                                <i class="bi bi-receipt"></i>
+
+                                <span>
+                                    No account transactions yet.
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="transactions-empty">
+
+                        <i class="bi bi-wallet2"></i>
+
+                        <span>
+                            No account record is available yet.
+                        </span>
+
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- =====================================================
+                 ANNOUNCEMENTS
+            ====================================================== -->
+
+            <section class="card dashboard-announcements">
+
+                <div class="section-heading announcement-heading">
+
+                    <div>
+
+                        <h2 class="card-title">
+                            Announcements
+                        </h2>
+
+                        <p>
+                            Important information from ZASTI.
+                        </p>
+
+                    </div>
+
+                    <i class="bi bi-megaphone-fill announcement-header-icon"></i>
+
+                </div>
+
+
+                {% if announcements %}
+
+                    <div class="announcement-list">
+
+                        {% for announcement in announcements %}
+
+                            <div class="announcement-item">
+
+                                <div class="announcement-icon">
+
+                                    <i class="bi bi-megaphone-fill"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        {{ announcement.title }}
+                                    </strong>
+
+                                    <div>
+                                        {{ announcement.message }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="announcement-empty">
+
+                        <i class="bi bi-megaphone"></i>
+
+                        <p>
+                            No announcements available.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- =====================================================
+                 VIEW CLEARANCE
+            ====================================================== -->
+
+            <div class="dashboard-action">
+
+                <a
+                    href="{{ url_for('student_clearance') }}"
+                    class="btn btn-primary dashboard-clearance-button"
+                >
+
+                    <i class="bi bi-clipboard-check"></i>
+
+                    View Full Clearance Report
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}

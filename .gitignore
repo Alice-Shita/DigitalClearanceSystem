@@ -3,3 +3,21 @@ __pycache__/
 instance/
 .env
 
+
+# Local databases and private uploads
+database.db
+*.sqlite
+*.sqlite3
+uploads/
+profile_pics/
+
+# Backups and Python cache
+backups/
+**/backups/
+__pycache__/
+*.py[cod]
+*.bak
+*.backup*
+.env
+.venv/
+venv/

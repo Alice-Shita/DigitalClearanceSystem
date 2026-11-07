@@ -1,0 +1,1092 @@
+{% extends "base.html" %}
+
+{% block title %}
+Administrator Dashboard | ZASTI Clearance System
+{% endblock %}
+
+{% block content %}
+
+
+
+<style>
+
+/* ==================================================
+   CLEAN ADMIN DASHBOARD LAYOUT
+   ================================================== */
+
+.admin-layout {
+    min-height: 100vh;
+    width: 100%;
+    background: #f5f8f7;
+}
+
+.admin-main {
+    margin-left: 270px;
+
+    min-height: 100vh;
+
+    width: calc(100% - 270px);
+
+    box-sizing: border-box;
+
+    padding: 30px 22px;
+
+    background: #f5f8f7;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 760px) {
+
+    .admin-main {
+        margin-left: 0;
+
+        width: 100%;
+
+        padding: 75px 15px 25px;
+    }
+
+}
+
+
+/* ==================================================
+   ADMIN DASHBOARD
+   ================================================== */
+
+
+
+/* ==================================================
+   SIDEBAR
+   ================================================== */
+
+.admin-brand {
+    height: 82px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 18px 20px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid rgba(255,255,255,.09);
+}
+
+.admin-brand-icon {
+    width: 43px;
+    height: 43px;
+
+    border-radius: 12px;
+
+    background: #198754;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 21px;
+
+    flex-shrink: 0;
+}
+
+.admin-brand strong {
+    display: block;
+    font-size: 17px;
+    letter-spacing: .8px;
+}
+
+.admin-brand span {
+    display: block;
+
+    font-size: 9px;
+    color: #9dc9bf;
+
+    letter-spacing: 1.2px;
+
+    margin-top: 2px;
+}
+
+.admin-nav {
+    padding: 15px 12px 25px;
+}
+
+.admin-section-title {
+    font-size: 10px;
+    font-weight: 700;
+
+    color: #77a79e;
+
+    letter-spacing: 1px;
+
+    padding: 14px 10px 7px;
+}
+
+.admin-link {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    min-height: 43px;
+
+    padding: 10px 12px;
+    margin: 3px 0;
+
+    border-radius: 10px;
+
+    color: #d9ece8;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    transition: .2s ease;
+
+    box-sizing: border-box;
+}
+
+.admin-link i {
+    width: 20px;
+
+    text-align: center;
+
+    font-size: 16px;
+}
+
+.admin-link:hover {
+    background: rgba(25,135,84,.18);
+    color: white;
+
+    transform: translateX(2px);
+}
+
+.admin-link.active {
+    background: #198754;
+    color: white;
+
+    box-shadow: 0 5px 14px rgba(25,135,84,.25);
+}
+
+.admin-link.admin-logout {
+    color: #ffb8b8;
+}
+
+/* ==================================================
+   MAIN CONTENT
+   ================================================== */
+
+
+
+/* ==================================================
+   PAGE HEADER
+   ================================================== */
+
+.admin-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+}
+
+.admin-heading h1 {
+    margin: 0;
+
+    font-size: 27px;
+
+    color: #123b35;
+
+    font-weight: 750;
+}
+
+.admin-heading p {
+    margin: 5px 0 0;
+
+    color: #71818a;
+
+    font-size: 13px;
+}
+
+.admin-user {
+    background: white;
+
+    border: 1px solid #e0e8e6;
+
+    border-radius: 12px;
+
+    padding: 9px 13px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    font-size: 13px;
+}
+
+.admin-user-icon {
+    width: 34px;
+    height: 34px;
+
+    border-radius: 50%;
+
+    background: #e9f7f1;
+
+    color: #198754;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ==================================================
+   MINI ACADEMIC CALENDAR
+   ================================================== */
+
+.mini-academic-calendar {
+    width: 205px;
+    flex-shrink: 0;
+    background: white;
+    border: 1px solid #e1e9e6;
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 15px rgba(18,59,53,.05);
+    box-sizing: border-box;
+}
+
+.mini-calendar-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mini-calendar-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #eaf7f1;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mini-calendar-weekday {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    color: #198754;
+    text-transform: uppercase;
+}
+
+.mini-calendar-date {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #173f38;
+}
+
+.mini-calendar-month {
+    margin-top: 2px;
+    font-size: 11px;
+    color: #71818a;
+}
+
+.mini-calendar-divider {
+    height: 1px;
+    background: #edf1f0;
+    margin: 10px 0;
+}
+
+.mini-calendar-academic {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
+    font-size: 10px;
+}
+
+.mini-calendar-academic span {
+    color: #829099;
+}
+
+.mini-calendar-academic strong {
+    color: #173f38;
+    font-weight: 700;
+}
+
+.mini-calendar-time {
+    margin-top: 9px;
+    font-size: 14px;
+    font-weight: 750;
+    letter-spacing: .4px;
+    color: #198754;
+}
+
+@media (max-width: 760px) {
+    .admin-topbar {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .mini-academic-calendar {
+        width: 100%;
+        max-width: 240px;
+    }
+}
+
+
+/* ==================================================
+   STATISTICS
+   ================================================== */
+
+.stats-grid {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 16px;
+
+    margin-bottom: 22px;
+}
+
+.stat-card {
+    background: white;
+
+    border: 1px solid #e3e9e7;
+
+    border-radius: 15px;
+
+    padding: 19px;
+
+    box-shadow: 0 4px 15px rgba(18,59,53,.04);
+}
+
+.stat-top {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+}
+
+.stat-icon {
+    width: 43px;
+    height: 43px;
+
+    border-radius: 11px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #eaf7f1;
+
+    color: #198754;
+
+    font-size: 20px;
+}
+
+.stat-label {
+    margin-top: 14px;
+
+    color: #71818a;
+
+    font-size: 12px;
+}
+
+.stat-number {
+    margin-top: 3px;
+
+    font-size: 27px;
+
+    font-weight: 750;
+
+    color: #173f38;
+}
+
+/* ==================================================
+   DASHBOARD PANELS
+   ================================================== */
+
+.dashboard-grid {
+    display: grid;
+
+    grid-template-columns: 1.45fr 1fr;
+
+    gap: 18px;
+}
+
+.panel {
+    background: white;
+
+    border: 1px solid #e3e9e7;
+
+    border-radius: 15px;
+
+    overflow: hidden;
+
+    box-shadow: 0 4px 15px rgba(18,59,53,.04);
+}
+
+.panel-header {
+    padding: 17px 19px;
+
+    border-bottom: 1px solid #edf1f0;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.panel-header h2 {
+    margin: 0;
+
+    font-size: 16px;
+
+    color: #173f38;
+}
+
+.panel-header span {
+    font-size: 11px;
+
+    color: #829099;
+}
+
+/* ==================================================
+   DEPARTMENTS
+   ================================================== */
+
+.department-list {
+    padding: 8px 18px 15px;
+}
+
+.department-row {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 12px 2px;
+
+    border-bottom: 1px solid #f0f3f2;
+}
+
+.department-row:last-child {
+    border-bottom: 0;
+}
+
+.department-info {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.department-info i {
+    width: 34px;
+    height: 34px;
+
+    border-radius: 9px;
+
+    background: #edf8f3;
+
+    color: #198754;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.department-info strong {
+    display: block;
+
+    font-size: 12px;
+
+    color: #30443f;
+}
+
+.department-info small {
+    display: block;
+
+    color: #8a969b;
+
+    margin-top: 2px;
+}
+
+.dept-count {
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #198754;
+}
+
+/* ==================================================
+   ACTIVITY
+   ================================================== */
+
+.activity-list {
+    padding: 7px 18px 15px;
+}
+
+.activity-item {
+    padding: 13px 2px;
+
+    border-bottom: 1px solid #f0f3f2;
+}
+
+.activity-item:last-child {
+    border-bottom: 0;
+}
+
+.activity-title {
+    font-size: 12px;
+
+    font-weight: 650;
+
+    color: #30443f;
+}
+
+.activity-meta {
+    margin-top: 4px;
+
+    font-size: 10px;
+
+    color: #8a969b;
+}
+
+.empty-activity {
+    padding: 35px 15px;
+
+    text-align: center;
+
+    color: #8a969b;
+
+    font-size: 12px;
+}
+
+/* ==================================================
+   TABLET
+   ================================================== */
+
+@media (max-width: 1100px) {
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* ==================================================
+   MOBILE
+   ================================================== */
+
+@media (max-width: 760px) {
+
+    </style>
+
+
+<div class="admin-layout">
+
+    <!-- ==================================================
+         ADMIN SIDEBAR
+         ================================================== -->
+        {% include "components/admin_sidebar.html" %}
+
+<!-- ==================================================
+         MAIN
+         ================================================== -->
+
+    <main class="admin-main">
+
+
+        <!-- HEADER -->
+
+        <div class="admin-topbar">
+
+            <div class="admin-heading">
+
+                <h1>
+                    Administrator Dashboard
+                </h1>
+
+                <p>
+                    Overview of the ZASTI Digital Clearance System.
+                </p>
+
+            </div>
+
+
+            <div class="admin-user">
+
+                <div class="admin-user-icon">
+
+                    <i class="bi bi-shield-check"></i>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        {{ session.get("username", "Administrator") }}
+                    </strong>
+
+                    <div style="
+                        font-size:10px;
+                        color:#829099;
+                    ">
+                        Administrator
+                    </div>
+
+                </div>
+
+            </div>
+
+        <div class="mini-academic-calendar" aria-label="Current date and academic term">
+
+            <div class="mini-calendar-top">
+
+                <div class="mini-calendar-icon">
+                    <i class="bi bi-calendar3"></i>
+                </div>
+
+                <div>
+                    <div class="mini-calendar-weekday" id="dashboardWeekday">
+                        ---
+                    </div>
+
+                    <div class="mini-calendar-date" id="dashboardDay">
+                        --
+                    </div>
+
+                    <div class="mini-calendar-month" id="dashboardMonth">
+                        ---
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mini-calendar-divider"></div>
+
+            <div class="mini-calendar-academic">
+
+                <span>Academic Year</span>
+                <strong>
+                    {{ settings.get('academic_year', '—') }}
+                </strong>
+
+                <span>Academic Term</span>
+                <strong>
+                    {{ settings.get('academic_term', '—') }}
+                </strong>
+
+                <span>Academic Week</span>
+                <strong id="dashboardAcademicWeek">
+                    —
+                </strong>
+
+            </div>
+
+            <div class="mini-calendar-time" id="dashboardClock">
+                --:--:--
+            </div>
+
+        </div>
+
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div>
+
+                        <div class="stat-label">
+                            TOTAL STUDENTS
+                        </div>
+
+                        <div class="stat-number">
+                            {{ total_students }}
+                        </div>
+
+                    </div>
+
+                    <div class="stat-icon">
+
+                        <i class="bi bi-people-fill"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div>
+
+                        <div class="stat-label">
+                            TOTAL STAFF
+                        </div>
+
+                        <div class="stat-number">
+                            {{ total_staff }}
+                        </div>
+
+                    </div>
+
+                    <div class="stat-icon">
+
+                        <i class="bi bi-person-workspace"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div>
+
+                        <div class="stat-label">
+                            PENDING CLEARANCE
+                        </div>
+
+                        <div class="stat-number">
+                            {{ pending_students }}
+                        </div>
+
+                    </div>
+
+                    <div class="stat-icon">
+
+                        <i class="bi bi-hourglass-split"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div>
+
+                        <div class="stat-label">
+                            FULLY CLEARED
+                        </div>
+
+                        <div class="stat-number">
+                            {{ cleared_students }}
+                        </div>
+
+                    </div>
+
+                    <div class="stat-icon">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DASHBOARD CONTENT -->
+
+        <div class="dashboard-grid">
+
+
+            <!-- DEPARTMENTS -->
+
+            <section class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Department Overview
+                    </h2>
+
+                    <span>
+                        {{ department_total }} departments
+                    </span>
+
+                </div>
+
+
+                <div class="department-list">
+
+                    {% for department in departments %}
+
+                    <div class="department-row">
+
+                        <div class="department-info">
+
+                            <i class="{{ department.icon }}"></i>
+
+                            <div>
+
+                                <strong>
+                                    {{ department.name }}
+                                </strong>
+
+                                <small>
+                                    {{ department.pending }} pending
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="dept-count">
+
+                            {{ department.cleared }}/{{ department.total }}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+            <!-- RECENT ACTIVITY -->
+
+            <section class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Recent Activity
+                    </h2>
+
+                    <span>
+                        Latest records
+                    </span>
+
+                </div>
+
+
+                <div class="activity-list">
+
+                    {% if recent_activity %}
+
+                        {% for item in recent_activity %}
+
+                        <div class="activity-item">
+
+                            <div class="activity-title">
+                                {{ item.description }}
+                            </div>
+
+                            <div class="activity-meta">
+                                {{ item.time }}
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="empty-activity">
+
+                            <i
+                                class="bi bi-clock-history"
+                                style="
+                                    font-size:25px;
+                                    display:block;
+                                    margin-bottom:8px;
+                                "
+                            ></i>
+
+                            No recent clearance activity.
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+(function () {
+
+    function updateDashboardCalendar() {
+
+        const now = new Date();
+
+        const formatter = new Intl.DateTimeFormat("en-GB", {
+            timeZone: "Africa/Lusaka",
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        });
+
+        const parts = formatter.formatToParts(now);
+        const values = {};
+
+        parts.forEach(function (part) {
+            if (part.type !== "literal") {
+                values[part.type] = part.value;
+            }
+        });
+
+        const weekday = document.getElementById("dashboardWeekday");
+        const day = document.getElementById("dashboardDay");
+        const month = document.getElementById("dashboardMonth");
+        const clock = document.getElementById("dashboardClock");
+
+        if (weekday) {
+            weekday.textContent = values.weekday || "---";
+        }
+
+        if (day) {
+            day.textContent = values.day || "--";
+        }
+
+        if (month) {
+            month.textContent =
+                (values.month || "---") + " " +
+                (values.year || "");
+        }
+
+        if (clock) {
+            clock.textContent =
+                (values.hour || "--") + ":" +
+                (values.minute || "--") + ":" +
+                (values.second || "--");
+        }
+
+        updateAcademicWeek();
+
+    }
+
+
+    function updateAcademicWeek() {
+
+        const academicWeek = document.getElementById(
+            "dashboardAcademicWeek"
+        );
+
+        if (!academicWeek) {
+            return;
+        }
+
+        const startDateString =
+            "{{ settings.get('term_start_date', '') }}";
+
+        const endDateString =
+            "{{ settings.get('term_end_date', '') }}";
+
+        if (!startDateString) {
+            academicWeek.textContent = "Not set";
+            return;
+        }
+
+        const now = new Date();
+
+        const startDate = new Date(
+            startDateString + "T00:00:00"
+        );
+
+        const endDate = endDateString
+            ? new Date(endDateString + "T23:59:59")
+            : null;
+
+        if (isNaN(startDate.getTime())) {
+            academicWeek.textContent = "Not set";
+            return;
+        }
+
+        if (now < startDate) {
+            academicWeek.textContent = "Not started";
+            return;
+        }
+
+        if (endDate && now > endDate) {
+            academicWeek.textContent = "Term ended";
+            return;
+        }
+
+        const difference =
+            now.getTime() - startDate.getTime();
+
+        const daysElapsed =
+            Math.floor(
+                difference / (1000 * 60 * 60 * 24)
+            );
+
+        const week =
+            Math.floor(daysElapsed / 7) + 1;
+
+        academicWeek.textContent =
+            "Week " + week;
+
+    }
+
+
+    updateDashboardCalendar();
+
+    setInterval(
+        updateDashboardCalendar,
+        1000
+    );
+
+})();
+</script>
+
+{% endblock %}

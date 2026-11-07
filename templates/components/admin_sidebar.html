@@ -1,0 +1,376 @@
+<div class="admin-sidebar" id="adminSidebar">
+
+    <div class="admin-sidebar-brand">
+        <div class="admin-brand-icon">
+            <i class="bi bi-shield-check"></i>
+        </div>
+
+        <div>
+            <strong>ZASTI</strong>
+            <span>ADMINISTRATOR</span>
+        </div>
+    </div>
+
+    <nav class="admin-nav">
+
+        <div class="admin-section-title">MAIN MENU</div>
+
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="admin-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="{{ url_for('admin_students') }}"
+   class="admin-link {% if request.endpoint == 'admin_students' %}active{% endif %}">
+    <i class="bi bi-mortarboard-fill"></i>
+    <span>Students</span>
+</a>
+
+        <a href="{{ url_for('admin_staff') }}"
+           class="admin-link {% if request.endpoint in ['admin_staff', 'admin_add_staff', 'admin_toggle_staff'] %}active{% endif %}">
+            <i class="bi bi-person-workspace"></i>
+            <span>Staff</span>
+        </a>
+
+        <a href="{{ url_for('admin_departments') }}"
+           class="admin-link {% if request.endpoint == 'admin_departments' %}active{% endif %}">
+            <i class="bi bi-building-fill"></i>
+            <span>Departments</span>
+        </a>
+
+        <div class="admin-section-title">CLEARANCE</div>
+
+        <a href="{{ url_for('admin_clearance_management') }}"
+           class="admin-link {% if request.endpoint == 'admin_clearance_management' %}active{% endif %}">
+            <i class="bi bi-clipboard-check-fill"></i>
+            <span>Clearance Management</span>
+        </a>
+
+        
+
+        
+
+                <a href="{{ url_for('admin_documents_payments') }}"
+           class="admin-link {% if request.endpoint in ['admin_documents_payments', 'admin_payment_review', 'admin_payment_document'] %}active{% endif %}">
+            <i class="bi bi-file-earmark-text-fill"></i>
+            <span>Documents & Payments</span>
+        </a>
+
+        <div class="admin-section-title">SYSTEM</div>
+
+        <a href="{{ url_for('admin_announcements') }}"
+           class="admin-link {% if request.endpoint in ['admin_announcements', 'admin_add_announcement', 'admin_toggle_announcement', 'admin_delete_announcement'] %}active{% endif %}">
+            <i class="bi bi-megaphone-fill"></i>
+            <span>Announcements</span>
+        </a>
+
+        <a href="{{ url_for('admin_system_settings') }}"
+           class="admin-link {% if request.endpoint == 'admin_system_settings' %}active{% endif %}">
+            <i class="bi bi-gear-fill"></i>
+            <span>System Settings</span>
+        </a>
+
+        <a href="{{ url_for('logout') }}" class="admin-link admin-logout">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+
+    </nav>
+</div>
+
+
+<button
+    type="button"
+    class="admin-mobile-menu"
+    onclick="toggleAdminSidebar()"
+    aria-label="Open menu">
+    <i class="bi bi-list"></i>
+</button>
+
+
+<div
+    class="admin-sidebar-overlay"
+    id="adminSidebarOverlay"
+    onclick="toggleAdminSidebar()">
+</div>
+
+
+<style>
+
+/* =====================================================
+   ZASTI ADMIN SIDEBAR
+   ===================================================== */
+
+.admin-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 270px;
+
+    background: #062f2b;
+    color: white;
+
+    z-index: 2000;
+
+    overflow-y: auto;
+
+    box-sizing: border-box;
+
+    box-shadow: 4px 0 20px rgba(0, 0, 0, .10);
+}
+
+
+/* BRAND */
+
+.admin-sidebar-brand {
+    height: 82px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 18px 20px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+
+.admin-brand-icon {
+    width: 43px;
+    height: 43px;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background: #198754;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 21px;
+}
+
+
+.admin-sidebar-brand strong {
+    display: block;
+
+    font-size: 17px;
+
+    letter-spacing: .8px;
+}
+
+
+.admin-sidebar-brand span {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 9px;
+
+    color: #9dc9bf;
+
+    letter-spacing: 1.2px;
+}
+
+
+/* NAVIGATION */
+
+.admin-nav {
+    padding: 15px 12px 25px;
+
+    box-sizing: border-box;
+}
+
+
+.admin-section-title {
+    padding: 14px 10px 7px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    color: #77a79e;
+
+    letter-spacing: 1px;
+}
+
+
+.admin-link {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-height: 43px;
+
+    padding: 10px 12px;
+
+    margin: 3px 0;
+
+    box-sizing: border-box;
+
+    border-radius: 10px;
+
+    color: #d9ece8;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
+}
+
+
+.admin-link i {
+    width: 20px;
+
+    flex-shrink: 0;
+
+    text-align: center;
+
+    font-size: 16px;
+}
+
+
+.admin-link:hover {
+    background: rgba(25,135,84,.18);
+
+    color: white;
+
+    transform: translateX(2px);
+}
+
+
+.admin-link.active {
+    background: #198754;
+
+    color: white;
+
+    box-shadow:
+        0 5px 14px rgba(25,135,84,.25);
+}
+
+
+.admin-link.admin-logout {
+    margin-top: 18px;
+
+    color: #ffb8b8;
+}
+
+
+.admin-link.admin-logout:hover {
+    background: rgba(220,53,69,.15);
+
+    color: #ffd2d2;
+}
+
+
+/* MOBILE BUTTON */
+
+.admin-mobile-menu {
+    display: none;
+
+    position: fixed;
+
+    top: 14px;
+    left: 14px;
+
+    width: 44px;
+    height: 44px;
+
+    border: 0;
+
+    border-radius: 11px;
+
+    background: #198754;
+
+    color: white;
+
+    font-size: 22px;
+
+    z-index: 2100;
+
+    cursor: pointer;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,.18);
+}
+
+
+/* OVERLAY */
+
+.admin-sidebar-overlay {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0,0,0,.40);
+
+    z-index: 1900;
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 760px) {
+
+    .admin-sidebar {
+        width: 250px;
+
+        transform: translateX(-100%);
+
+        transition: transform .25s ease;
+    }
+
+    .admin-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .admin-mobile-menu {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+    }
+
+    .admin-sidebar-overlay.show {
+        display: block;
+    }
+
+}
+
+</style>
+
+
+<script>
+
+function toggleAdminSidebar() {
+
+    const sidebar =
+        document.getElementById("adminSidebar");
+
+    const overlay =
+        document.getElementById("adminSidebarOverlay");
+
+    sidebar.classList.toggle("open");
+
+    overlay.classList.toggle("show");
+}
+
+</script>
+

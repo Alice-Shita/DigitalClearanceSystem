@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mathematics Students | ZASTI</title>
+
+    <style>
+        :root {
+            --green: #15803d;
+            --green-dark: #166534;
+            --green-light: #ecfdf5;
+            --blue: #2563eb;
+            --text: #172033;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f8fafc;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+        }
+        /* SIDEBAR — MASTER DASHBOARD STYLE */
+
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 260px;
+            z-index: 1100;
+
+            display: flex;
+            flex-direction: column;
+
+            background: #fff;
+            border-right: 1px solid var(--border);
+            padding: 24px 15px 18px;
+
+            box-shadow: 4px 0 20px rgba(15, 23, 42, .035);
+
+            overflow-y: auto;
+            scrollbar-width: thin;
+
+            transition: transform .25s ease;
+        }
+
+        .brand {
+            padding: 4px 10px 25px;
+            border-bottom: 1px solid #eef0f2;
+            margin-bottom: 22px;
+        }
+
+        .brand-title {
+            margin: 0;
+            color: var(--green-dark);
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .brand-subtitle {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .nav-title {
+            padding: 0 10px 9px;
+            color: #9ca3af;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav a {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 45px;
+            padding: 10px 12px;
+
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 10px;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            transition:
+                background .18s ease,
+                color .18s ease,
+                transform .18s ease;
+        }
+
+        .nav a:hover {
+            background: #f3fdf7;
+            color: var(--green-dark);
+            transform: translateX(2px);
+        }
+
+        .nav a.active {
+            background: #ecfdf5;
+            color: var(--green-dark);
+        }
+
+        .nav a.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 9px;
+            bottom: 9px;
+            width: 3px;
+            background: var(--green);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-icon {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 9px;
+            background: #f3f4f6;
+            color: #6b7280;
+
+            font-size: 15px;
+            font-weight: 800;
+
+            transition:
+                background .18s ease,
+                color .18s ease;
+        }
+
+        .nav a:hover .nav-icon,
+        .nav a.active .nav-icon {
+            background: #dff7e9;
+            color: var(--green-dark);
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #eef0f2;
+        }
+
+        .staff-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px 13px;
+        }
+
+        .staff-avatar {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+            border-radius: 50%;
+
+            background: #dcfce7;
+            color: var(--green-dark);
+
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .staff-info {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .staff-info strong {
+            color: var(--text);
+            font-size: 12px;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .staff-info span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            min-height: 42px;
+            padding: 9px 12px;
+
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 9px;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            transition:
+                background .18s ease,
+                color .18s ease;
+        }
+
+        .logout:hover {
+            background: #f9fafb;
+            color: var(--text);
+        }
+
+
+
+        /* =========================
+           MAIN
+        ========================== */
+
+        .main {
+            margin-left: 260px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 27px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .page-header p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .content-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, .035);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 750;
+        }
+
+        .card-header p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* =========================
+           SEARCH
+        ========================== */
+
+        .search-area {
+            padding: 18px 22px;
+            background: #fbfdfc;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            -webkit-appearance: none;
+            appearance: none;
+            flex: 1;
+            min-width: 0;
+
+            height: 42px;
+            padding: 0 13px;
+
+            border: 1px solid #d7dce2;
+            border-radius: 9px;
+
+            background: white;
+            color: var(--text);
+
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(21, 128, 61, .08);
+        }
+
+        .search-btn {
+            height: 42px;
+            padding: 0 18px;
+
+            border: 0;
+            border-radius: 9px;
+
+            background: var(--green);
+            color: white;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            background: var(--green-dark);
+        }
+
+        /* =========================
+           TABLE
+        ========================== */
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th {
+            padding: 13px 18px;
+            text-align: left;
+
+            background: #f8fafc;
+            color: #64748b;
+
+            font-size: 10px;
+            font-weight: 750;
+
+            text-transform: uppercase;
+            letter-spacing: .06em;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 15px 18px;
+            border-bottom: 1px solid #eef0f2;
+
+            color: #374151;
+            font-size: 13px;
+        }
+
+        tbody tr:hover {
+            background: #fbfdfc;
+        }
+
+        .student-id {
+            font-weight: 700;
+            color: var(--green-dark);
+        }
+
+        .student-name {
+            font-weight: 650;
+            color: var(--text);
+        }
+
+        .program {
+            color: #4b5563;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+
+            padding: 5px 9px;
+            border-radius: 999px;
+
+            font-size: 10px;
+            font-weight: 750;
+        }
+
+        .status.cleared {
+            background: #ecfdf5;
+            color: #166534;
+        }
+
+        .status.pending {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .empty {
+            padding: 45px 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* =========================
+           MOBILE HEADER
+        ========================== */
+
+        .mobile-top-header {
+            display: none;
+        }
+
+        .mobile-menu {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid var(--border);
+            border-radius: 9px;
+
+            background: white;
+            color: var(--green-dark);
+
+            cursor: pointer;
+            font-size: 19px;
+
+            box-shadow: 0 2px 6px rgba(15,23,42,.04);
+        }
+
+        .mobile-page-title {
+            min-width: 0;
+        }
+
+        .mobile-page-title h1 {
+            margin: 0;
+            color: var(--text);
+            font-size: 19px;
+            line-height: 1.2;
+            font-weight: 750;
+        }
+
+        .mobile-page-title p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.35;
+        }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-close {
+                display: flex;
+
+                position: absolute;
+                top: 18px;
+                right: 15px;
+
+                width: 34px;
+                height: 34px;
+
+                align-items: center;
+                justify-content: center;
+
+                border: 1px solid var(--border);
+                border-radius: 8px;
+
+                background: white;
+                color: #374151;
+
+                cursor: pointer;
+                font-size: 17px;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 1050;
+
+                background: rgba(15, 23, 42, .30);
+                backdrop-filter: blur(2px);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            .mobile-top-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1040;
+
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                padding: 11px 15px;
+
+                background: rgba(248, 250, 252, .97);
+                border-bottom: 1px solid var(--border);
+
+                backdrop-filter: blur(9px);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 85px 16px 25px;
+            }
+
+            .page-header {
+                display: none;
+            }
+
+            .card-header {
+                padding: 18px;
+            }
+
+            .search-area {
+                padding: 16px 18px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-btn {
+                width: 100%;
+            }
+
+            .main {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            .card-header h2 {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="mobile-top-header">
+    <button
+        class="mobile-menu"
+        onclick="toggleSidebar()"
+        aria-label="Open menu"
+        type="button"
+    >
+        ☰
+    </button>
+
+    <div class="mobile-page-title">
+        <h1>Students</h1>
+        <p>Mathematics staff portal</p>
+    </div>
+</header>
+
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+    onclick="toggleSidebar()"
+></div>
+
+<div class="layout">
+
+    <aside class="sidebar" id="sidebar">
+
+    <button
+        class="sidebar-close"
+        onclick="toggleSidebar()"
+        aria-label="Close menu"
+        type="button"
+    >
+        ×
+    </button>
+
+    <div class="brand">
+        <h1 class="brand-title">ZASTI</h1>
+        <div class="brand-subtitle">
+            Digital Student Clearance System
+        </div>
+    </div>
+
+    <div class="nav-title">Main Menu</div>
+
+    <nav class="nav">
+
+        <a href="{{ url_for('new_staff_mathematics_dashboard') }}">
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_mathematics_students') }}" class="active">
+            <span class="nav-icon">♙</span>
+            <span>Students</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_mathematics_issue_property') }}">
+            <span class="nav-icon">▣</span>
+            <span>Issue Property</span>
+        </a>
+
+        <a href="#">
+            <span class="nav-icon">↩</span>
+            <span>Return Property</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_mathematics_property_records') }}">
+            <span class="nav-icon">▤</span>
+            <span>Property Records</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_mathematics_announcements') }}">
+            <span class="nav-icon">▰</span>
+            <span>Announcements</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <div class="staff-mini">
+
+            <div class="staff-avatar">
+                {{ (staff_name or "Staff")[:1]|upper }}
+            </div>
+
+            <div class="staff-info">
+
+                <strong>
+                    {{ staff_name or "Mathematics Staff" }}
+                </strong>
+
+                <span>
+                    Mathematics Staff
+                </span>
+
+            </div>
+
+        </div>
+
+        <a
+            href="{{ url_for('staff_change_password') }}"
+            class="logout"
+        >
+            <span class="nav-icon">⚙</span>
+            <span>Change Password</span>
+        </a>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout"
+        >
+            <span class="nav-icon">↪</span>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>
+
+    <main class="main">
+
+        <div class="page-header">
+            <h1>Students</h1>
+            <p>
+                View students and their Mathematics clearance status.
+            </p>
+        </div>
+
+        <section class="content-card">
+
+            <div class="card-header">
+                <div>
+                    <h2>Mathematics Students</h2>
+                    <p>
+                        Students registered in the Digital Student Clearance System.
+                    </p>
+                </div>
+            </div>
+
+            <div class="search-area">
+                <form
+                    class="search-form"
+                    method="GET"
+                    action="{{ url_for('new_staff_mathematics_students') }}"
+                >
+                    <input
+                        class="search-input"
+                        type="text"
+                        name="search"
+                        value="{{ search }}"
+                        placeholder="Search by student ID or name..."
+                        autocomplete="off"
+                    >
+
+                    <button class="search-btn" type="submit">
+                        Search
+                    </button>
+                </form>
+            </div>
+
+            <div class="table-wrap">
+
+                {% if students %}
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Programme</th>
+                            <th>Mathematics Clearance</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for student in students %}
+
+                        <tr>
+
+                            <td class="student-id">
+                                {{ student.student_id }}
+                            </td>
+
+                            <td class="student-name">
+                                {{ student.name }}
+                            </td>
+
+                            <td class="program">
+                                {{ student.program or '-' }}
+                            </td>
+
+                            <td>
+
+                                {% if student.student_id in cleared_student_ids %}
+
+                                <span class="status cleared">
+                                    Cleared
+                                </span>
+
+                                {% else %}
+
+                                <span class="status pending">
+                                    Pending
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+                {% else %}
+
+                <div class="empty">
+                    No students found.
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+
+    if (!sidebar || !overlay) {
+        return;
+    }
+
+    sidebar.classList.toggle("open");
+    overlay.classList.toggle("show");
+}
+</script>
+
+</body>
+</html>

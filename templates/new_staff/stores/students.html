@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Stores Students | ZASTI</title>
+
+<style>
+
+:root {
+    --green: #15803d;
+    --green-dark: #166534;
+    --green-light: #ecfdf5;
+    --text: #172033;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f8fafc;
+    --white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 260px;
+    z-index: 1100;
+
+    display: flex;
+    flex-direction: column;
+
+    background: white;
+    border-right: 1px solid var(--border);
+
+    padding: 24px 15px 18px;
+
+    overflow-y: auto;
+
+    transition: transform .25s ease;
+}
+
+.brand {
+    padding: 4px 10px 25px;
+    border-bottom: 1px solid #eef0f2;
+    margin-bottom: 22px;
+}
+
+.brand-title {
+    margin: 0;
+
+    color: var(--green-dark);
+
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.brand-subtitle {
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.nav-title {
+    padding: 0 10px 9px;
+
+    color: #9ca3af;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.nav a {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 45px;
+    padding: 10px 12px;
+
+    color: #4b5563;
+
+    text-decoration: none;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.nav a:hover,
+.nav a.active {
+    background: var(--green-light);
+    color: var(--green-dark);
+}
+
+.nav-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 9px;
+
+    background: #f3f4f6;
+
+    color: #6b7280;
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.nav a.active .nav-icon,
+.nav a:hover .nav-icon {
+    background: #dff7e9;
+    color: var(--green-dark);
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #eef0f2;
+}
+
+.staff-mini {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 9px 10px 13px;
+}
+
+.staff-avatar {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #dcfce7;
+    color: var(--green-dark);
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.staff-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.staff-info strong {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: 12px;
+}
+
+.staff-info span {
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.logout {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 42px;
+    padding: 9px 12px;
+
+    color: #4b5563;
+
+    text-decoration: none;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.logout:hover {
+    background: #f9fafb;
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+    margin-left: 260px;
+
+    min-height: 100vh;
+
+    padding: 38px 42px 45px;
+}
+
+.page-header {
+    max-width: 1050px;
+
+    margin: 0 auto 27px;
+}
+
+.page-header h1 {
+    margin: 0;
+
+    font-size: 27px;
+    font-weight: 750;
+}
+
+.page-header p {
+    margin: 7px 0 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.search-box {
+    max-width: 1050px;
+
+    margin: 0 auto 20px;
+
+    display: flex;
+    gap: 10px;
+}
+
+.search-box input {
+    flex: 1;
+
+    min-height: 44px;
+
+    padding: 10px 13px;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: white;
+
+    color: var(--text);
+
+    font-family: inherit;
+    font-size: 13px;
+
+    outline: none;
+}
+
+.search-box input:focus {
+    border-color: var(--green);
+
+    box-shadow:
+        0 0 0 3px rgba(21,128,61,.08);
+}
+
+.search-box button {
+    min-width: 80px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: var(--green);
+    color: white;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+/* =========================================================
+   STUDENTS CARD
+========================================================= */
+
+.students-container {
+    max-width: 1050px;
+
+    margin: 0 auto;
+}
+
+.students-card {
+    overflow: hidden;
+
+    background: white;
+
+    border: 1px solid var(--border);
+    border-radius: 15px;
+
+    box-shadow:
+        0 2px 8px rgba(15,23,42,.035);
+}
+
+.student-row {
+    display: flex;
+    align-items: center;
+
+    min-height: 72px;
+
+    padding: 13px 18px;
+
+    border-bottom: 1px solid #eef0f2;
+}
+
+.student-row:last-child {
+    border-bottom: 0;
+}
+
+.student-info {
+    min-width: 0;
+
+    flex: 1;
+}
+
+.student-name {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.student-id {
+    margin-top: 4px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+.view-btn {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 70px;
+    min-height: 36px;
+
+    padding: 8px 13px;
+
+    border-radius: 8px;
+
+    background: var(--green-light);
+    border: 1px solid #bbf7d0;
+
+    color: var(--green-dark);
+
+    text-decoration: none;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.view-btn:hover {
+    background: #dcfce7;
+}
+
+/* Empty */
+
+.empty {
+    padding: 60px 20px;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+.mobile-top-header {
+    display: none;
+}
+
+.mobile-menu {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: white;
+    color: var(--green-dark);
+
+    font-size: 19px;
+
+    cursor: pointer;
+}
+
+.mobile-page-title h1 {
+    margin: 0;
+
+    font-size: 19px;
+}
+
+.mobile-page-title p {
+    margin: 4px 0 0;
+
+    color: var(--muted);
+
+    font-size: 10px;
+}
+
+.sidebar-close,
+.sidebar-overlay {
+    display: none;
+}
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-close {
+        display: flex;
+
+        position: absolute;
+
+        top: 18px;
+        right: 15px;
+
+        width: 34px;
+        height: 34px;
+
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid var(--border);
+        border-radius: 8px;
+
+        background: white;
+
+        cursor: pointer;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+
+        z-index: 1050;
+
+        background: rgba(15,23,42,.30);
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+
+    .mobile-top-header {
+        position: fixed;
+
+        top: 0;
+        left: 0;
+        right: 0;
+
+        z-index: 1040;
+
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        padding: 11px 15px;
+
+        background: rgba(248,250,252,.97);
+
+        border-bottom: 1px solid var(--border);
+    }
+
+    .main {
+        margin-left: 0;
+
+        padding:
+            80px
+            15px
+            30px;
+    }
+
+    .page-header {
+        display: none;
+    }
+
+    .student-row {
+        min-height: 68px;
+
+        padding: 12px 14px;
+    }
+
+    .student-name {
+        font-size: 13px;
+    }
+
+}
+
+@media (max-width: 430px) {
+
+    .main {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .mobile-top-header {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .view-btn {
+        min-width: 62px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="mobile-top-header">
+
+    <button
+        class="mobile-menu"
+        type="button"
+        onclick="toggleSidebar()"
+    >
+        ☰
+    </button>
+
+    <div class="mobile-page-title">
+        <h1>Students</h1>
+        <p>Stores property records</p>
+    </div>
+
+</header>
+
+
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+    onclick="toggleSidebar()"
+></div>
+
+
+<aside class="sidebar" id="sidebar">
+
+    <button
+        class="sidebar-close"
+        type="button"
+        onclick="toggleSidebar()"
+    >
+        ×
+    </button>
+
+    <div class="brand">
+
+        <h1 class="brand-title">ZASTI</h1>
+
+        <div class="brand-subtitle">
+            Digital Student Clearance System
+        </div>
+
+    </div>
+
+    <div class="nav-title">
+        Main Menu
+    </div>
+
+    <nav class="nav">
+
+        <a href="{{ url_for('new_staff_stores_dashboard') }}">
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a
+            href="{{ url_for('new_staff_stores_students') }}"
+            class="active"
+        >
+            <span class="nav-icon">♙</span>
+            <span>Students</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_stores_issue_property') }}">
+            <span class="nav-icon">▣</span>
+            <span>Issue Property</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_stores_return_property') }}">
+            <span class="nav-icon">↩</span>
+            <span>Return Property</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_stores_property_records') }}">
+            <span class="nav-icon">▤</span>
+            <span>Property Records</span>
+        </a>
+
+        <a href="{{ url_for('new_staff_stores_announcements') }}">
+            <span class="nav-icon">▰</span>
+            <span>Announcements</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <div class="staff-mini">
+
+            <div class="staff-avatar">
+                {{ (staff_name or "Staff")[:1]|upper }}
+            </div>
+
+            <div class="staff-info">
+                <strong>{{ staff_name or "Stores Staff" }}</strong>
+                <span>Stores Staff</span>
+            </div>
+
+        </div>
+
+        <a
+            href="{{ url_for('staff_change_password') }}"
+            class="logout"
+        >
+            <span class="nav-icon">⚙</span>
+            <span>Change Password</span>
+        </a>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout"
+        >
+            <span class="nav-icon">↪</span>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>
+
+
+<main class="main">
+
+    <div class="page-header">
+
+        <h1>Students</h1>
+
+        <p>
+            View Stores property status and history for each student.
+        </p>
+
+    </div>
+
+
+    <form
+        class="search-box"
+        method="GET"
+    >
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search or '' }}"
+            placeholder="Search by student name or ID..."
+        >
+
+        <button type="submit">
+            Search
+        </button>
+
+    </form>
+
+
+    <div class="students-container">
+
+        <div class="students-card">
+
+            {% if students %}
+
+                {% for student in students %}
+
+                    <div class="student-row">
+
+                        <div class="student-info">
+
+                            <p class="student-name">
+                                {{ student.name }}
+                            </p>
+
+                            <div class="student-id">
+                                {{ student.student_id }}
+                            </div>
+
+                        </div>
+
+                        <a
+                            href="{{ url_for(
+                                'new_staff_stores_student_details',
+                                student_id=student.student_id
+                            ) }}"
+                            class="view-btn"
+                        >
+                            View
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty">
+                    No students found.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<script>
+
+function toggleSidebar() {
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const overlay =
+        document.getElementById("sidebarOverlay");
+
+    if (!sidebar) {
+        return;
+    }
+
+    sidebar.classList.toggle("open");
+
+    if (overlay) {
+        overlay.classList.toggle(
+            "show",
+            sidebar.classList.contains("open")
+        );
+    }
+
+}
+
+document.querySelectorAll(".sidebar a").forEach(function(link) {
+
+    link.addEventListener("click", function() {
+
+        if (window.innerWidth <= 800) {
+
+            document
+                .getElementById("sidebar")
+                ?.classList.remove("open");
+
+            document
+                .getElementById("sidebarOverlay")
+                ?.classList.remove("show");
+
+        }
+
+    });
+
+});
+
+document.addEventListener("keydown", function(event) {
+
+    if (event.key === "Escape") {
+
+        document
+            .getElementById("sidebar")
+            ?.classList.remove("open");
+
+        document
+            .getElementById("sidebarOverlay")
+            ?.classList.remove("show");
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

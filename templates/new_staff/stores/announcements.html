@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Stores Announcements</title>
+
+<style>
+:root {
+    --green: #15803d;
+    --green-dark: #166534;
+    --green-light: #ecfdf5;
+    --text: #172033;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --sidebar: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+}
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.layout {
+    min-height: 100vh;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    z-index: 1100;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+
+    padding: 24px 15px 18px;
+
+    box-shadow: 4px 0 20px rgba(15, 23, 42, .035);
+
+    overflow-y: auto;
+    scrollbar-width: thin;
+
+    transition: transform .25s ease;
+}
+
+/* Brand */
+
+.brand {
+    padding: 4px 10px 25px;
+    border-bottom: 1px solid #eef0f2;
+    margin-bottom: 22px;
+}
+
+.brand-title {
+    margin: 0;
+    color: var(--green-dark);
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+.brand-subtitle {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+/* Menu heading */
+
+.nav-title {
+    padding: 0 10px 9px;
+
+    color: #9ca3af;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+/* Navigation */
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.nav a {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 45px;
+    padding: 10px 12px;
+
+    color: #4b5563;
+    text-decoration: none;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition:
+        background .18s ease,
+        color .18s ease,
+        transform .18s ease;
+}
+
+.nav a:hover {
+    background: #f3fdf7;
+    color: var(--green-dark);
+    transform: translateX(2px);
+}
+
+.nav a.active {
+    background: #ecfdf5;
+    color: var(--green-dark);
+}
+
+.nav a.active::before {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    top: 9px;
+    bottom: 9px;
+
+    width: 3px;
+
+    background: var(--green);
+    border-radius: 0 4px 4px 0;
+}
+
+/* Icons */
+
+.nav-icon {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #f3f4f6;
+    color: #6b7280;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    transition:
+        background .18s ease,
+        color .18s ease;
+}
+
+.nav a:hover .nav-icon,
+.nav a.active .nav-icon {
+    background: #dff7e9;
+    color: var(--green-dark);
+}
+
+/* Disabled */
+
+.nav a.disabled {
+    opacity: .72;
+    cursor: default;
+}
+
+.nav a.disabled:hover {
+    transform: none;
+    background: transparent;
+}
+
+/* Sidebar bottom */
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #eef0f2;
+}
+
+.staff-mini {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 9px 10px 13px;
+}
+
+.staff-avatar {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #dcfce7;
+    color: var(--green-dark);
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.staff-info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.staff-info strong {
+    color: var(--text);
+    font-size: 12px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.staff-info span {
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.logout {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 42px;
+    padding: 9px 12px;
+
+    color: #4b5563;
+    text-decoration: none;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    transition:
+        background .18s ease,
+        color .18s ease;
+}
+
+.logout:hover {
+    background: #f9fafb;
+    color: var(--text);
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+    margin-left: 260px;
+    min-height: 100vh;
+
+    padding: 38px 42px 45px;
+}
+
+/* =========================================================
+   DESKTOP PAGE HEADER
+========================================================= */
+
+.page-header {
+    max-width: 1050px;
+    margin: 0 auto 27px;
+}
+
+.page-header h1 {
+    margin: 0;
+
+    color: var(--text);
+    font-size: 27px;
+    font-weight: 750;
+    letter-spacing: -.3px;
+}
+
+.page-header p {
+    margin: 7px 0 0;
+
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* =========================================================
+   ANNOUNCEMENTS
+========================================================= */
+
+.announcements-container {
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+.announcement-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.announcement-card {
+    position: relative;
+
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+
+    padding: 20px 22px;
+
+    box-shadow:
+        0 2px 7px rgba(15, 23, 42, .035);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+.announcement-card:hover {
+    transform: translateY(-2px);
+
+    border-color: #d7e7dc;
+
+    box-shadow:
+        0 8px 22px rgba(15, 23, 42, .07);
+}
+
+.announcement-card::before {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    top: 17px;
+    bottom: 17px;
+
+    width: 3px;
+
+    background: var(--green);
+    border-radius: 0 4px 4px 0;
+}
+
+.announcement-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.announcement-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 0;
+}
+
+.announcement-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    background: var(--green-light);
+    color: var(--green-dark);
+
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.announcement-title {
+    margin: 0;
+
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.35;
+    font-weight: 750;
+}
+
+.announcement-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    flex-shrink: 0;
+
+    padding: 6px 9px;
+
+    background: #f8fafc;
+    border: 1px solid #eef0f2;
+    border-radius: 7px;
+
+    color: #6b7280;
+
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.date-icon {
+    color: var(--green-dark);
+    font-size: 12px;
+}
+
+.announcement-message {
+    margin: 15px 0 0;
+    padding-left: 54px;
+
+    color: #4b5563;
+
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* Empty */
+
+.empty-announcements {
+    text-align: center;
+
+    padding: 70px 25px;
+
+    background: var(--white);
+    border: 1px dashed #cfd5dc;
+    border-radius: 15px;
+
+    color: var(--muted);
+}
+
+.empty-icon {
+    width: 52px;
+    height: 52px;
+
+    margin: 0 auto 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: var(--green-light);
+    color: var(--green-dark);
+
+    font-size: 20px;
+}
+
+.empty-announcements strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #374151;
+    font-size: 15px;
+}
+
+/* =========================================================
+   MOBILE HEADER
+========================================================= */
+
+.mobile-top-header {
+    display: none;
+}
+
+.mobile-menu {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: white;
+    color: var(--green-dark);
+
+    cursor: pointer;
+
+    font-size: 19px;
+
+    box-shadow: 0 2px 6px rgba(15,23,42,.04);
+}
+
+.mobile-page-title {
+    min-width: 0;
+}
+
+.mobile-page-title h1 {
+    margin: 0;
+
+    color: var(--text);
+    font-size: 19px;
+    line-height: 1.2;
+    font-weight: 750;
+}
+
+.mobile-page-title p {
+    margin: 4px 0 0;
+
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.35;
+}
+
+/* Close button */
+
+.sidebar-close {
+    display: none;
+}
+
+/* Overlay */
+
+.sidebar-overlay {
+    display: none;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .main {
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform .25s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-close {
+        display: flex;
+
+        position: absolute;
+
+        top: 18px;
+        right: 15px;
+
+        width: 34px;
+        height: 34px;
+
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid var(--border);
+        border-radius: 8px;
+
+        background: white;
+        color: #374151;
+
+        cursor: pointer;
+
+        font-size: 17px;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+
+        z-index: 1050;
+
+        background: rgba(15, 23, 42, .30);
+        backdrop-filter: blur(2px);
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+
+    .mobile-top-header {
+        position: fixed;
+
+        top: 0;
+        left: 0;
+        right: 0;
+
+        z-index: 1040;
+
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        padding: 11px 15px;
+
+        background: rgba(248, 250, 252, .97);
+
+        border-bottom: 1px solid var(--border);
+
+        backdrop-filter: blur(9px);
+    }
+
+    .main {
+        margin-left: 0;
+
+        padding:
+            80px
+            15px
+            30px;
+    }
+
+    .page-header {
+        display: none;
+    }
+
+    .announcement-card {
+        padding: 17px 16px;
+    }
+
+    .announcement-top {
+        flex-direction: column;
+        gap: 11px;
+    }
+
+    .announcement-date {
+        align-self: flex-start;
+
+        white-space: normal;
+    }
+
+    .announcement-message {
+        padding-left: 0;
+        margin-top: 13px;
+
+        font-size: 13px;
+    }
+
+    .announcement-title {
+        font-size: 15px;
+    }
+
+    .announcement-icon {
+        width: 39px;
+        height: 39px;
+    }
+
+}
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 430px) {
+
+    .main {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .mobile-top-header {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .announcement-card {
+        border-radius: 13px;
+        padding: 15px;
+    }
+
+    .announcement-heading {
+        gap: 9px;
+    }
+
+    .announcement-title {
+        font-size: 14px;
+    }
+
+    .announcement-message {
+        font-size: 12.5px;
+        line-height: 1.65;
+    }
+
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     MOBILE HEADER
+===================================================== -->
+
+<header class="mobile-top-header">
+
+    <button
+        class="mobile-menu"
+        onclick="toggleSidebar()"
+        aria-label="Open menu"
+        type="button"
+    >
+        ☰
+    </button>
+
+    <div class="mobile-page-title">
+        <h1>Announcements</h1>
+        <p>Stores staff updates and notices</p>
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     MOBILE OVERLAY
+===================================================== -->
+
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+    onclick="toggleSidebar()"
+></div>
+
+
+<div class="layout">
+
+<!-- =====================================================
+     STORES SIDEBAR
+===================================================== -->
+
+<aside class="sidebar" id="sidebar">
+
+    <button
+        class="sidebar-close"
+        onclick="toggleSidebar()"
+        aria-label="Close menu"
+        type="button"
+    >
+        ×
+    </button>
+
+
+    <div class="brand">
+
+        <h1 class="brand-title">ZASTI</h1>
+
+        <div class="brand-subtitle">
+            Digital Student Clearance System
+        </div>
+
+    </div>
+
+
+    <div class="nav-title">
+        Main Menu
+    </div>
+
+
+    <nav class="nav">
+
+        <a href="{{ url_for('new_staff_stores_dashboard') }}">
+
+            <span class="nav-icon">⌂</span>
+
+            <span>Dashboard</span>
+
+        </a>
+
+
+        <a href="{{ url_for('new_staff_stores_students') }}">
+
+            <span class="nav-icon">♙</span>
+
+            <span>Students</span>
+
+        </a>
+
+
+        <a href="{{ url_for('new_staff_stores_issue_property') }}">
+
+            <span class="nav-icon">▣</span>
+
+            <span>Issue Property</span>
+
+        </a>
+
+
+        <a href="{{ url_for('new_staff_stores_return_property') }}">
+
+            <span class="nav-icon">↩</span>
+
+            <span>Return Property</span>
+
+        </a>
+
+
+        <a href="{{ url_for('new_staff_stores_property_records') }}">
+
+            <span class="nav-icon">▤</span>
+
+            <span>Property Records</span>
+
+        </a>
+
+
+        <a href="#" class="active">
+
+            <span class="nav-icon">▰</span>
+
+            <span>Announcements</span>
+
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <div class="staff-mini">
+
+            <div class="staff-avatar">
+                {{ (staff_name or "Staff")[:1]|upper }}
+            </div>
+
+            <div class="staff-info">
+
+                <strong>
+                    {{ staff_name or "Stores Staff" }}
+                </strong>
+
+                <span>
+                    Stores Staff
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('staff_change_password') }}"
+            class="logout"
+        >
+
+            <span class="nav-icon">⚙</span>
+
+            <span>Change Password</span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout"
+        >
+
+            <span class="nav-icon">↪</span>
+
+            <span>Logout</span>
+
+        </a>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<main class="main">
+
+    <div class="page-header">
+
+        <h1>Announcements</h1>
+
+        <p>
+            Important updates and notices for Stores staff.
+        </p>
+
+    </div>
+
+
+    <div class="announcements-container">
+
+        <div class="announcement-list">
+
+            {% if announcements %}
+
+                {% for announcement in announcements %}
+
+                    <article class="announcement-card">
+
+                        <div class="announcement-top">
+
+                            <div class="announcement-heading">
+
+                                <div class="announcement-icon">
+                                    !
+                                </div>
+
+                                <h2 class="announcement-title">
+                                    {{ announcement.title }}
+                                </h2>
+
+                            </div>
+
+
+                            <div class="announcement-date">
+
+                                <span class="date-icon">
+                                    ◷
+                                </span>
+
+                                <span>
+                                    {{ announcement.created_at.strftime("%d %B %Y, %H:%M")
+                                       if announcement.created_at else "" }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <p class="announcement-message">
+                            {{ announcement.message }}
+                        </p>
+
+                    </article>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty-announcements">
+
+                    <div class="empty-icon">
+                        !
+                    </div>
+
+                    <strong>
+                        No announcements
+                    </strong>
+
+                    There are currently no announcements to display.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</main>
+
+</div>
+
+
+<script>
+function toggleSidebar() {
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const overlay =
+        document.getElementById("sidebarOverlay");
+
+    if (!sidebar) {
+        return;
+    }
+
+    sidebar.classList.toggle("open");
+
+    if (overlay) {
+        overlay.classList.toggle(
+            "show",
+            sidebar.classList.contains("open")
+        );
+    }
+}
+
+
+/* Close sidebar after selecting a mobile link */
+
+document.querySelectorAll(".sidebar a").forEach(function(link) {
+
+    link.addEventListener("click", function() {
+
+        if (window.innerWidth <= 800) {
+
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const overlay =
+                document.getElementById("sidebarOverlay");
+
+            if (sidebar) {
+                sidebar.classList.remove("open");
+            }
+
+            if (overlay) {
+                overlay.classList.remove("show");
+            }
+
+        }
+
+    });
+
+});
+
+
+/* Escape key closes mobile sidebar */
+
+document.addEventListener("keydown", function(event) {
+
+    if (event.key === "Escape") {
+
+        const sidebar =
+            document.getElementById("sidebar");
+
+        const overlay =
+            document.getElementById("sidebarOverlay");
+
+        if (sidebar) {
+            sidebar.classList.remove("open");
+        }
+
+        if (overlay) {
+            overlay.classList.remove("show");
+        }
+
+    }
+
+});
+</script>
+
+</body>
+</html>

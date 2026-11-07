@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+
+{% block title %}
+Departments | ZASTI Clearance System
+{% endblock %}
+
+{% block content %}
+
+{% include "components/admin_sidebar.html" %}
+
+<div class="departments-page">
+
+<style>
+
+.departments-page {
+    margin-left: 270px;
+    min-height: 100vh;
+    width: calc(100% - 270px);
+    background: #f5f8f7;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.departments-main {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+/* HEADER */
+
+.departments-header {
+    margin-bottom: 25px;
+}
+
+.departments-eyebrow {
+    margin: 0 0 5px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+.departments-header h1 {
+    margin: 0;
+    color: #12372f;
+    font-size: 28px;
+}
+
+.departments-header p {
+    margin: 7px 0 0;
+    color: #64748b;
+}
+
+/* SUMMARY */
+
+.department-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.department-summary-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.department-summary-label {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.department-summary-number {
+    display: block;
+    margin-top: 5px;
+    color: #12372f;
+    font-size: 28px;
+}
+
+/* DEPARTMENT GRID */
+
+.department-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.department-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 15px rgba(18,59,53,.04);
+}
+
+.department-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.department-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: #e8f6ef;
+    color: #15803d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+}
+
+.department-name {
+    flex: 1;
+}
+
+.department-name h2 {
+    margin: 2px 0 5px;
+    color: #12372f;
+    font-size: 17px;
+}
+
+.department-name p {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.department-count {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    padding: 6px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* STAFF */
+
+.department-staff {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #edf2f0;
+}
+
+.department-staff-title {
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.department-staff-member {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 0;
+}
+
+.department-staff-member + .department-staff-member {
+    border-top: 1px solid #f1f5f3;
+}
+
+.staff-member-info {
+    min-width: 0;
+}
+
+.staff-member-name {
+    color: #1f3f38;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.staff-member-id {
+    margin-top: 2px;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.staff-status {
+    padding: 5px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.staff-status.active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.staff-status.inactive {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.no-staff {
+    color: #94a3b8;
+    font-size: 12px;
+    padding: 5px 0;
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+
+    .departments-page {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .departments-main {
+        padding: 24px 18px 40px;
+    }
+
+    .department-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .department-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .departments-main {
+        padding: 20px 14px 35px;
+    }
+
+    .departments-header h1 {
+        font-size: 24px;
+    }
+
+    .department-card {
+        padding: 16px;
+    }
+
+}
+
+</style>
+
+
+<main class="departments-main">
+
+    <div class="departments-header">
+
+        <p class="departments-eyebrow">
+            ADMINISTRATION
+        </p>
+
+        <h1>
+            Departments
+        </h1>
+
+        <p>
+            Manage and monitor the departments responsible for student clearance.
+        </p>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="department-summary">
+
+        <div class="department-summary-card">
+
+            <div class="department-summary-label">
+                TOTAL DEPARTMENTS
+            </div>
+
+            <strong class="department-summary-number">
+                {{ total_departments }}
+            </strong>
+
+        </div>
+
+
+        <div class="department-summary-card">
+
+            <div class="department-summary-label">
+                TOTAL STAFF
+            </div>
+
+            <strong class="department-summary-number">
+                {{ total_staff }}
+            </strong>
+
+        </div>
+
+
+        <div class="department-summary-card">
+
+            <div class="department-summary-label">
+                ACTIVE STAFF
+            </div>
+
+            <strong class="department-summary-number">
+                {{ active_staff }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- DEPARTMENTS -->
+
+    <div class="department-grid">
+
+        {% for department in departments %}
+
+        <div class="department-card">
+
+            <div class="department-card-top">
+
+                <div class="department-icon">
+                    <i class="bi {{ department.icon }}"></i>
+                </div>
+
+                <div class="department-name">
+
+                    <h2>
+                        {{ department.name }}
+                    </h2>
+
+                    <p>
+                        Clearance Department
+                    </p>
+
+                </div>
+
+                <div class="department-count">
+                    {{ department.staff_count }}
+                    {% if department.staff_count == 1 %}
+                        Staff
+                    {% else %}
+                        Staff
+                    {% endif %}
+                </div>
+
+            </div>
+
+
+            <div class="department-staff">
+
+                <div class="department-staff-title">
+                    Assigned Staff
+                </div>
+
+                {% for member in department.staff %}
+
+                <div class="department-staff-member">
+
+                    <div class="staff-member-info">
+
+                        <div class="staff-member-name">
+                            {{ member.name }}
+                        </div>
+
+                        <div class="staff-member-id">
+                            {{ member.staff_id }}
+                        </div>
+
+                    </div>
+
+                    {% if member.active %}
+
+                        <span class="staff-status active">
+                            Active
+                        </span>
+
+                    {% else %}
+
+                        <span class="staff-status inactive">
+                            Inactive
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+                {% else %}
+
+                <div class="no-staff">
+                    No staff assigned to this department.
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</main>
+
+</div>
+
+{% endblock %}

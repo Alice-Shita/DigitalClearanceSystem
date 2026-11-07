@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{{ department_name|default(department|default('Department'), true) }} History | ZASTI</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 950px;
+            margin: auto;
+            padding: 25px 18px 40px;
+        }
+
+        .back-dashboard {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 16px;
+            margin-bottom: 18px;
+            background: white;
+            color: #166534;
+            border: 1px solid #d9e3df;
+            border-radius: 9px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .back-dashboard:hover {
+            background: #f0fdf4;
+        }
+
+        .header {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 23px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 14px rgba(0,0,0,.05);
+        }
+
+        .header-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-icon {
+            width: 49px;
+            height: 49px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: #ecfdf5;
+            color: #198754;
+            border-radius: 12px;
+            font-size: 23px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            margin: 6px 0 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .history-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 19px;
+            margin-bottom: 13px;
+            box-shadow: 0 3px 11px rgba(0,0,0,.04);
+        }
+
+        .history-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .department {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .department-icon {
+            width: 43px;
+            height: 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: #eff6ff;
+            color: #2563eb;
+            border-radius: 11px;
+            font-size: 20px;
+        }
+
+        .department-name {
+            font-size: 16px;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .date {
+            margin-top: 5px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 11px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-cleared {
+            background: #ecfdf5;
+            color: #166534;
+        }
+
+        .status-pending {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .status-rejected {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .status-other {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .details {
+            margin-top: 16px;
+            padding: 14px 15px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .detail-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 9px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .label {
+            color: #475569;
+            font-weight: 700;
+        }
+
+        .value {
+            color: #64748b;
+            overflow-wrap: anywhere;
+        }
+
+        .empty {
+            padding: 45px 20px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .empty i {
+            font-size: 42px;
+            color: #94a3b8;
+        }
+
+        .empty h3 {
+            margin: 13px 0 7px;
+            color: #334155;
+        }
+
+        .footer {
+            margin-top: 35px;
+            padding-top: 22px;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 600px) {
+            .page {
+                padding: 17px 12px 30px;
+            }
+
+            .header {
+                padding: 19px;
+            }
+
+            h1 {
+                font-size: 21px;
+            }
+
+            .history-card {
+                padding: 16px;
+            }
+
+            .history-top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .status {
+                margin-left: 55px;
+            }
+
+            .detail-row {
+                font-size: 13px;
+            }
+        }
+    </style>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+    @media print {
+        .site-header,
+        .student-sidebar,
+        .student-menu-button,
+        .student-menu-overlay {
+            display: none !important;
+        }
+        body {
+            padding-top: 0 !important;
+        }
+        .student-portal-layout,
+        .student-portal-content {
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+    }
+    </style>
+
+</head>
+
+<body>
+
+{% include "components/student_header.html" %}
+<div class="student-portal-layout">
+    {% include "components/sidebar.html" %}
+    <main class="student-portal-content">
+
+<div class="page">
+
+    
+
+    <div class="header">
+        <div class="header-row">
+            <div class="header-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+
+            <div>
+                <h1>{{ department_name|default(department|default('Department'), true) }} History</h1>
+                <p class="subtitle">
+                    View previous clearance actions, updates and department remarks.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    {% if history %}
+
+        {% for record in history %}
+
+            {% set dept = record.get('department', '') if record is mapping else record.department|default('', true) %}
+            {% set status = record.get('status', '') if record is mapping else record.status|default('', true) %}
+            {% set created = record.get('created_at') if record is mapping else record.created_at|default('', true) %}
+            {% set action = record.get('action') if record is mapping else record.action|default('', true) %}
+            {% set remarks = record.get('remarks') if record is mapping else record.remarks|default('', true) %}
+            {% set performed = record.get('performed_by') if record is mapping else record.performed_by|default('', true) %}
+            {% set item_name = record.get('item') if record is mapping else record.item|default('', true) %}
+
+            {% set status_text = status|string %}
+            {% set status_lower = status_text|lower %}
+
+            <div class="history-card">
+                <div class="history-top">
+
+                    <div class="department">
+                        <div class="department-icon">
+                            {% if dept == "Library" %}
+                                <i class="bi bi-book-fill"></i>
+                            {% elif dept == "Sports" %}
+                                <i class="bi bi-trophy-fill"></i>
+                            {% elif dept == "Accounts" %}
+                                <i class="bi bi-cash-stack"></i>
+                            {% elif dept == "Stores" %}
+                                <i class="bi bi-box-seam-fill"></i>
+                            {% elif dept == "Communication Skills" %}
+                                <i class="bi bi-chat-square-text-fill"></i>
+                            {% elif dept == "Mathematics" %}
+                                <i class="bi bi-calculator-fill"></i>
+                            {% elif dept == "Human Resource" %}
+                                <i class="bi bi-people-fill"></i>
+                            {% elif dept in ["Head Of Training Section", "Training Section"] %}
+                                <i class="bi bi-mortarboard-fill"></i>
+                            {% elif dept == "AME Stores" %}
+                                <i class="bi bi-tools"></i>
+                            {% elif dept in ["Technical Services Office", "TSO"] %}
+                                <i class="bi bi-building"></i>
+                            {% elif dept == "Hostel" %}
+                                <i class="bi bi-house-check-fill"></i>
+                            {% else %}
+                                <i class="bi bi-building"></i>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <div class="department-name">
+                                {{ dept or department_name|default(department|default('Department'), true) }}
+                            </div>
+
+                            <div class="date">
+                                <i class="bi bi-calendar3"></i>
+                                {% if created.strftime is defined %}
+                                    {{ created.strftime("%d %B %Y | %I:%M %p") }}
+                                {% else %}
+                                    {{ created or 'Date not available' }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if 'clear' in status_lower or 'approv' in status_lower or 'accept' in status_lower %}
+                        <span class="status status-cleared">{{ status or 'Updated' }}</span>
+                    {% elif 'reject' in status_lower or 'declin' in status_lower %}
+                        <span class="status status-rejected">{{ status }}</span>
+                    {% elif 'pending' in status_lower %}
+                        <span class="status status-pending">{{ status }}</span>
+                    {% else %}
+                        <span class="status status-other">{{ status or 'Updated' }}</span>
+                    {% endif %}
+
+                </div>
+
+                <div class="details">
+
+                    {% if action %}
+                    <div class="detail-row">
+                        <span class="label">Action:</span>
+                        <span class="value">{{ action }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if item_name %}
+                    <div class="detail-row">
+                        <span class="label">Item:</span>
+                        <span class="value">{{ item_name }}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="detail-row">
+                        <span class="label">Remarks:</span>
+                        <span class="value">{{ remarks or 'No remarks provided.' }}</span>
+                    </div>
+
+                    {% if performed %}
+                    <div class="detail-row">
+                        <span class="label">Updated by:</span>
+                        <span class="value">{{ performed }}</span>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+            <i class="bi bi-clock-history"></i>
+            <h3>No Department History</h3>
+            <p>No department clearance actions have been recorded yet.</p>
+        </div>
+
+    {% endif %}
+
+    <div class="footer">
+        © 2026 Zambia Air Services Training Institute<br>
+        All Rights Reserved
+    </div>
+
+</div>
+
+    </main>
+</div>
+</body>
+</html>

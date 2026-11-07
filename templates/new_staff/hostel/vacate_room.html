@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <title>Vacate Room | Hostel</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f7fb;
+            color: #1f2937;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* ==================================================
+           SIDEBAR
+        ================================================== */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #0b1f3a;
+            color: #ffffff;
+            padding: 24px 16px;
+            overflow-y: auto;
+        }
+
+        .sidebar-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 28px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #dbe5f1;
+            text-decoration: none;
+            padding: 12px 14px;
+            margin-bottom: 6px;
+            border-radius: 8px;
+        }
+
+        .sidebar a:hover {
+            background: #17345c;
+            color: #ffffff;
+        }
+
+        /* ==================================================
+           MAIN
+        ================================================== */
+
+        .main {
+            margin-left: 250px;
+            padding: 32px;
+            max-width: 1500px;
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-header h1 {
+            margin: 0 0 7px;
+            color: #0b1f3a;
+            font-size: 28px;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #64748b;
+        }
+
+        /* ==================================================
+           CARDS
+        ================================================== */
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #dbe3ec;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 2px 7px rgba(15, 23, 42, 0.04);
+        }
+
+        .card h2 {
+            margin: 0 0 18px;
+            color: #0b1f3a;
+            font-size: 19px;
+        }
+
+        /* ==================================================
+           STUDENT / ACCOMMODATION INFO
+        ================================================== */
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px 24px;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .info-item strong {
+            color: #111827;
+            font-size: 15px;
+        }
+
+        /* ==================================================
+           CLEARANCE STATUS
+        ================================================== */
+
+        .clearance-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .clearance-box {
+            border: 1px solid #dbe3ec;
+            border-radius: 10px;
+            padding: 18px;
+            background: #f8fafc;
+        }
+
+        .clearance-box h3 {
+            margin: 0 0 10px;
+            color: #0b1f3a;
+            font-size: 16px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 11px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .status-cleared {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pending {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .clearance-message {
+            margin: 12px 0 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .outstanding-list {
+            margin: 10px 0 0;
+            padding-left: 20px;
+            color: #991b1b;
+            font-size: 14px;
+        }
+
+        /* ==================================================
+           CHECKLIST
+        ================================================== */
+
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px 24px;
+        }
+
+        .check-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .check-item label {
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 7px;
+            font-size: 14px;
+        }
+
+        .check-item select,
+        .check-item textarea {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px 11px;
+            font-size: 14px;
+            background: #ffffff;
+            color: #1f2937;
+            outline: none;
+        }
+
+        .check-item select:focus,
+        .check-item textarea:focus {
+            border-color: #16a34a;
+            box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.08);
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        /* ==================================================
+           ACTION BAR
+        ================================================== */
+
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn {
+            display: inline-block;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #15803d;
+        }
+
+        .btn-disabled {
+            background: #cbd5e1;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        /* ==================================================
+           NOTICE
+        ================================================== */
+
+        .blocked-notice {
+            border-left: 4px solid #dc2626;
+            background: #fef2f2;
+            color: #991b1b;
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-top: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .ready-notice {
+            border-left: 4px solid #16a34a;
+            background: #f0fdf4;
+            color: #166534;
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-top: 18px;
+            font-size: 14px;
+        }
+
+        /* ==================================================
+           MOBILE
+        ================================================== */
+
+        .sidebar-close {
+            display: none;
+        }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        .mobile-top-header {
+            display: none;
+        }
+
+        @media (max-width: 1000px) {
+
+            .main {
+                margin-left: 0;
+                padding: 32px 16px;
+            }
+
+            .info-grid,
+            .clearance-grid,
+            .checklist-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background:
+                    rgba(15,23,42,.38);
+                z-index: 950;
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .mobile-top-header {
+                display: flex;
+
+                position: sticky;
+                top: 0;
+
+                align-items: center;
+                gap: 12px;
+                padding:
+                    13px 16px;
+                background: white;
+                border-bottom:
+                    1px solid var(--border);
+
+                z-index: 900;
+            }
+
+            .menu-button {
+                width: 38px;
+                height: 38px;
+
+                border:
+                    1px solid var(--border);
+                border-radius: 8px;
+
+                background: white;
+
+                color: var(--text);
+                font-size: 20px;
+                cursor: pointer;
+            }
+
+            .mobile-title {
+                color: var(--text);
+                font-size: 16px;
+                font-weight: 700;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .main {
+                padding: 24px 15px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .page-header h1 {
+                font-size: 23px;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================= SIDEBAR ================= -->
+    {% include "new_staff/hostel/_sidebar.html" %}
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+        onclick="toggleSidebar()"
+    ></div>
+
+    <!-- ================= MOBILE HEADER ================= -->
+
+    <header class="mobile-top-header">
+        <button
+            class="menu-button"
+            onclick="toggleSidebar()"
+            type="button"
+            aria-label="Open menu"
+        >
+            ☰
+        </button>
+
+        <div class="mobile-title">
+            Hostel Department
+        </div>
+    </header>
+
+<main class="main">
+
+        <div class="page-header">
+            <h1>Final Room Inspection</h1>
+            <p>Review the student's accommodation before completing the final Hostel clearance.</p>
+        </div>
+
+        <!-- ==================================================
+             STUDENT INFORMATION
+        ================================================== -->
+
+        <section class="card">
+
+            <h2>Student Information</h2>
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <label>Student ID</label>
+                    <strong>{{ student.student_id }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <label>Name</label>
+                    <strong>{{ student.name }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <label>Programme</label>
+                    <strong>{{ student.program or "—" }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <label>Year</label>
+                    <strong>{{ student.year or "—" }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <label>Term</label>
+                    <strong>{{ student.term or "—" }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <label>Accommodation</label>
+                    <strong>{{ "Boarder" if assignment else (student.accommodation or "—") }}</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ==================================================
+             ACCOMMODATION
+        ================================================== -->
+
+        <section class="card">
+
+            <h2>Accommodation</h2>
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <label>Hostel</label>
+                    <strong>
+                        {{ hostel.name if hostel else "—" }}
+                    </strong>
+                </div>
+
+                <div class="info-item">
+                    <label>Room</label>
+                    <strong>
+                        {{ room.room_number or "—" }}
+                    </strong>
+                </div>
+
+                <div class="info-item">
+                    <label>Assignment Status</label>
+                    <strong>{{ assignment.status }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <label>Assigned At</label>
+                    <strong>
+                        {{ assignment.assigned_at.strftime("%d %b %Y %H:%M")
+                           if assignment.assigned_at else "—" }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ==================================================
+             UPSTREAM CLEARANCES
+        ================================================== -->
+
+        <section class="card">
+
+            <h2>Required Clearances</h2>
+
+            <div class="clearance-grid">
+
+                <!-- TSO -->
+
+                <div class="clearance-box">
+
+                    <h3>Technical Services Office</h3>
+
+                    {% if tso_cleared %}
+
+                        <span class="status status-cleared">
+                            Cleared
+                        </span>
+
+                        <p class="clearance-message">
+                            TSO clearance has been completed.
+                        </p>
+
+                    {% else %}
+
+                        <span class="status status-pending">
+                            Pending
+                        </span>
+
+                        <p class="clearance-message">
+                            The student must first be cleared by TSO.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+                <!-- STORES -->
+
+                <div class="clearance-box">
+
+                    <h3>Stores</h3>
+
+                    {% if stores_cleared %}
+
+                        <span class="status status-cleared">
+                            Cleared
+                        </span>
+
+                        <p class="clearance-message">
+                            No outstanding Stores property was found.
+                        </p>
+
+                    {% else %}
+
+                        <span class="status status-pending">
+                            Pending
+                        </span>
+
+                        <p class="clearance-message">
+                            The following property is still issued:
+                        </p>
+
+                        {% if stores_outstanding %}
+                            <ul class="outstanding-list">
+                                {% for item in stores_outstanding %}
+                                    <li>{{ item.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% if not tso_cleared or not stores_cleared %}
+
+                <div class="blocked-notice">
+                    The student cannot be vacated yet.
+                    Both <strong>TSO</strong> and <strong>Stores</strong>
+                    clearance must be completed before Hostel can complete
+                    the final room clearance.
+                </div>
+
+            {% else %}
+
+                <div class="ready-notice">
+                    TSO and Stores clearance requirements have been satisfied.
+                    Hostel may now complete the final room inspection and vacate
+                    the student.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        <!-- ==================================================
+             HOSTEL INSPECTION
+        ================================================== -->
+
+        <form method="POST">
+
+            <section class="card">
+
+                <h2>Room Condition</h2>
+
+                <div class="checklist-grid">
+
+                    <div class="check-item">
+                        <label for="walls">Walls</label>
+                        <select name="walls" id="walls">
+                            <option value="">Select condition</option>
+                            <option value="Good" {% if inspection and inspection.walls == "Good" %}selected{% endif %}>Good</option>
+                            <option value="Fair" {% if inspection and inspection.walls == "Fair" %}selected{% endif %}>Fair</option>
+                            <option value="Damaged" {% if inspection and inspection.walls == "Damaged" %}selected{% endif %}>Damaged</option>
+                            <option value="Missing" {% if inspection and inspection.walls == "Missing" %}selected{% endif %}>Missing</option>
+                            <option value="Not Applicable" {% if inspection and inspection.walls == "Not Applicable" %}selected{% endif %}>Not Applicable</option>
+                        </select>
+                    </div>
+
+                    <div class="check-item">
+                        <label for="paint">Paint</label>
+                        <select name="paint" id="paint">
+                            <option value="">Select condition</option>
+                            <option value="Good" {% if inspection and inspection.paint == "Good" %}selected{% endif %}>Good</option>
+                            <option value="Fair" {% if inspection and inspection.paint == "Fair" %}selected{% endif %}>Fair</option>
+                            <option value="Damaged" {% if inspection and inspection.paint == "Damaged" %}selected{% endif %}>Damaged</option>
+                            <option value="Missing" {% if inspection and inspection.paint == "Missing" %}selected{% endif %}>Missing</option>
+                            <option value="Not Applicable" {% if inspection and inspection.paint == "Not Applicable" %}selected{% endif %}>Not Applicable</option>
+                        </select>
+                    </div>
+
+                    <div class="check-item">
+                        <label for="floor">Floor</label>
+                        <select name="floor" id="floor">
+                            <option value="">Select condition</option>
+                            <option value="Good" {% if inspection and inspection.floor == "Good" %}selected{% endif %}>Good</option>
+                            <option value="Fair" {% if inspection and inspection.floor == "Fair" %}selected{% endif %}>Fair</option>
+                            <option value="Damaged" {% if inspection and inspection.floor == "Damaged" %}selected{% endif %}>Damaged</option>
+                            <option value="Missing" {% if inspection and inspection.floor == "Missing" %}selected{% endif %}>Missing</option>
+                            <option value="Not Applicable" {% if inspection and inspection.floor == "Not Applicable" %}selected{% endif %}>Not Applicable</option>
+                        </select>
+                    </div>
+
+                    <div class="check-item">
+                        <label for="ceiling">Ceiling</label>
+                        <select name="ceiling" id="ceiling">
+                            <option value="">Select condition</option>
+                            <option value="Good" {% if inspection and inspection.ceiling == "Good" %}selected{% endif %}>Good</option>
+                            <option value="Fair" {% if inspection and inspection.ceiling == "Fair" %}selected{% endif %}>Fair</option>
+                            <option value="Damaged" {% if inspection and inspection.ceiling == "Damaged" %}selected{% endif %}>Damaged</option>
+                            <option value="Missing" {% if inspection and inspection.ceiling == "Missing" %}selected{% endif %}>Missing</option>
+                            <option value="Not Applicable" {% if inspection and inspection.ceiling == "Not Applicable" %}selected{% endif %}>Not Applicable</option>
+                        </select>
+                    </div>
+
+                    <div class="check-item">
+                        <label for="windows">Windows</label>
+                        <select name="windows" id="windows">
+                            <option value="">Select condition</option>
+                            <option value="Good" {% if inspection and inspection.windows == "Good" %}selected{% endif %}>Good</option>
+                            <option value="Fair" {% if inspection and inspection.windows == "Fair" %}selected{% endif %}>Fair</option>
+                            <option value="Damaged" {% if inspection and inspection.windows == "Damaged" %}selected{% endif %}>Damaged</option>
+                            <option value="Missing" {% if inspection and inspection.windows == "Missing" %}selected{% endif %}>Missing</option>
+                            <option value="Not Applicable" {% if inspection and inspection.windows == "Not Applicable" %}selected{% endif %}>Not Applicable</option>
+                        </select>
+                    </div>
+
+                    <div class="check-item">
+                        <label for="door">Door</label>
+                        <select name="door" id="door">
+                            <option value="">Select condition</option>
+                            <option value="Good" {% if inspection and inspection.door == "Good" %}selected{% endif %}>Good</option>
+                            <option value="Fair" {% if inspection and inspection.door == "Fair" %}selected{% endif %}>Fair</option>
+                            <option value="Damaged" {% if inspection and inspection.door == "Damaged" %}selected{% endif %}>Damaged</option>
+                            <option value="Missing" {% if inspection and inspection.door == "Missing" %}selected{% endif %}>Missing</option>
+                            <option value="Not Applicable" {% if inspection and inspection.door == "Not Applicable" %}selected{% endif %}>Not Applicable</option>
+                        </select>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="card">
+
+                <h2>Furniture & Property</h2>
+
+                <div class="checklist-grid">
+
+                    <div class="check-item">
+                        <label for="bed">Bed</label>
+                        <select name="bed" id="bed">
+                            <option value="">Select condition</option>
+                            <option value="Good" {% if inspection and inspection.bed == "Good" %}selected{% endif %}>Good</option>
+                            <option value="Fair" {% if inspection and inspection.bed == "Fair" %}selected{% endif %}>Fair</option>
+                            <option value="Damaged" {% if inspection and inspection.bed == "Damaged" %}selected{% endif %}>Damaged</option>
+                            <option value="Missing" {% if inspection and inspection.bed == "Missing" %}selected{% endif %}>Missing</option>
+                            <option value="Not Applicable" {% if inspection and inspection.bed == "Not Applicable" %}selected{% endif %}>Not Applicable</option>
+                        </select>
+                    </div>
+
+                    <div class="check-item full-width">
+                        <label for="missing_damaged_property">
+                            Missing / Damaged Property
+                        </label>
+
+                        <textarea
+                            name="missing_damaged_property"
+                            id="missing_damaged_property"
+                            placeholder="Record any missing or damaged Hostel property..."
+                        >{{ inspection.missing_damaged_property if inspection else "" }}</textarea>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="card">
+
+                <h2>General</h2>
+
+                <div class="checklist-grid">
+
+                    <div class="check-item">
+                        <label for="room_cleanliness">
+                            Room Cleanliness
+                        </label>
+
+                        <select
+                            name="room_cleanliness"
+                            id="room_cleanliness"
+                        >
+                            <option value="">Select condition</option>
+                            <option value="Good" {% if inspection and inspection.room_cleanliness == "Good" %}selected{% endif %}>Good</option>
+                            <option value="Fair" {% if inspection and inspection.room_cleanliness == "Fair" %}selected{% endif %}>Fair</option>
+                            <option value="Poor" {% if inspection and inspection.room_cleanliness == "Poor" %}selected{% endif %}>Poor</option>
+                        </select>
+                    </div>
+
+                    <div class="check-item full-width">
+                        <label for="remarks">
+                            Other Remarks
+                        </label>
+
+                        <textarea
+                            name="remarks"
+                            id="remarks"
+                            placeholder="Enter any additional Hostel inspection remarks..."
+                        >{{ inspection.remarks if inspection else "" }}</textarea>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ==================================================
+                 FINAL ACTION
+            ================================================== -->
+
+            <section class="card">
+
+                <div class="action-bar">
+
+                    {% if tso_cleared and stores_cleared %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Vacate Room
+                        </button>
+
+                    {% else %}
+
+                        <button
+                            type="button"
+                            class="btn btn-disabled"
+                            disabled
+                        >
+                            Vacate Room
+                        </button>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+        </form>
+
+    </main>
+
+
+    <script>
+        function toggleSidebar() {
+            const sidebar =
+                document.getElementById(
+                    "sidebar"
+                );
+
+            const overlay =
+                document.getElementById(
+                    "sidebarOverlay"
+                );
+
+            sidebar.classList.toggle(
+                "open"
+            );
+
+            overlay.classList.toggle(
+                "open"
+            );
+        }
+    </script>
+
+</body>
+</html>

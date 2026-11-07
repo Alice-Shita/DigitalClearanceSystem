@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}
+Proof of Payment | ZASTI Clearance System
+{% endblock %}
+
+{% block content %}
+<div class="student-portal-layout">
+    {% include "components/sidebar.html" %}
+    <main class="student-portal-content">
+
+
+<!-- STUDENT BOTTOM DASHBOARD BUTTON STYLE -->
+<style>
+.student-bottom-dashboard {
+    display: flex;
+    justify-content: center;
+    margin: 35px 0 10px 0;
+}
+
+.student-bottom-dashboard a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 16px;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #173f38;
+    border: 1px solid #d9e3df;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.student-bottom-dashboard a:hover {
+    background: #198754;
+    color: #ffffff;
+    border-color: #198754;
+    text-decoration: none;
+}
+
+.student-bottom-dashboard i {
+    font-size: 15px;
+}
+</style>
+
+
+<style>
+.student-bottom-dashboard {
+    display: flex;
+    justify-content: center;
+    margin: 35px 0 10px 0;
+}
+
+.student-bottom-dashboard a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 18px;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #173f38;
+    border: 1px solid #d9e3df;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.student-bottom-dashboard a:hover {
+    background: #198754;
+    color: #ffffff;
+    border-color: #198754;
+    text-decoration: none;
+}
+
+.student-bottom-dashboard i {
+    font-size: 15px;
+}
+</style>
+
+<div class="container payment-container">
+
+    <section class="card payment-card">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h1 class="card-title">
+                    Proof of Payment
+                </h1>
+
+                <p>
+                    Upload your payment proof for Accounts verification.
+                </p>
+
+            </div>
+
+            <i class="bi bi-cloud-arrow-up-fill payment-heading-icon"></i>
+
+        </div>
+
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            class="payment-form"
+        >
+
+            <div class="form-group">
+
+                <label for="amount">
+                    Payment Amount
+                </label>
+
+                <div class="input-wrapper">
+
+                    <i class="bi bi-cash-stack"></i>
+
+                    <input
+                        type="number"
+                        id="amount"
+                        name="amount"
+                        step="0.01"
+                        min="0"
+                        placeholder="Enter amount paid"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="proof">
+                    Proof of Payment
+                </label>
+
+                <div class="file-upload-box">
+
+                    <div class="payment-upload-icon"><i class="bi bi-cloud-arrow-up-fill"></i></div>
+
+                    <strong>
+                        Choose payment proof
+                    </strong>
+
+                    <span>
+                        PNG, JPG, JPEG or PDF
+                    </span>
+
+                    <input
+                        type="file"
+                        id="proof"
+                        name="proof"
+                        accept=".png,.jpg,.jpeg,.pdf"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary payment-submit"
+            >
+
+                <i class="bi bi-cloud-arrow-up-fill"></i>
+
+                Upload Proof
+
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <section class="card payment-history-card">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2 class="card-title">
+                    Payment History
+                </h2>
+
+                <p>
+                    Your submitted payment proofs.
+                </p>
+
+            </div>
+
+            <i class="bi bi-clock-history"></i>
+
+        </div>
+
+
+        {% if payments %}
+
+            <div class="payment-list">
+
+                {% for payment in payments %}
+
+                    <div class="payment-item">
+
+                        <div>
+
+                            <strong>
+                                {{ payment.amount|money }}
+                            </strong>
+
+                            <span>
+                                {{ payment.created_at.strftime("%d %b %Y, %H:%M") if payment.created_at else "Date unavailable" }}
+                            </span>
+
+                        </div>
+
+
+                        <span class="status status-info">
+
+                            <i class="bi bi-clock"></i>
+
+                            {{ payment.status or "Pending" }}
+
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="payment-empty">
+
+                <i class="bi bi-receipt"></i>
+
+                <p>
+                    You have not submitted any payments yet.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+    </main>
+</div>
+{% endblock %}
