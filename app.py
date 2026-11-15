@@ -49,7 +49,7 @@ from models import (
     ProgramFeeSection,
     ProgramFee
 )
-from config import DATABASE_URL
+from config import SQLALCHEMY_DATABASE_URI
 from datetime import datetime, timedelta
 from time_utils import zambia_now
 from config import PROFILE_PICS_FOLDER
@@ -80,7 +80,7 @@ app.config["SECRET_KEY"] = (
 )
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "sqlite:///" + DATABASE_URL
+    SQLALCHEMY_DATABASE_URI
 )
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
