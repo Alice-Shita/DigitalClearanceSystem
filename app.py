@@ -14707,7 +14707,7 @@ def new_staff_library_dashboard():
     ).count()
 
     announcement_filter = db.and_(
-        db.func.coalesce(Announcement.active, 1) == 1,
+        db.func.coalesce(Announcement.active, True) == True,
         db.func.lower(
             db.func.trim(
                 db.func.coalesce(Announcement.audience, "")
@@ -14720,11 +14720,11 @@ def new_staff_library_dashboard():
     ).count()
 
     books_issued = LibraryBook.query.filter(
-        db.func.coalesce(LibraryBook.returned, 0) == 0
+        db.func.coalesce(LibraryBook.returned, False) == False
     ).count()
 
     books_returned = LibraryBook.query.filter(
-        db.func.coalesce(LibraryBook.returned, 0) == 1
+        db.func.coalesce(LibraryBook.returned, False) == True
     ).count()
 
     pending_list = db.session.execute(
