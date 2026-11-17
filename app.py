@@ -1,6 +1,5 @@
 import re
 import os
-import sqlite3
 
 from flask import (
     Flask,
@@ -47,7 +46,10 @@ from models import (
     ProgramFeeCategory,
     ProgramFeeSchool,
     ProgramFeeSection,
-    ProgramFee
+    ProgramFee,
+    SystemSetting,
+    DocumentArchive,
+    AgreementHistory
 )
 from config import SQLALCHEMY_DATABASE_URI
 from datetime import datetime, timedelta
@@ -86,8 +88,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = (
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
-
-
 
 
 # ============================================================
@@ -809,19 +809,12 @@ def hostel_dashboard():
     # Existing staff mini academic calendar/clock uses
     # these values from system_settings.
     # --------------------------------------------------
-    import sqlite3
-
-    calendar_conn = sqlite3.connect(DATABASE_URL)
-    calendar_cursor = calendar_conn.cursor()
-
-    calendar_cursor.execute("""
-        SELECT setting_key, setting_value
-        FROM system_settings
-    """)
-
-    settings = dict(calendar_cursor.fetchall())
-
-    calendar_conn.close()
+    settings = dict(
+        db.session.query(
+            SystemSetting.setting_key,
+            SystemSetting.setting_value
+        ).all()
+    )
 
     return render_template(
         "new_staff/hostel/dashboard.html",
@@ -1844,28 +1837,12 @@ def student_dashboard():
     # LIBRARY BOOKS AWAITING STUDENT CONFIRMATION
     # --------------------------------------------------
 
-    import sqlite3
-
-    con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-
-    pending_library_books = cur.execute(
-        """
-        SELECT
-            id,
-            name,
-            borrowed_at,
-            status
-        FROM library_books
-        WHERE student_id = ?
-          AND COALESCE(status, '') = 'pending'
-        ORDER BY id DESC
-        """,
-        (student.student_id,)
-    ).fetchall()
-
-    con.close()
+    pending_library_books = LibraryBook.query.filter(
+        LibraryBook.student_id == student.student_id,
+        db.func.coalesce(LibraryBook.status, '') == 'pending'
+    ).order_by(
+        LibraryBook.id.desc()
+    ).all()
 
     library_status = (
         "Pending"
@@ -3798,6 +3775,25 @@ def student_clearance(_return_snapshot=False):
             )
 
     # --------------------------------------------------
+    # Latest actual Accounts history timestamp.
+    try:
+        latest_account_history = (
+            AccountHistory.query
+            .filter_by(student_id=s.student_id)
+            .order_by(AccountHistory.created_at.desc())
+            .first()
+        )
+        if latest_account_history:
+            details = export_transactions.setdefault(
+                "Accounts",
+                {"officer": "NIL", "remarks": "NIL", "datetime": "—"}
+            )
+            details["datetime"] = transaction_date(
+                latest_account_history.created_at
+            )
+    except Exception:
+        pass
+
     # COMMUNICATION SKILLS
     # --------------------------------------------------
 
@@ -4050,6 +4046,33 @@ def student_clearance(_return_snapshot=False):
         )
 
     # --------------------------------------------------
+    # Latest actual Human Resource history timestamp.
+    try:
+        latest_hr_history = (
+            DepartmentHistory.query
+            .filter_by(student_id=s.student_id)
+            .order_by(DepartmentHistory.created_at.desc())
+            .all()
+        )
+        latest_hr_history = next(
+            (
+                record for record in latest_hr_history
+                if str(record.department or "").strip().casefold()
+                in {"human resource", "hr"}
+            ),
+            None
+        )
+        if latest_hr_history:
+            details = export_transactions.setdefault(
+                "Human Resource",
+                {"officer": "NIL", "remarks": "NIL", "datetime": "—"}
+            )
+            details["datetime"] = transaction_date(
+                latest_hr_history.created_at
+            )
+    except Exception:
+        pass
+
     # HEAD OF TRAINING SECTION
     # --------------------------------------------------
 
@@ -4088,182 +4111,56 @@ def student_clearance(_return_snapshot=False):
 
     # --------------------------------------------------
     # TSO
-    # --------------------------------------------------
-    # TSO is responsible for the hostel key.
-    #
-    # An active hostel assignment automatically creates
-    # the current TSO key requirement.
-    #
-    # TSO becomes Cleared only after an actual TSO
-    # inspection has been completed.
-    #
-    # Returned/old transactions remain in History.
-
-    tso_current_items = []
-
-    if current_accommodation:
-        tso_key_name = None
-
-        try:
-            tso_accommodation = _tso_accommodation_details(
-                current_accommodation
-            )
-            if tso_accommodation:
-                tso_key_name = (
-                    tso_accommodation.get("key_name")
-                    or ""
-                ).strip()
-        except Exception:
-            tso_key_name = None
-
-        if not tso_key_name:
-            room_obj = db.session.get(
-                HostelRoom,
-                current_accommodation.room_id
-            )
-
-            hostel_obj = (
-                db.session.get(
-                    Hostel,
-                    room_obj.hostel_id
-                )
-                if room_obj
-                else None
-            )
-
-            hostel_name = (
-                getattr(
-                    hostel_obj,
-                    "name",
-                    None
-                )
-                or ""
-            ).strip()
-
-            block_name = ""
-
-            if (
-                room_obj
-                and getattr(
-                    room_obj,
-                    "block_id",
-                    None
-                )
-            ):
-                block_obj = db.session.get(
-                    HostelBlock,
-                    room_obj.block_id
-                )
-
-                block_name = (
-                    getattr(
-                        block_obj,
-                        "name",
-                        None
-                    )
-                    or ""
-                ).strip()
-
-            room_number = (
-                getattr(
-                    room_obj,
-                    "room_number",
-                    None
-                )
-                or ""
-            ).strip()
-
-            key_parts = [hostel_name]
-
-            if block_name:
-                key_parts.append(block_name)
-
-            if room_number:
-                key_parts.append(
-                    f"Room {room_number}"
-                )
-
-            tso_key_name = " — ".join(
-                part
-                for part in key_parts
-                if part
-            )
-
-        if (
-            tso_inspection
-            and str(
-                getattr(
-                    tso_inspection,
-                    "status",
-                    ""
-                )
-                or ""
-            ).strip().lower()
-            == "cleared"
-        ):
-            add_department_row(
-                "TSO",
-                items=[
-                    tso_key_name or "NIL"
-                ],
-                issued_at=getattr(
-                    current_accommodation,
-                    "assigned_at",
-                    None
-                ),
-                issued_by=None,
-                resolved_at=getattr(
-                    tso_inspection,
-                    "inspected_at",
-                    None
-                ),
-                resolved_by=getattr(
-                    tso_inspection,
-                    "inspected_by",
-                    None
-                ),
-                remarks=(
-                    getattr(
-                        tso_inspection,
-                        "remarks",
-                        None
-                    )
-                    or tso_Remarks
-                    or "NIL"
-                ),
-                status="Cleared"
-            )
-        else:
-            add_department_row(
-                "TSO",
-                items=[
-                    tso_key_name or "NIL"
-                ],
-                issued_at=getattr(
-                    current_accommodation,
-                    "assigned_at",
-                    None
-                ),
-                issued_by=None,
-                remarks=(
-                    getattr(
-                        tso_inspection,
-                        "remarks",
-                        None
-                    )
-                    or "NIL"
-                ),
-                status="Pending"
-            )
-    else:
-        add_department_row(
-            "TSO",
-            items=["NIL"],
-            remarks="NIL",
-            status="Cleared"
+    # Use the inspection linked to the current accommodation assignment.
+    try:
+        tso_query = TSOInspection.query.filter_by(
+            student_id=s.student_id
         )
 
-    # --------------------------------------------------
+        if student_accommodation:
+            tso_query = tso_query.filter_by(
+                accommodation_assignment_id=student_accommodation.id
+            )
+
+        if accommodation_gate:
+            latest_tso = (
+                TSOInspection.query
+                .filter_by(
+                    accommodation_assignment_id=accommodation_gate.id
+                )
+                .order_by(
+                    TSOInspection.inspected_at.desc(),
+                    TSOInspection.id.desc(),
+                )
+                .first()
+            )
+        else:
+            latest_tso = (
+                TSOInspection.query
+                .filter_by(student_id=s.student_id)
+                .order_by(
+                    TSOInspection.inspected_at.desc(),
+                    TSOInspection.id.desc(),
+                )
+                .first()
+            )
+
+        if latest_tso and completed(latest_tso.status):
+            export_transactions["TSO"] = {
+                "officer": _display(
+                    getattr(latest_tso, "inspected_by", None)
+                ),
+                "remarks": _remark(
+                    getattr(latest_tso, "remarks", None)
+                ),
+                "datetime": transaction_date(
+                    getattr(latest_tso, "inspected_at", None)
+                ),
+            }
+
+    except Exception:
+        pass
+
     # HOSTEL
     # --------------------------------------------------
     # Current accommodation snapshot.
@@ -5962,24 +5859,53 @@ def print_clearance():
     # occupies a room. A student may have completed TSO
     # inspection and later vacated the accommodation.
 
-    tso_gate = (
-        TSOInspection.query
-        .filter_by(student_id=s.student_id)
-        .order_by(
-            TSOInspection.inspected_at.desc(),
-            TSOInspection.id.desc()
-        )
-        .first()
+    _accommodation_label = str(
+        getattr(s, "accommodation", "") or ""
+    ).strip().casefold()
+
+    _is_day_scholar = "day" in _accommodation_label
+
+    _is_boarder = bool(
+        student_accommodation
+        or getattr(s, "hostel", None)
+        or getattr(s, "room", None)
+        or "board" in _accommodation_label
+        or "hostel" in _accommodation_label
     )
 
-    if tso_gate:
+    if _is_day_scholar:
+        export_statuses["TSO"] = "Cleared"
+
+    elif _is_boarder:
+        if student_accommodation:
+            tso_gate = (
+                TSOInspection.query
+                .filter_by(
+                    accommodation_assignment_id=
+                    student_accommodation.id
+                )
+                .order_by(TSOInspection.id.desc())
+                .first()
+            )
+        else:
+            tso_gate = (
+                TSOInspection.query
+                .filter_by(student_id=s.student_id)
+                .order_by(
+                    TSOInspection.inspected_at.desc(),
+                    TSOInspection.id.desc()
+                )
+                .first()
+            )
+
         export_statuses["TSO"] = (
             "Cleared"
-            if str(
+            if tso_gate and str(
                 tso_gate.status or ""
-            ).strip().lower() == "cleared"
+            ).strip().casefold() == "cleared"
             else "Pending"
         )
+
     else:
         export_statuses["TSO"] = "Cleared"
 
@@ -6579,14 +6505,15 @@ def print_clearance():
             .all()
         )
 
-        completed_accounts = [
+        successful_accounts = [
             record for record in account_history
-            if completed(record.status)
+            if str(record.status or "").strip().casefold()
+            in {"approved", "recorded", "cleared"}
         ]
 
-        if completed_accounts:
+        if successful_accounts:
             export_transactions["Accounts"] = transaction_details(
-                completed_accounts[0],
+                successful_accounts[0],
                 None,
                 "created_at",
                 "remarks",
@@ -6843,6 +6770,118 @@ def print_clearance():
             pass
 
     # ------------------------------------------------------------
+    # FINAL PRINT FORM REMARKS
+    # These remarks are based on actual student records.
+    # The existing clearance gates above remain authoritative.
+    # ------------------------------------------------------------
+
+    def _set_print_remark(department, remark):
+        details = export_transactions.setdefault(
+            department,
+            {
+                "officer": "NIL",
+                "remarks": "NIL",
+                "datetime": "—",
+            }
+        )
+        details["remarks"] = remark
+
+    _sports_records = SportsItem.query.filter_by(
+        student_id=s.student_id
+    ).all()
+
+    _issued_sports_records = [
+        item for item in _sports_records
+        if str(item.status or "").strip().casefold()
+        not in {"declined", "rejected", "cancelled", "canceled"}
+    ]
+
+    if not _sports_records:
+        _set_print_remark("Sports", "No sports items")
+    elif not _issued_sports_records:
+        _set_print_remark("Sports", "No sports items")
+    elif all(
+        str(item.status or "").strip().casefold()
+        in {"returned", "cleared", "resolved", "complete", "completed"}
+        or bool(item.returned_at)
+        for item in _issued_sports_records
+    ):
+        _set_print_remark("Sports", "Sports item(s) returned")
+
+    _library_records = LibraryBook.query.filter_by(
+        student_id=s.student_id
+    ).all()
+
+    if not _library_records:
+        _set_print_remark("Library", "No library books")
+    elif all(bool(book.returned) for book in _library_records):
+        _set_print_remark("Library", "Library book(s) returned")
+
+    _ame_records = AMETool.query.filter_by(
+        student_id=s.student_id
+    ).all()
+
+    if not _ame_records:
+        _set_print_remark("AME Stores", "No AME tools")
+    elif all(
+        bool(tool.returned) or bool(tool.returned_at)
+        for tool in _ame_records
+    ):
+        _set_print_remark("AME Stores", "AME tool(s) returned")
+
+    if _is_day_scholar:
+        _set_print_remark("Stores", "Day Scholar")
+        _set_print_remark("TSO", "Day Scholar")
+        _set_print_remark("Technical Services Office", "Day Scholar")
+        _set_print_remark("Hostel", "Day Scholar")
+    else:
+        _set_print_remark("Stores", "Mattress returned")
+        _set_print_remark("TSO", "Room inspected")
+        _set_print_remark("Technical Services Office", "Room inspected")
+        _set_print_remark("Hostel", "Room vacated")
+
+    _set_print_remark("Mathematics", "No mathematics material")
+    _set_print_remark("Communication Skills", "No communication skills material")
+    _set_print_remark(
+        "Head Of Training Section",
+        "No institutional property"
+    )
+    _set_print_remark(
+        "Human Resource",
+        "No pending disciplinary matters"
+    )
+
+    _account_for_print = Account.query.filter_by(
+        student_id=s.student_id
+    ).first()
+
+    if _account_for_print:
+        _total_for_print = float(
+            _account_for_print.total_fee or 0
+        )
+        _paid_for_print = float(
+            _account_for_print.paid or 0
+        )
+        _difference_for_print = round(
+            _total_for_print - _paid_for_print, 2
+        )
+
+        if _difference_for_print > 0:
+            _account_remark = (
+                "Outstanding balance: K"
+                + format(_difference_for_print, ".2f")
+            )
+        elif _difference_for_print < 0:
+            _account_remark = (
+                "Credit: K"
+                + format(abs(_difference_for_print), ".2f")
+            )
+        else:
+            _account_remark = "No outstanding balance"
+
+        _set_print_remark("Accounts", _account_remark)
+
+    # ------------------------------------------------------------
     # AUTHORITATIVE OFFICER NAMES
     #
     # The final export table reads from export_transactions["officer"].
@@ -6905,6 +6944,40 @@ def print_clearance():
             )
 
     # ------------------------------------------------------------
+    # FINAL REMARKS OVERRIDE — immediately before table creation.
+    _sports_records_final = SportsItem.query.filter_by(
+        student_id=s.student_id
+    ).all()
+
+    _issued_sports_records_final = [
+        item for item in _sports_records_final
+        if str(item.status or "").strip().casefold()
+        not in {"declined", "rejected", "cancelled", "canceled"}
+    ]
+
+    if not _sports_records_final:
+        _set_print_remark("Sports", "No sports items")
+    elif not _issued_sports_records_final:
+        _set_print_remark("Sports", "No sports items")
+    elif all(
+        str(item.status or "").strip().casefold()
+        in {"returned", "cleared", "resolved", "complete", "completed"}
+        or bool(item.returned_at)
+        for item in _issued_sports_records_final
+    ):
+        _set_print_remark("Sports", "Sports item(s) returned")
+
+    _set_print_remark("Mathematics", "No mathematics material")
+    _set_print_remark(
+        "Communication Skills",
+        "No communication skills material"
+    )
+
+    if "TSO" in export_transactions:
+        export_transactions["Technical Services Office"] = dict(
+            export_transactions["TSO"]
+        )
+
     # BUILD OFFICIAL FIVE-COLUMN EXPORT
     # ------------------------------------------------------------
 
@@ -7282,7 +7355,7 @@ def print_clearance():
             font-family:Arial, Helvetica, sans-serif;
             padding:35px;
             background:white;
-            color:#1e293b;
+            color:#111827;
         }}
 
         .report {{
@@ -7297,12 +7370,13 @@ def print_clearance():
 
         .generated {{
             text-align:center;
-            color:#64748b;
+            color:#374151;
+            font-weight:600;
         }}
 
         .document {{
             text-align:center;
-            color:#2563eb;
+            color:#1e40af;
             margin:12px 0 35px;
             font-weight:bold;
         }}
@@ -7328,8 +7402,21 @@ def print_clearance():
         }}
 
         @media print {{
+            body {{
+                color:#111827;
+                -webkit-print-color-adjust:exact;
+                print-color-adjust:exact;
+            }}
+
             table {{
                 font-size:10px;
+                color:#111827;
+                border-collapse:collapse;
+            }}
+
+            th, td {{
+                border:1px solid #374151;
+                font-weight:600;
             }}
 
             th, td {{
@@ -7346,15 +7433,17 @@ def print_clearance():
         }}
 
         th {{
-            background:#166534;
+            background:#14532d;
             color:white;
+            border:1px solid #1f2937;
             padding:12px;
             text-align:left;
         }}
 
         td {{
             padding:12px;
-            border:1px solid #dbe3ea;
+            border:1px solid #4b5563;
+            color:#111827;
             vertical-align:top;
         }}
 
@@ -7367,8 +7456,8 @@ def print_clearance():
             text-align:center;
             margin-top:40px;
             padding-top:20px;
-            border-top:1px solid #e2e8f0;
-            color:#64748b;
+            border-top:2px solid #4b5563;
+            color:#374151;
             font-size:13px;
         }}
 
@@ -7765,88 +7854,52 @@ def document_history():
     agreement_records = []
 
     try:
-        conn = sqlite3.connect(DATABASE_URL)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS agreement_history (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                student_id VARCHAR(20) NOT NULL,
-                agreement_type VARCHAR(100) NOT NULL,
-                agreement_version VARCHAR(50),
-                accepted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                status VARCHAR(30) DEFAULT 'Accepted'
+        agreement_records = db.session.execute(
+            db.select(
+                AgreementHistory.id,
+                AgreementHistory.student_id,
+                AgreementHistory.agreement_type,
+                AgreementHistory.agreement_version,
+                AgreementHistory.accepted_at,
+                AgreementHistory.status
+            ).where(
+                AgreementHistory.student_id == sid
+            ).order_by(
+                AgreementHistory.accepted_at.desc(),
+                AgreementHistory.id.desc()
             )
-        """)
-
-        cursor.execute("""
-            SELECT
-                id,
-                student_id,
-                agreement_type,
-                agreement_version,
-                accepted_at,
-                status
-            FROM agreement_history
-            WHERE student_id = ?
-            ORDER BY accepted_at DESC, id DESC
-        """, (sid,))
-
-        agreement_records = cursor.fetchall()
-
-        conn.close()
+        ).mappings().all()
 
     except Exception:
         agreement_records = []
 
-    # --------------------------------------------------
     # OTHER DOCUMENTS
     # --------------------------------------------------
 
     other_documents = []
 
     try:
-        conn = sqlite3.connect(DATABASE_URL)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS document_archive (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                student_id VARCHAR(20) NOT NULL,
-                document_type VARCHAR(50) NOT NULL,
-                title VARCHAR(200) NOT NULL,
-                filename VARCHAR(255),
-                description TEXT,
-                uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                source VARCHAR(100)
+        other_documents = db.session.execute(
+            db.select(
+                DocumentArchive.id,
+                DocumentArchive.student_id,
+                DocumentArchive.document_type,
+                DocumentArchive.title,
+                DocumentArchive.filename,
+                DocumentArchive.description,
+                DocumentArchive.uploaded_at,
+                DocumentArchive.source
+            ).where(
+                DocumentArchive.student_id == sid
+            ).order_by(
+                DocumentArchive.uploaded_at.desc(),
+                DocumentArchive.id.desc()
             )
-        """)
-
-        cursor.execute("""
-            SELECT
-                id,
-                student_id,
-                document_type,
-                title,
-                filename,
-                description,
-                uploaded_at,
-                source
-            FROM document_archive
-            WHERE student_id = ?
-            ORDER BY uploaded_at DESC, id DESC
-        """, (sid,))
-
-        other_documents = cursor.fetchall()
-
-        conn.close()
+        ).mappings().all()
 
     except Exception:
         other_documents = []
 
-    # --------------------------------------------------
     # PAYMENT FILES THAT ARE NOT LINKED TO ARCHIVE
     # ARE STILL SHOWN THROUGH THE ACCOUNTS SECTION.
     # --------------------------------------------------
@@ -7885,28 +7938,23 @@ def student_other_documents():
     other_documents = []
 
     try:
-        conn = sqlite3.connect(DATABASE_URL)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            SELECT
-                id,
-                student_id,
-                document_type,
-                title,
-                filename,
-                description,
-                uploaded_at,
-                source
-            FROM document_archive
-            WHERE student_id = ?
-            ORDER BY uploaded_at DESC, id DESC
-        """, (sid,))
-
-        other_documents = cursor.fetchall()
-
-        conn.close()
+        other_documents = db.session.execute(
+            db.select(
+                DocumentArchive.id,
+                DocumentArchive.student_id,
+                DocumentArchive.document_type,
+                DocumentArchive.title,
+                DocumentArchive.filename,
+                DocumentArchive.description,
+                DocumentArchive.uploaded_at,
+                DocumentArchive.source
+            ).where(
+                DocumentArchive.student_id == sid
+            ).order_by(
+                DocumentArchive.uploaded_at.desc(),
+                DocumentArchive.id.desc()
+            )
+        ).mappings().all()
 
     except Exception:
         other_documents = []
@@ -7930,25 +7978,18 @@ def student_other_document(document_id):
         return redirect(url_for("student_login"))
 
     try:
-        conn = sqlite3.connect(DATABASE_URL)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            SELECT
-                id,
-                student_id,
-                document_type,
-                title,
-                filename
-            FROM document_archive
-            WHERE id = ?
-              AND student_id = ?
-        """, (document_id, sid))
-
-        document = cursor.fetchone()
-
-        conn.close()
+        document = db.session.execute(
+            db.select(
+                DocumentArchive.id,
+                DocumentArchive.student_id,
+                DocumentArchive.document_type,
+                DocumentArchive.title,
+                DocumentArchive.filename
+            ).where(
+                DocumentArchive.id == document_id,
+                DocumentArchive.student_id == sid
+            )
+        ).mappings().first()
 
     except Exception:
         document = None
@@ -8265,20 +8306,14 @@ def serve_student_document(filename):
     # ONLY ALLOW DOCUMENTS BELONGING TO THIS STUDENT
     # --------------------------------------------------
 
-    conn = sqlite3.connect(DATABASE_URL)
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT filename
-        FROM document_archive
-        WHERE student_id = ?
-        AND filename = ?
-        LIMIT 1
-    """, (sid, filename))
-
-    row = cursor.fetchone()
-
-    conn.close()
+    row = (
+        db.session.query(DocumentArchive.id)
+        .filter_by(
+            student_id=sid,
+            filename=filename
+        )
+        .first()
+    )
 
     if not row:
         return "Document not found or access denied.", 404
@@ -8935,8 +8970,29 @@ def student_department_history_page(department_slug=None, department=None):
 
     history = list(unique.values())
 
+    def library_history_sort_date(row):
+        value = row.get("created_at")
+
+        if isinstance(value, datetime):
+            return value
+
+        if value:
+            value = str(value).strip()
+
+            for date_format in (
+                "%Y-%m-%d %H:%M:%S",
+                "%d %B %Y | %I:%M %p",
+                "%d %B %Y %I:%M %p",
+            ):
+                try:
+                    return datetime.strptime(value, date_format)
+                except ValueError:
+                    pass
+
+        return datetime.min
+
     history.sort(
-        key=lambda row: str(row.get("created_at") or ""),
+        key=library_history_sort_date,
         reverse=True,
     )
 
@@ -8992,51 +9048,22 @@ def terms():
         # --------------------------------------------------
         # PERMANENT AGREEMENT HISTORY
         # --------------------------------------------------
-
         try:
-
-            conn = sqlite3.connect(DATABASE_URL)
-            cursor = conn.cursor()
-
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS agreement_history (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    student_id VARCHAR(20) NOT NULL,
-                    agreement_type VARCHAR(100) NOT NULL,
-                    agreement_version VARCHAR(50),
-                    accepted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    status VARCHAR(30) DEFAULT 'Accepted'
+            db.session.add(
+                AgreementHistory(
+                    student_id=str(sid),
+                    agreement_type="Terms & Conditions",
+                    agreement_version="1.0",
+                    accepted_at=zambia_now(),
+                    status="Accepted"
                 )
-            """)
-
-            cursor.execute("""
-                INSERT INTO agreement_history
-                (
-                    student_id,
-                    agreement_type,
-                    agreement_version,
-                    accepted_at,
-                    status
-                )
-                VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)
-            """, (
-                str(sid),
-                "Terms & Conditions",
-                "1.0",
-                "Accepted"
-            ))
-
-            conn.commit()
-            conn.close()
-
+            )
+            db.session.commit()
         except Exception as e:
+            db.session.rollback()
+            print("AGREEMENT HISTORY ERROR:", e)
 
-            print("=" * 80)
-            print("AGREEMENT HISTORY ERROR")
-            print("=" * 80)
-            print(e)
-            print("=" * 80)
-
+        # --------------------------------------------------
         # --------------------------------------------------
         # FIND STUDENT DASHBOARD AUTOMATICALLY
         # --------------------------------------------------
@@ -9111,19 +9138,14 @@ def terms():
     # Load current penalty fee from system settings
     penalty_fee = 0
     try:
-        conn = sqlite3.connect(DATABASE_URL)
-        conn.row_factory = sqlite3.Row
+        setting = SystemSetting.query.filter_by(
+            setting_key="penalty_fee"
+        ).first()
 
-        row = conn.execute(
-            "SELECT setting_value FROM system_settings WHERE setting_key = ?",
-            ("penalty_fee",)
-        ).fetchone()
-
-        if row and row["setting_value"] is not None:
-            penalty_fee = row["setting_value"]
-
-        conn.close()
+        if setting and setting.setting_value is not None:
+            penalty_fee = setting.setting_value
     except Exception:
+        db.session.rollback()
         penalty_fee = 0
 
     return render_template(
@@ -9139,185 +9161,80 @@ def terms():
 
 @app.route("/student/library/book/<int:book_id>/confirm", methods=["POST"])
 def confirm_library_book(book_id):
-
     if session.get("role") != "student":
         return redirect(url_for("student_login"))
 
     student_id = session.get("student_id")
-
     if not student_id:
         return redirect(url_for("student_login"))
 
-    import sqlite3
-    from datetime import datetime
-
-    con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-
-    book = cur.execute(
-        """
-        SELECT *
-        FROM library_books
-        WHERE id = ?
-          AND student_id = ?
-        LIMIT 1
-        """,
-        (book_id, student_id)
-    ).fetchone()
+    book = LibraryBook.query.filter_by(
+        id=book_id,
+        student_id=student_id
+    ).first()
 
     if not book:
-        con.close()
-
-        flash(
-            "Library book request not found.",
-            "error"
-        )
-
+        flash("Library book request not found.", "error")
         return redirect(url_for("student_dashboard"))
 
-    if (book["status"] or "").lower() != "pending":
-        con.close()
-
-        flash(
-            "This library book request has already been processed.",
-            "error"
-        )
-
+    if (book.status or "").lower() != "pending":
+        flash("This library book request has already been processed.", "error")
         return redirect(url_for("student_dashboard"))
 
-    active_count = cur.execute(
-        """
-        SELECT COUNT(*)
-        FROM library_books
-        WHERE student_id = ?
-          AND COALESCE(status, '') = 'borrowed'
-          AND COALESCE(returned, 0) = 0
-        """,
-        (student_id,)
-    ).fetchone()[0]
+    active_count = LibraryBook.query.filter(
+        LibraryBook.student_id == student_id,
+        db.func.coalesce(LibraryBook.status, "") == "borrowed",
+        db.func.coalesce(LibraryBook.returned, 0) == 0
+    ).count()
 
     if active_count >= 2:
-        con.close()
-
-        flash(
-            "You already have the maximum of 2 borrowed books.",
-            "error"
-        )
-
+        flash("You already have the maximum of 2 borrowed books.", "error")
         return redirect(url_for("student_dashboard"))
 
-    borrowed_at = zambia_now().strftime(
-        "%d %B %Y | %I:%M %p"
-    )
-
-    cur.execute(
-        """
-        UPDATE library_books
-        SET
-            status = 'borrowed',
-            borrowed_at = ?,
-            returned = 0,
-            returned_at = NULL
-        WHERE id = ?
-          AND student_id = ?
-          AND COALESCE(status, '') = 'pending'
-        """,
-        (
-            borrowed_at,
-            book_id,
-            student_id
-        )
-    )
-
-    con.commit()
-    con.close()
+    book.status = "borrowed"
+    book.borrowed_at = zambia_now().strftime("%d %B %Y | %I:%M %p")
+    book.returned = 0
+    book.returned_at = None
+    db.session.commit()
 
     flash(
-        f"You confirmed '{book['name']}'. "
+        f"You confirmed '{book.name}'. "
         "The book is now recorded as borrowed.",
         "success"
     )
-
     return redirect(url_for("student_dashboard"))
 
 
-# ============================================================
-# DECLINE LIBRARY BOOK ASSIGNMENT
-# ============================================================
-
 @app.route("/student/library/book/<int:book_id>/decline", methods=["POST"])
 def decline_library_book(book_id):
-
     if session.get("role") != "student":
         return redirect(url_for("student_login"))
 
     student_id = session.get("student_id")
-
     if not student_id:
         return redirect(url_for("student_login"))
 
-    import sqlite3
-
-    con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-
-    book = cur.execute(
-        """
-        SELECT *
-        FROM library_books
-        WHERE id = ?
-          AND student_id = ?
-        LIMIT 1
-        """,
-        (book_id, student_id)
-    ).fetchone()
+    book = LibraryBook.query.filter_by(
+        id=book_id,
+        student_id=student_id
+    ).first()
 
     if not book:
-        con.close()
-
-        flash(
-            "Library book request not found.",
-            "error"
-        )
-
+        flash("Library book request not found.", "error")
         return redirect(url_for("student_dashboard"))
 
-    if (book["status"] or "").lower() != "pending":
-        con.close()
-
-        flash(
-            "This library book request has already been processed.",
-            "error"
-        )
-
+    if (book.status or "").lower() != "pending":
+        flash("This library book request has already been processed.", "error")
         return redirect(url_for("student_dashboard"))
 
-    cur.execute(
-        """
-        UPDATE library_books
-        SET
-            status = 'declined',
-            returned = 1
-        WHERE id = ?
-          AND student_id = ?
-          AND COALESCE(status, '') = 'pending'
-        """,
-        (
-            book_id,
-            student_id
-        )
-    )
-
-    con.commit()
-    con.close()
+    book.status = "declined"
+    book.returned = 1
+    db.session.commit()
 
     flash(
-        f"You declined the book assignment '{book['name']}'.",
+        f"You declined the book assignment '{book.name}'.",
         "success"
     )
-
     return redirect(url_for("student_dashboard"))
 
 
@@ -10311,18 +10228,13 @@ def new_staff_accounts_dashboard():
     # SYSTEM SETTINGS FOR ACADEMIC CALENDAR
     # ========================================================
 
-    import sqlite3
 
-    calendar_conn = sqlite3.connect(DATABASE_URL)
-    calendar_cursor = calendar_conn.cursor()
-
-    calendar_cursor.execute("""
-        SELECT setting_key, setting_value
-        FROM system_settings
-    """)
-
-    settings = dict(calendar_cursor.fetchall())
-    calendar_conn.close()
+    settings = dict(
+        db.session.query(
+            SystemSetting.setting_key,
+            SystemSetting.setting_value
+        ).all()
+    )
 
     return render_template(
         "new_staff/accounts/dashboard.html",
@@ -11299,18 +11211,12 @@ def admin_dashboard():
     # SYSTEM SETTINGS FOR DASHBOARD CALENDAR
     # ========================================================
 
-    import sqlite3
-
-    conn = sqlite3.connect(DATABASE_URL)
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT setting_key, setting_value
-        FROM system_settings
-    """)
-
-    settings = dict(cursor.fetchall())
-    conn.close()
+    settings = dict(
+        db.session.query(
+            SystemSetting.setting_key,
+            SystemSetting.setting_value
+        ).all()
+    )
 
     return render_template(
         "admin/dashboard.html",
@@ -11496,6 +11402,85 @@ def admin_update_student_gender(student_id):
         "admin_student_view", student_id=student_id
     ))
 
+
+
+@app.route("/admin/students/<student_id>/delete", methods=["POST"])
+def admin_delete_student(student_id):
+    if session.get("role") != "admin":
+        return redirect(url_for("admin_login"))
+
+    student = Student.query.filter_by(
+        student_id=student_id
+    ).first()
+
+    if not student:
+        flash("Student record not found.", "error")
+        return redirect(url_for("admin_students"))
+
+    try:
+        # Check every mapped model with a student_id column.
+        # Preserve all institutional history and linked records.
+        linked_records = []
+
+        for mapper in db.Model.registry.mappers:
+            model = mapper.class_
+
+            if model is Student or model is User:
+                continue
+
+            table = getattr(model, "__table__", None)
+            if table is None or "student_id" not in table.columns:
+                continue
+
+            count = model.query.filter(
+                table.c.student_id == student_id
+            ).count()
+
+            if count:
+                linked_records.append(
+                    f"{model.__name__}: {count}"
+                )
+
+        if linked_records:
+            details = ", ".join(linked_records[:6])
+            if len(linked_records) > 6:
+                details += ", and other records"
+
+            flash(
+                "Student cannot be deleted because institutional "
+                "records are linked to this account. "
+                + details,
+                "error"
+            )
+            return redirect(url_for("admin_students"))
+
+        # Remove only the student's own login account(s).
+        student_users = User.query.filter(
+            User.student_id == student_id,
+            db.func.lower(User.role) == "student"
+        ).all()
+
+        for user in student_users:
+            db.session.delete(user)
+
+        db.session.delete(student)
+        db.session.commit()
+
+        flash(
+            f"Student {student_id} and their student login "
+            "were deleted successfully.",
+            "success"
+        )
+
+    except Exception as exc:
+        db.session.rollback()
+        print("Student deletion failed:", exc)
+        flash(
+            "Student could not be deleted. No changes were saved.",
+            "error"
+        )
+
+    return redirect(url_for("admin_students"))
 
 @app.route("/admin/students/<student_id>")
 def admin_student_view(student_id):
@@ -12045,10 +12030,6 @@ def admin_system_settings():
     if session.get("role") != "admin":
         return redirect(url_for("admin_login"))
 
-    import sqlite3
-
-    database_path = DATABASE_URL
-
     if request.method == "POST":
 
         institution_name = request.form.get(
@@ -12186,24 +12167,27 @@ def admin_system_settings():
             "payment_proof_enabled": payment_proof_enabled
         }
 
-        conn = sqlite3.connect(database_path)
-        cursor = conn.cursor()
+        try:
+            for key, value in settings.items():
+                setting = SystemSetting.query.filter_by(
+                    setting_key=key
+                ).first()
 
-        for key, value in settings.items():
+                if setting is None:
+                    setting = SystemSetting(
+                        setting_key=key,
+                        setting_value=value,
+                        updated_at=zambia_now()
+                    )
+                    db.session.add(setting)
+                else:
+                    setting.setting_value = value
+                    setting.updated_at = zambia_now()
 
-            cursor.execute("""
-                INSERT INTO system_settings
-                (setting_key, setting_value, updated_at)
-                VALUES (?, ?, CURRENT_TIMESTAMP)
-
-                ON CONFLICT(setting_key)
-                DO UPDATE SET
-                    setting_value = excluded.setting_value,
-                    updated_at = CURRENT_TIMESTAMP
-            """, (key, value))
-
-        conn.commit()
-        conn.close()
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            raise
 
         flash(
             "System settings saved successfully.",
@@ -12214,17 +12198,12 @@ def admin_system_settings():
             url_for("admin_system_settings")
         )
 
-    conn = sqlite3.connect(database_path)
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT setting_key, setting_value
-        FROM system_settings
-    """)
-
-    settings = dict(cursor.fetchall())
-
-    conn.close()
+    settings = dict(
+        db.session.query(
+            SystemSetting.setting_key,
+            SystemSetting.setting_value
+        ).all()
+    )
 
     programme_fee_schools = (
         ProgramFeeSchool.query
@@ -14029,91 +14008,56 @@ def new_staff_sports_records():
     if session.get("role") != "staff":
         return redirect(url_for("new_staff_login"))
 
-    department = (
-        session.get("department") or ""
-    ).strip().lower()
-
-    if department not in {
-        "sports",
-        "sports department"
-    }:
+    department = (session.get("department") or "").strip().lower()
+    if department not in {"sports", "sports department"}:
         return redirect(url_for("new_staff_login"))
 
-    import sqlite3
+    search = (request.args.get("search") or "").strip()
+    status_filter = (request.args.get("status") or "").strip().lower()
 
-    con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-
-    search = (
-        request.args.get("search") or ""
-    ).strip()
-
-    status_filter = (
-        request.args.get("status") or ""
-    ).strip().lower()
-
-    query = """
-        SELECT
-            si.id,
-            si.student_id,
-            si.sport,
-            si.item,
-            si.status,
-            si.remarks,
-            si.created_at,
-            si.returned_at,
-            si.responded_at,
-            s.name AS student_name,
-            s.program
-        FROM sports_items si
-        LEFT JOIN students s
-            ON s.student_id = si.student_id
-        WHERE 1 = 1
-    """
-
-    params = []
+    query = (
+        db.select(
+            SportsItem.id,
+            SportsItem.student_id,
+            SportsItem.sport,
+            SportsItem.item,
+            SportsItem.status,
+            SportsItem.remarks,
+            SportsItem.created_at,
+            SportsItem.returned_at,
+            SportsItem.responded_at,
+            Student.name.label("student_name"),
+            Student.program
+        )
+        .outerjoin(
+            Student,
+            Student.student_id == SportsItem.student_id
+        )
+    )
 
     if search:
-        query += """
-            AND (
-                LOWER(COALESCE(si.student_id, '')) LIKE ?
-                OR LOWER(COALESCE(si.sport, '')) LIKE ?
-                OR LOWER(COALESCE(si.item, '')) LIKE ?
-                OR LOWER(COALESCE(si.remarks, '')) LIKE ?
-                OR LOWER(COALESCE(s.name, '')) LIKE ?
-                OR LOWER(COALESCE(s.program, '')) LIKE ?
-            )
-        """
-
         value = f"%{search.lower()}%"
-
-        params.extend([
-            value,
-            value,
-            value,
-            value,
-            value,
-            value
-        ])
+        query = query.where(
+            db.or_(
+                db.func.lower(db.func.coalesce(SportsItem.student_id, "")).like(value),
+                db.func.lower(db.func.coalesce(SportsItem.sport, "")).like(value),
+                db.func.lower(db.func.coalesce(SportsItem.item, "")).like(value),
+                db.func.lower(db.func.coalesce(SportsItem.remarks, "")).like(value),
+                db.func.lower(db.func.coalesce(Student.name, "")).like(value),
+                db.func.lower(db.func.coalesce(Student.program, "")).like(value)
+            )
+        )
 
     if status_filter:
-        query += """
-            AND LOWER(COALESCE(si.status, '')) = ?
-        """
+        query = query.where(
+            db.func.lower(
+                db.func.coalesce(SportsItem.status, "")
+            ) == status_filter
+        )
 
-        params.append(status_filter)
-
-    query += """
-        ORDER BY si.id DESC
-    """
-
-    records = cur.execute(
-        query,
-        params
-    ).fetchall()
-
-    con.close()
+    records = db.session.execute(
+        query.order_by(SportsItem.id.desc())
+    ).mappings().all()
 
     return render_template(
         "new_staff/sports/records.html",
@@ -14121,6 +14065,8 @@ def new_staff_sports_records():
         search=search,
         status_filter=status_filter
     )
+
+
 
 
 @app.route("/new-staff/sports/dashboard")
@@ -14253,19 +14199,13 @@ def new_staff_sports_dashboard():
     # Existing staff mini academic calendar/clock uses
     # these values from system_settings.
     # --------------------------------------------------
-    import sqlite3
 
-    calendar_conn = sqlite3.connect(DATABASE_URL)
-    calendar_cursor = calendar_conn.cursor()
-
-    calendar_cursor.execute("""
-        SELECT setting_key, setting_value
-        FROM system_settings
-    """)
-
-    settings = dict(calendar_cursor.fetchall())
-
-    calendar_conn.close()
+    settings = dict(
+        db.session.query(
+            SystemSetting.setting_key,
+            SystemSetting.setting_value
+        ).all()
+    )
 
     return render_template(
         "new_staff/sports/dashboard.html",
@@ -14290,200 +14230,116 @@ def new_staff_library_return_books():
     if session.get("role") != "staff":
         return redirect(url_for("new_staff_login"))
 
-    department = (
-        session.get("department") or ""
-    ).strip().lower()
-
-    if department not in {
-        "library",
-        "library department"
-    }:
+    department = (session.get("department") or "").strip().lower()
+    if department not in {"library", "library department"}:
         return redirect(url_for("new_staff_login"))
-
-    import sqlite3
-    from datetime import datetime
-
-    con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
 
     error = None
     success = None
 
-    # ========================================================
-    # RETURN SELECTED BOOKS
-    # ========================================================
-
     if request.method == "POST":
 
-        student_id = (
-            request.form.get("student_id") or ""
-        ).strip()
-
+        student_id = (request.form.get("student_id") or "").strip()
         selected_books = request.form.getlist("book_ids")
 
         if not student_id:
-
             error = "Please select a student."
 
         elif not selected_books:
-
             error = "Please select at least one book to return."
 
         else:
-
-            student = cur.execute(
-                """
-                SELECT student_id, name, program
-                FROM students
-                WHERE student_id = ?
-                """,
-                (student_id,)
-            ).fetchone()
+            student = Student.query.filter_by(
+                student_id=student_id
+            ).first()
 
             if not student:
-
                 error = "Student not found."
 
             else:
-
                 returned_count = 0
-
-                returned_names = []
-
                 returned_at = zambia_now().strftime(
                     "%d %B %Y | %I:%M %p"
                 )
 
-                for book_id in selected_books:
+                staff_name = (
+                    session.get("staff_name")
+                    or session.get("name")
+                    or session.get("username")
+                    or "Unknown Staff"
+                )
 
+                for raw_book_id in selected_books:
                     try:
-                        book_id = int(book_id)
+                        book_id = int(raw_book_id)
                     except (TypeError, ValueError):
                         continue
 
-                    book = cur.execute(
-                        """
-                        SELECT id, name
-                        FROM library_books
-                        WHERE id = ?
-                          AND student_id = ?
-                          AND COALESCE(status, '') = 'borrowed'
-                          AND COALESCE(returned, 0) = 0
-                        LIMIT 1
-                        """,
-                        (
-                            book_id,
-                            student_id
-                        )
-                    ).fetchone()
+                    book = LibraryBook.query.filter(
+                        LibraryBook.id == book_id,
+                        LibraryBook.student_id == student_id,
+                        db.func.coalesce(LibraryBook.status, "") == "borrowed",
+                        db.func.coalesce(LibraryBook.returned, 0) == 0
+                    ).first()
 
                     if not book:
                         continue
 
-                    cur.execute(
-                        """
-                        UPDATE library_books
-                        SET
-                            returned = 1,
-                            returned_at = ?
-                        WHERE id = ?
-                          AND student_id = ?
-                          AND COALESCE(status, '') = 'borrowed'
-                          AND COALESCE(returned, 0) = 0
-                        """,
-                        (
-                            returned_at,
-                            book_id,
-                            student_id
-                        )
-                    )
+                    book.returned = 1
+                    book.returned_at = returned_at
+
+                    db.session.add(DepartmentHistory(
+                        student_id=student_id,
+                        department="library",
+                        status="Returned",
+                        remarks=f"Book: {book.name}",
+                        action="Book returned",
+                        performed_by=staff_name,
+                        created_at=zambia_now()
+                    ))
 
                     returned_count += 1
-                    returned_names.append(book["name"])
 
-                    staff_name = (
-                        session.get("staff_name")
-                        or session.get("name")
-                        or session.get("username")
-                        or "Unknown Staff"
-                    )
-                    cur.execute(
-                        """
-                        INSERT INTO department_history
-                        (student_id, department, status, remarks,
-                         action, performed_by, created_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)
-                        """,
-                        (
-                            student_id,
-                            "library",
-                            "Returned",
-                            f"Book: {book['name']}",
-                            "Book returned",
-                            staff_name,
-                            zambia_now().strftime("%Y-%m-%d %H:%M:%S"),
-                        ),
-                    )
-
-                con.commit()
+                db.session.commit()
 
                 if returned_count == 0:
-
                     error = (
                         "No valid borrowed books were found "
                         "to return."
                     )
-
                 else:
-
                     success = (
                         f"{returned_count} book(s) returned for "
-                        f"{student['name']}."
+                        f"{student.name}."
                     )
 
-    # ========================================================
-    # STUDENTS
-    # ========================================================
+    students = db.session.execute(
+        db.select(
+            Student.student_id,
+            Student.name,
+            Student.program
+        ).order_by(Student.name)
+    ).mappings().all()
 
-    students = cur.execute(
-        """
-        SELECT
-            student_id,
-            name,
-            program
-        FROM students
-        ORDER BY name
-        """
-    ).fetchall()
-
-    # ========================================================
-    # CURRENTLY BORROWED BOOKS
-    # ========================================================
-
-    borrowed_books = cur.execute(
-        """
-        SELECT
-            lb.id,
-            lb.student_id,
-            lb.name AS book_name,
-            lb.borrowed_at,
-            s.name AS student_name,
-            s.program
-        FROM library_books lb
-        LEFT JOIN students s
-            ON s.student_id = lb.student_id
-        WHERE COALESCE(lb.status, '') = 'borrowed'
-          AND COALESCE(lb.returned, 0) = 0
-        ORDER BY
-            s.name,
-            lb.id DESC
-        """
-    ).fetchall()
-
-    # ========================================================
-    # GROUP BOOKS BY STUDENT
-    # ========================================================
+    borrowed_books = db.session.execute(
+        db.select(
+            LibraryBook.id,
+            LibraryBook.student_id,
+            LibraryBook.name.label("book_name"),
+            LibraryBook.borrowed_at,
+            Student.name.label("student_name"),
+            Student.program
+        )
+        .outerjoin(
+            Student,
+            Student.student_id == LibraryBook.student_id
+        )
+        .where(
+            db.func.coalesce(LibraryBook.status, "") == "borrowed",
+            db.func.coalesce(LibraryBook.returned, 0) == 0
+        )
+        .order_by(Student.name, LibraryBook.id.desc())
+    ).mappings().all()
 
     student_books = {}
 
@@ -14501,7 +14357,6 @@ def new_staff_library_return_books():
             "student_name": book["student_name"],
             "program": book["program"]
         })
-    con.close()
 
     return render_template(
         "new_staff/library/return_books.html",
@@ -14513,122 +14368,90 @@ def new_staff_library_return_books():
 
 
 
+
+
 # ============================================================
 # NEW STAFF LIBRARY — BOOK RECORDS
 # ============================================================
 
 @app.route("/new-staff/library/book-records", methods=["GET"])
 def new_staff_library_book_records():
+
     if session.get("role") != "staff":
         return redirect(url_for("new_staff_login"))
 
-    department = (
-        session.get("department") or ""
-    ).strip().lower()
-
-    if department not in {
-        "library",
-        "library department"
-    }:
+    department = (session.get("department") or "").strip().lower()
+    if department not in {"library", "library department"}:
         return redirect(url_for("new_staff_login"))
 
-    import sqlite3
+    search = (request.args.get("search") or "").strip()
+    status_filter = (request.args.get("status") or "").strip().lower()
 
-    con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
+    print("BOOK RECORDS FILTER RECEIVED:", repr(status_filter))
 
-    search = (
-        request.args.get("search") or ""
-    ).strip()
-
-    status_filter = (
-        request.args.get("status") or ""
-    ).strip().lower()
-
-    print(
-        "BOOK RECORDS FILTER RECEIVED:",
-        repr(status_filter)
+    query = (
+        db.select(
+            LibraryBook.id,
+            LibraryBook.student_id,
+            LibraryBook.name.label("book_name"),
+            LibraryBook.borrowed_at,
+            LibraryBook.returned,
+            LibraryBook.returned_at,
+            LibraryBook.status,
+            Student.name.label("student_name"),
+            Student.program
+        )
+        .outerjoin(
+            Student,
+            Student.student_id == LibraryBook.student_id
+        )
     )
-
-    query = """
-        SELECT
-            lb.id,
-            lb.student_id,
-            lb.name AS book_name,
-            lb.borrowed_at,
-            lb.returned,
-            lb.returned_at,
-            lb.status,
-            s.name AS student_name,
-            s.program
-        FROM library_books lb
-        LEFT JOIN students s
-            ON s.student_id = lb.student_id
-        WHERE 1 = 1
-    """
-
-    params = []
 
     if search:
-        query += """
-            AND (
-                LOWER(COALESCE(lb.student_id, '')) LIKE ?
-                OR LOWER(COALESCE(lb.name, '')) LIKE ?
-                OR LOWER(COALESCE(s.name, '')) LIKE ?
-                OR LOWER(COALESCE(s.program, '')) LIKE ?
+        value = f"%{search.lower()}%"
+        query = query.where(
+            db.or_(
+                db.func.lower(db.func.coalesce(LibraryBook.student_id, "")).like(value),
+                db.func.lower(db.func.coalesce(LibraryBook.name, "")).like(value),
+                db.func.lower(db.func.coalesce(Student.name, "")).like(value),
+                db.func.lower(db.func.coalesce(Student.program, "")).like(value)
             )
-        """
-
-        search_value = f"%{search.lower()}%"
-
-        params.extend([
-            search_value,
-            search_value,
-            search_value,
-            search_value
-        ])
+        )
 
     if status_filter == "borrowed":
-
-        query += """
-            AND COALESCE(lb.returned, 0) = 0
-            AND LOWER(COALESCE(lb.status, 'borrowed')) = 'borrowed'
-        """
+        query = query.where(
+            db.func.coalesce(LibraryBook.returned, 0) == 0,
+            db.func.lower(
+                db.func.coalesce(LibraryBook.status, "borrowed")
+            ) == "borrowed"
+        )
 
     elif status_filter == "returned":
-
-        query += """
-            AND COALESCE(lb.returned, 0) = 1
-            AND LOWER(COALESCE(lb.status, '')) != 'declined'
-        """
+        query = query.where(
+            db.func.coalesce(LibraryBook.returned, 0) == 1,
+            db.func.lower(
+                db.func.coalesce(LibraryBook.status, "")
+            ) != "declined"
+        )
 
     elif status_filter == "pending":
-
-        query += """
-            AND LOWER(COALESCE(lb.status, '')) = 'pending'
-            AND COALESCE(lb.returned, 0) = 0
-        """
+        query = query.where(
+            db.func.lower(
+                db.func.coalesce(LibraryBook.status, "")
+            ) == "pending",
+            db.func.coalesce(LibraryBook.returned, 0) == 0
+        )
 
     elif status_filter == "declined":
+        query = query.where(
+            db.func.lower(
+                db.func.coalesce(LibraryBook.status, "")
+            ) == "declined"
+        )
 
-        query += """
-            AND LOWER(COALESCE(lb.status, '')) = 'declined'
-        """
-
-    query += """
-        ORDER BY lb.id DESC
-    """
-
-    print(
-        "BOOK RECORDS FILTER SQL:",
-        status_filter
-    )
-
-    records = cur.execute(
-        query,
-        params
-    ).fetchall()
+    records = db.session.execute(
+        query.order_by(LibraryBook.id.desc())
+    ).mappings().all()
 
     print(
         "BOOK RECORDS FILTER RESULT:",
@@ -14638,8 +14461,6 @@ def new_staff_library_book_records():
         "records"
     )
 
-    con.close()
-
     return render_template(
         "new_staff/library/book_records.html",
         records=records,
@@ -14647,73 +14468,45 @@ def new_staff_library_book_records():
         status_filter=status_filter
     )
 
+
+
 @app.route("/new-staff/library/assign-books", methods=["GET", "POST"])
 def new_staff_library_assign_books():
 
     if session.get("role") != "staff":
         return redirect(url_for("new_staff_login"))
 
-    department = (
-        session.get("department") or ""
-    ).strip().lower()
-
-    if department not in {
-        "library",
-        "library department"
-    }:
+    department = (session.get("department") or "").strip().lower()
+    if department not in {"library", "library department"}:
         return redirect(url_for("new_staff_login"))
-
-    import sqlite3
-
-    from datetime import datetime
-
-    con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
 
     error = None
     success = None
 
-    # ========================================================
-    # AVAILABLE BOOKS
-    # ========================================================
-
     book_names = [
-        row["name"]
-        for row in cur.execute(
-            """
-            SELECT DISTINCT name
-            FROM library_books
-            WHERE name IS NOT NULL
-              AND TRIM(name) != ''
-            ORDER BY name COLLATE NOCASE
-            """
-        ).fetchall()
+        row[0]
+        for row in db.session.query(
+            db.func.min(LibraryBook.name)
+        ).filter(
+            LibraryBook.name.isnot(None),
+            db.func.trim(LibraryBook.name) != ""
+        ).group_by(
+            db.func.lower(db.func.trim(LibraryBook.name))
+        ).order_by(
+            db.func.lower(db.func.trim(LibraryBook.name))
+        ).all()
     ]
-
-    # ========================================================
-    # ASSIGN BOOKS
-    # ========================================================
 
     if request.method == "POST":
 
-        student_id = (
-            request.form.get("student_id") or ""
-        ).strip()
-
-        book_1 = (
-            request.form.get("book_1") or ""
-        ).strip()
-
-        book_2 = (
-            request.form.get("book_2") or ""
-        ).strip()
+        student_id = (request.form.get("student_id") or "").strip()
+        book_1 = (request.form.get("book_1") or "").strip()
+        book_2 = (request.form.get("book_2") or "").strip()
 
         selected_books = []
-
-        for book in (book_1, book_2):
-            if book and book not in selected_books:
-                selected_books.append(book)
+        for book_name in (book_1, book_2):
+            if book_name and book_name not in selected_books:
+                selected_books.append(book_name)
 
         if not student_id:
             error = "Student ID is required."
@@ -14722,141 +14515,93 @@ def new_staff_library_assign_books():
             error = "Please select at least one book."
 
         else:
-
-            student = cur.execute(
-                """
-                SELECT
-                    student_id,
-                    name,
-                    program
-                FROM students
-                WHERE student_id = ?
-                """,
-                (student_id,)
-            ).fetchone()
+            student = Student.query.filter_by(
+                student_id=student_id
+            ).first()
 
             if not student:
-
                 error = "Student not found."
 
             else:
+                active_count = LibraryBook.query.filter(
+                    LibraryBook.student_id == student_id,
+                    db.func.coalesce(LibraryBook.status, "") == "borrowed",
+                    db.func.coalesce(LibraryBook.returned, 0) == 0
+                ).count()
 
-                active_count = cur.execute(
-                    """
-                    SELECT COUNT(*)
-                    FROM library_books
-                    WHERE student_id = ?
-                      AND COALESCE(status, '') = 'borrowed'
-                      AND COALESCE(returned, 0) = 0
-                    """,
-                    (student_id,)
-                ).fetchone()[0]
-
-                pending_count = cur.execute(
-                    """
-                    SELECT COUNT(*)
-                    FROM library_books
-                    WHERE student_id = ?
-                      AND COALESCE(status, '') = 'pending'
-                    """,
-                    (student_id,)
-                ).fetchone()[0]
+                pending_count = LibraryBook.query.filter(
+                    LibraryBook.student_id == student_id,
+                    db.func.coalesce(LibraryBook.status, "") == "pending"
+                ).count()
 
                 available_slots = 2 - active_count - pending_count
 
                 if available_slots <= 0:
-
                     error = (
                         "This student already has 2 active or "
                         "pending book assignments."
                     )
 
                 elif len(selected_books) > available_slots:
-
                     error = (
                         f"Only {available_slots} book slot(s) "
                         f"are available for this student."
                     )
 
                 else:
-
                     added = []
                     skipped = []
 
+                    staff_name = (
+                        session.get("staff_name")
+                        or session.get("name")
+                        or session.get("username")
+                        or "Unknown Staff"
+                    )
+
                     for book_name in selected_books:
 
-                        existing_pending = cur.execute(
-                            """
-                            SELECT id
-                            FROM library_books
-                            WHERE student_id = ?
-                              AND LOWER(TRIM(name)) =
-                                  LOWER(TRIM(?))
-                              AND COALESCE(status, '') = 'pending'
-                            LIMIT 1
-                            """,
-                            (
-                                student_id,
-                                book_name
-                            )
-                        ).fetchone()
+                        existing_pending = LibraryBook.query.filter(
+                            LibraryBook.student_id == student_id,
+                            db.func.lower(
+                                db.func.trim(LibraryBook.name)
+                            ) == db.func.lower(
+                                db.func.trim(book_name)
+                            ),
+                            db.func.coalesce(LibraryBook.status, "") == "pending"
+                        ).first()
 
                         if existing_pending:
                             skipped.append(book_name)
                             continue
 
-                        cur.execute(
-                            """
-                            INSERT INTO library_books
-                            (
-                                student_id,
-                                name,
-                                borrowed_at,
-                                returned,
-                                returned_at,
-                                status
-                            )
-                            VALUES (?, ?, NULL, 0, NULL, 'pending')
-                            """,
-                            (
-                                student_id,
-                                book_name
-                            )
-                        )
+                        db.session.add(LibraryBook(
+                            student_id=student_id,
+                            name=book_name,
+                            borrowed_at=None,
+                            returned=0,
+                            returned_at=None,
+                            status="pending"
+                        ))
 
-                        staff_name = (
-                            session.get("staff_name")
-                            or session.get("name")
-                            or session.get("username")
-                            or "Unknown Staff"
-                        )
-                        cur.execute(
-                            """
-                            INSERT INTO department_history
-                            (student_id, department, status, remarks,
-                             action, performed_by, created_at)
-                            VALUES (?, ?, ?, ?, ?, ?, ?)
-                            """,
-                            (
-                                student_id,
-                                "library",
-                                "Assigned",
-                                f"Book: {book_name}",
-                                "Book assigned",
-                                staff_name,
-                                zambia_now().strftime("%Y-%m-%d %H:%M:%S"),
-                            ),
-                        )
+                        db.session.add(DepartmentHistory(
+                            student_id=student_id,
+                            department="library",
+                            status="Assigned",
+                            remarks=f"Book: {book_name}",
+                            action="Book assigned",
+                            performed_by=staff_name,
+                            created_at=zambia_now()
+                        ))
 
                         added.append(book_name)
 
-                    con.commit()
+                    db.session.commit()
 
                     if added:
-
                         success = (
                             f"{len(added)} book assignment(s) sent to "
-                            f"{student['name']} for confirmation."
+                            f"{student.name} for confirmation."
                         )
 
                         if skipped:
@@ -14865,59 +14610,48 @@ def new_staff_library_assign_books():
                             )
 
                     elif skipped:
-
                         error = (
                             "The selected book assignment(s) are "
                             "already awaiting student confirmation."
                         )
 
-    # ========================================================
-    # STUDENTS
-    # ========================================================
-
-    students = cur.execute(
-        """
-        SELECT
-            student_id,
-            name,
-            program
-        FROM students
-        ORDER BY name COLLATE NOCASE
-        """
-    ).fetchall()
-
-    # ========================================================
-    # CURRENT BOOK STATUS
-    # ========================================================
+    students = db.session.execute(
+        db.select(
+            Student.student_id,
+            Student.name,
+            Student.program
+        ).order_by(db.func.lower(Student.name))
+    ).mappings().all()
 
     student_books = {}
 
+    rows = db.session.execute(
+        db.select(
+            LibraryBook.id,
+            LibraryBook.student_id,
+            LibraryBook.name,
+            LibraryBook.status,
+            LibraryBook.borrowed_at,
+            LibraryBook.returned
+        )
+        .where(
+            db.func.coalesce(LibraryBook.status, "").in_(
+                ["pending", "borrowed"]
+            ),
+            db.or_(
+                db.func.coalesce(LibraryBook.status, "") == "pending",
+                db.func.coalesce(LibraryBook.returned, 0) == 0
+            )
+        )
+        .order_by(LibraryBook.id.desc())
+    ).mappings().all()
+
+    for row in rows:
+        sid = row["student_id"]
+        student_books.setdefault(sid, []).append(row)
+
     for student in students:
-
-        rows = cur.execute(
-            """
-            SELECT
-                id,
-                name,
-                status,
-                borrowed_at,
-                returned
-            FROM library_books
-            WHERE student_id = ?
-              AND COALESCE(status, '') IN
-                    ('pending', 'borrowed')
-              AND (
-                    COALESCE(status, '') = 'pending'
-                    OR COALESCE(returned, 0) = 0
-                  )
-            ORDER BY id DESC
-            """,
-            (student["student_id"],)
-        ).fetchall()
-
-        student_books[student["student_id"]] = rows
-
-    con.close()
+        student_books.setdefault(student["student_id"], [])
 
     return render_template(
         "new_staff/library/assign_books.html",
@@ -14927,6 +14661,8 @@ def new_staff_library_assign_books():
         error=error,
         success=success
     )
+
+
 
 
 @app.route("/new-staff/library/dashboard")
@@ -14943,113 +14679,104 @@ def new_staff_library_dashboard():
     }:
         return redirect(url_for("new_staff_login"))
 
-    import sqlite3
+    total_students = Student.query.count()
 
-    con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
+    completed_statuses = (
+        "cleared",
+        "approved",
+        "complete",
+        "completed"
+    )
 
-    total_students = cur.execute(
-        "SELECT COUNT(*) FROM students"
-    ).fetchone()[0]
+    pending_students = DepartmentClearance.query.filter(
+        db.func.lower(db.func.trim(DepartmentClearance.department)) == "library",
+        ~db.func.lower(
+            db.func.trim(
+                db.func.coalesce(DepartmentClearance.status, "")
+            )
+        ).in_(completed_statuses)
+    ).count()
 
-    pending_students = cur.execute(
-        """
-        SELECT COUNT(*)
-        FROM department_clearances
-        WHERE LOWER(TRIM(department)) = 'library'
-          AND LOWER(TRIM(COALESCE(status, ''))) NOT IN
-              ('cleared', 'approved', 'complete', 'completed')
-        """
-    ).fetchone()[0]
+    cleared_students = DepartmentClearance.query.filter(
+        db.func.lower(db.func.trim(DepartmentClearance.department)) == "library",
+        db.func.lower(
+            db.func.trim(
+                db.func.coalesce(DepartmentClearance.status, "")
+            )
+        ).in_(completed_statuses)
+    ).count()
 
-    cleared_students = cur.execute(
-        """
-        SELECT COUNT(*)
-        FROM department_clearances
-        WHERE LOWER(TRIM(department)) = 'library'
-          AND LOWER(TRIM(COALESCE(status, ''))) IN
-              ('cleared', 'approved', 'complete', 'completed')
-        """
-    ).fetchone()[0]
+    announcement_filter = db.and_(
+        db.func.coalesce(Announcement.active, 1) == 1,
+        db.func.lower(
+            db.func.trim(
+                db.func.coalesce(Announcement.audience, "")
+            )
+        ).in_(["staff", "all"])
+    )
 
-    announcement_count = cur.execute(
-        """
-        SELECT COUNT(*)
-        FROM announcements
-        WHERE COALESCE(active, 1) = 1
-          AND LOWER(TRIM(COALESCE(audience, ''))) IN ('staff', 'all')
-        """
-    ).fetchone()[0]
+    announcement_count = Announcement.query.filter(
+        announcement_filter
+    ).count()
 
-    books_issued = cur.execute(
-        """
-        SELECT COUNT(*)
-        FROM library_books
-        WHERE COALESCE(returned, 0) = 0
-        """
-    ).fetchone()[0]
+    books_issued = LibraryBook.query.filter(
+        db.func.coalesce(LibraryBook.returned, 0) == 0
+    ).count()
 
-    books_returned = cur.execute(
-        """
-        SELECT COUNT(*)
-        FROM library_books
-        WHERE COALESCE(returned, 0) = 1
-        """
-    ).fetchone()[0]
+    books_returned = LibraryBook.query.filter(
+        db.func.coalesce(LibraryBook.returned, 0) == 1
+    ).count()
 
-    pending_list = cur.execute(
-        """
-        SELECT
-            s.student_id,
-            s.name,
-            s.program
-        FROM students s
-        INNER JOIN department_clearances dc
-            ON dc.student_id = s.student_id
-        WHERE LOWER(TRIM(dc.department)) = 'library'
-          AND LOWER(TRIM(COALESCE(dc.status, ''))) NOT IN
-              ('cleared', 'approved', 'complete', 'completed')
-        ORDER BY s.name
-        LIMIT 10
-        """
-    ).fetchall()
+    pending_list = db.session.execute(
+        db.select(
+            Student.student_id,
+            Student.name,
+            Student.program
+        )
+        .join(
+            DepartmentClearance,
+            DepartmentClearance.student_id == Student.student_id
+        )
+        .where(
+            db.func.lower(
+                db.func.trim(DepartmentClearance.department)
+            ) == "library",
+            ~db.func.lower(
+                db.func.trim(
+                    db.func.coalesce(DepartmentClearance.status, "")
+                )
+            ).in_(completed_statuses)
+        )
+        .order_by(Student.name)
+        .limit(10)
+    ).mappings().all()
 
-    announcements = cur.execute(
-        """
-        SELECT title, message, created_at
-        FROM announcements
-        WHERE COALESCE(active, 1) = 1
-          AND LOWER(TRIM(COALESCE(audience, ''))) IN ('staff', 'all')
-        ORDER BY created_at DESC
-        LIMIT 5
-        """
-    ).fetchall()
+    announcements = db.session.execute(
+        db.select(
+            Announcement.title,
+            Announcement.message,
+            Announcement.created_at
+        )
+        .where(announcement_filter)
+        .order_by(Announcement.created_at.desc())
+        .limit(5)
+    ).mappings().all()
 
-    con.close()
-
-
-    # --------------------------------------------------
-    # DASHBOARD SETTINGS
-    # --------------------------------------------------
-
-    import sqlite3
-
-    calendar_conn = sqlite3.connect(DATABASE_URL)
-    calendar_cursor = calendar_conn.cursor()
-
-    calendar_cursor.execute("""
-        SELECT setting_key, setting_value
-        FROM system_settings
-    """)
-
-    settings = dict(calendar_cursor.fetchall())
-
-    calendar_conn.close()
+    settings = dict(
+        db.session.query(
+            SystemSetting.setting_key,
+            SystemSetting.setting_value
+        ).all()
+    )
 
     return render_template(
         "new_staff/library/dashboard.html",
-        staff_name=session.get("staff_name") or session.get("name") or session.get("username") or "Library Staff",
+        staff_name=(
+            session.get("staff_name")
+            or session.get("name")
+            or session.get("username")
+            or "Library Staff"
+        ),
         department=session.get("department") or "Library",
         total_students=total_students,
         pending_students=pending_students,
@@ -15073,64 +14800,33 @@ def new_staff_library_pending():
     if session.get("role") != "staff":
         return redirect(url_for("new_staff_login"))
 
-    department = (
-        session.get("department") or ""
-    ).strip().lower()
-
-    if department not in {
-        "library",
-        "library department"
-    }:
+    department = (session.get("department") or "").strip().lower()
+    if department not in {"library", "library department"}:
         return redirect(url_for("new_staff_login"))
 
-    import sqlite3
+    pending_students = db.session.execute(
+        db.select(
+            Student.student_id,
+            Student.name,
+            Student.program,
+            db.func.count(LibraryBook.id).label("active_books")
+        )
+        .join(LibraryBook, LibraryBook.student_id == Student.student_id)
+        .where(db.func.coalesce(LibraryBook.returned, 0) == 0)
+        .group_by(Student.student_id, Student.name, Student.program)
+        .order_by(Student.name)
+    ).mappings().all()
 
-    con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-
-    # --------------------------------------------------------
-    # Find students who currently have unreturned books.
-    # --------------------------------------------------------
-
-    pending_students = cur.execute(
-        """
-        SELECT
-            s.student_id,
-            s.name,
-            s.program,
-            COUNT(lb.id) AS active_books
-        FROM students s
-        INNER JOIN library_books lb
-            ON lb.student_id = s.student_id
-        WHERE COALESCE(lb.returned, 0) = 0
-        GROUP BY
-            s.student_id,
-            s.name,
-            s.program
-        ORDER BY s.name
-        """
-    ).fetchall()
-
-    # --------------------------------------------------------
-    # Full active-book information for the pending students.
-    # --------------------------------------------------------
-
-    books = cur.execute(
-        """
-        SELECT
-            lb.*,
-            s.name AS student_name,
-            s.program AS student_program
-        FROM library_books lb
-        INNER JOIN students s
-            ON s.student_id = lb.student_id
-        WHERE COALESCE(lb.returned, 0) = 0
-        ORDER BY s.name, lb.id DESC
-        """
-    ).fetchall()
-
-    con.close()
+    books = db.session.execute(
+        db.select(
+            *LibraryBook.__table__.columns,
+            Student.name.label("student_name"),
+            Student.program.label("student_program")
+        )
+        .join(Student, Student.student_id == LibraryBook.student_id)
+        .where(db.func.coalesce(LibraryBook.returned, 0) == 0)
+        .order_by(Student.name, LibraryBook.id.desc())
+    ).mappings().all()
 
     return render_template(
         "new_staff/library/pending.html",
@@ -15146,54 +14842,32 @@ def new_staff_library_pending():
     )
 
 
-# ============================================================
-# LIBRARY — CLEARED STUDENTS
-# ============================================================
-
 @app.route("/new-staff/library/cleared")
 def new_staff_library_cleared():
 
     if session.get("role") != "staff":
         return redirect(url_for("new_staff_login"))
 
-    department = (
-        session.get("department") or ""
-    ).strip().lower()
-
-    if department not in {
-        "library",
-        "library department"
-    }:
+    department = (session.get("department") or "").strip().lower()
+    if department not in {"library", "library department"}:
         return redirect(url_for("new_staff_login"))
 
-    import sqlite3
-
-    con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-
-    # --------------------------------------------------------
-    # Students with NO active/unreturned library books.
-    # --------------------------------------------------------
-
-    cleared_students = cur.execute(
-        """
-        SELECT
-            s.student_id,
-            s.name,
-            s.program
-        FROM students s
-        WHERE NOT EXISTS (
-            SELECT 1
-            FROM library_books lb
-            WHERE lb.student_id = s.student_id
-              AND COALESCE(lb.returned, 0) = 0
+    cleared_students = db.session.execute(
+        db.select(
+            Student.student_id,
+            Student.name,
+            Student.program
         )
-        ORDER BY s.name
-        """
-    ).fetchall()
-
-    con.close()
+        .where(
+            ~db.exists(
+                db.select(LibraryBook.id).where(
+                    LibraryBook.student_id == Student.student_id,
+                    db.func.coalesce(LibraryBook.returned, 0) == 0
+                )
+            )
+        )
+        .order_by(Student.name)
+    ).mappings().all()
 
     return render_template(
         "new_staff/library/cleared.html",
@@ -15224,38 +14898,27 @@ def new_staff_sports_announcements():
     if session.get("role") != "staff":
         return redirect(url_for("new_staff_login"))
 
-    department = (
-        session.get("department") or ""
-    ).strip().lower()
-
-    if department not in {
-        "sports",
-        "sports department"
-    }:
+    department = (session.get("department") or "").strip().lower()
+    if department not in {"sports", "sports department"}:
         return redirect(url_for("new_staff_login"))
 
-    import sqlite3
-
-    con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-
-    announcements = cur.execute(
-        """
-        SELECT
-            id,
-            title,
-            message,
-            created_at
-        FROM announcements
-        WHERE COALESCE(active, 1) = 1
-          AND LOWER(TRIM(COALESCE(audience, ''))) IN
-              ('staff', 'all')
-        ORDER BY created_at DESC
-        """
-    ).fetchall()
-
-    con.close()
+    announcements = db.session.execute(
+        db.select(
+            Announcement.id,
+            Announcement.title,
+            Announcement.message,
+            Announcement.created_at
+        )
+        .where(
+            db.func.coalesce(Announcement.active, 1) == 1,
+            db.func.lower(
+                db.func.trim(
+                    db.func.coalesce(Announcement.audience, "")
+                )
+            ).in_(["staff", "all"])
+        )
+        .order_by(Announcement.created_at.desc())
+    ).mappings().all()
 
     return render_template(
         "new_staff/sports/announcements.html",
@@ -15269,11 +14932,6 @@ def new_staff_sports_announcements():
         announcements=announcements
     )
 
-
-
-# ============================================================
-# SPORTS — BASKETBALL
-# ============================================================
 
 @app.route("/new-staff/sports/basketball")
 def new_staff_sports_basketball():
@@ -17437,25 +17095,15 @@ def new_staff_communication_dashboard():
     ).count()
 
     settings = {}
-
     try:
-        import sqlite3
-
-        conn = sqlite3.connect(DATABASE_URL)
-        conn.row_factory = sqlite3.Row
-
-        rows = conn.execute(
-            "SELECT setting_key, setting_value FROM system_settings"
-        ).fetchall()
-
-        settings = {
-            row["setting_key"]: row["setting_value"]
-            for row in rows
-        }
-
-        conn.close()
-
+        settings = dict(
+            db.session.query(
+                SystemSetting.setting_key,
+                SystemSetting.setting_value
+            ).all()
+        )
     except Exception:
+        db.session.rollback()
         settings = {}
 
     return render_template(
@@ -17697,25 +17345,15 @@ def new_staff_training_section_dashboard():
     ).count()
 
     settings = {}
-
     try:
-        import sqlite3
-
-        conn = sqlite3.connect(DATABASE_URL)
-        conn.row_factory = sqlite3.Row
-
-        rows = conn.execute(
-            "SELECT setting_key, setting_value FROM system_settings"
-        ).fetchall()
-
-        settings = {
-            row["setting_key"]: row["setting_value"]
-            for row in rows
-        }
-
-        conn.close()
-
+        settings = dict(
+            db.session.query(
+                SystemSetting.setting_key,
+                SystemSetting.setting_value
+            ).all()
+        )
     except Exception:
+        db.session.rollback()
         settings = {}
 
     return render_template(
@@ -17969,18 +17607,14 @@ def new_staff_hr_dashboard():
 
     settings = {}
     try:
-        import sqlite3
-        conn = sqlite3.connect(DATABASE_URL)
-        conn.row_factory = sqlite3.Row
-        rows = conn.execute(
-            "SELECT setting_key, setting_value FROM system_settings"
-        ).fetchall()
-        settings = {
-            row["setting_key"]: row["setting_value"]
-            for row in rows
-        }
-        conn.close()
+        settings = dict(
+            db.session.query(
+                SystemSetting.setting_key,
+                SystemSetting.setting_value
+            ).all()
+        )
     except Exception:
+        db.session.rollback()
         settings = {}
 
     return render_template(
@@ -18570,25 +18204,15 @@ def new_staff_mathematics_dashboard():
     ).count()
 
     settings = {}
-
     try:
-        import sqlite3
-
-        conn = sqlite3.connect(DATABASE_URL)
-        conn.row_factory = sqlite3.Row
-
-        rows = conn.execute(
-            "SELECT setting_key, setting_value FROM system_settings"
-        ).fetchall()
-
-        settings = {
-            row["setting_key"]: row["setting_value"]
-            for row in rows
-        }
-
-        conn.close()
-
+        settings = dict(
+            db.session.query(
+                SystemSetting.setting_key,
+                SystemSetting.setting_value
+            ).all()
+        )
     except Exception:
+        db.session.rollback()
         settings = {}
 
     return render_template(
@@ -19090,21 +18714,13 @@ def new_staff_stores_dashboard():
     # DASHBOARD SETTINGS
     # --------------------------------------------------
 
-    import sqlite3
-
-    calendar_conn = sqlite3.connect(DATABASE_URL)
-    calendar_cursor = calendar_conn.cursor()
-
-    calendar_cursor.execute("""
-        SELECT setting_key, setting_value
-        FROM system_settings
-    """)
 
     settings = dict(
-        calendar_cursor.fetchall()
+        db.session.query(
+            SystemSetting.setting_key,
+            SystemSetting.setting_value
+        ).all()
     )
-
-    calendar_conn.close()
 
     # --------------------------------------------------
     # CLEARANCE PERCENTAGE
@@ -22814,19 +22430,13 @@ def tso_dashboard():
     # Existing staff mini academic calendar/clock uses
     # these values from system_settings.
     # --------------------------------------------------
-    import sqlite3
 
-    calendar_conn = sqlite3.connect(DATABASE_URL)
-    calendar_cursor = calendar_conn.cursor()
-
-    calendar_cursor.execute("""
-        SELECT setting_key, setting_value
-        FROM system_settings
-    """)
-
-    settings = dict(calendar_cursor.fetchall())
-
-    calendar_conn.close()
+    settings = dict(
+        db.session.query(
+            SystemSetting.setting_key,
+            SystemSetting.setting_value
+        ).all()
+    )
 
     return render_template(
         "new_staff/tso/overview.html",
@@ -23975,25 +23585,15 @@ def new_staff_ame_dashboard():
     ).count()
 
     settings = {}
-
     try:
-        import sqlite3
-
-        conn = sqlite3.connect(DATABASE_URL)
-        conn.row_factory = sqlite3.Row
-
-        rows = conn.execute(
-            "SELECT setting_key, setting_value FROM system_settings"
-        ).fetchall()
-
-        settings = {
-            row["setting_key"]: row["setting_value"]
-            for row in rows
-        }
-
-        conn.close()
-
+        settings = dict(
+            db.session.query(
+                SystemSetting.setting_key,
+                SystemSetting.setting_value
+            ).all()
+        )
     except Exception:
+        db.session.rollback()
         settings = {}
 
     return render_template(
