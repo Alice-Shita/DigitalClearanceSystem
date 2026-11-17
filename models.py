@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from sqlalchemy import text
 from time_utils import zambia_now
 
 
@@ -665,6 +666,17 @@ class AccommodationAssignment(db.Model):
     )
 
 
+    assigned_by = db.Column(
+        db.String(150),
+        nullable=True
+    )
+
+    vacated_by = db.Column(
+        db.String(100),
+        nullable=True
+    )
+
+
 class HostelItem(db.Model):
     __tablename__ = "hostel_items"
 
@@ -732,6 +744,14 @@ class LibraryBook(db.Model):
     returned_at = db.Column(
         db.String(100),
         nullable=True
+    )
+
+
+    status = db.Column(
+        db.String(20),
+        nullable=True,
+        default="borrowed",
+        server_default="borrowed"
     )
 
 
@@ -1137,6 +1157,12 @@ class AccountHistory(db.Model):
     )
 
 
+
+
+    updated_by = db.Column(
+        db.String(120),
+        nullable=True
+    )
 
 
 class TSOInspection(db.Model):
@@ -1680,3 +1706,104 @@ class DisciplinaryCase(db.Model):
         foreign_keys=[student_id]
     )
 
+
+
+# Additional tables used by document and system-settings features.
+
+class AgreementHistory(db.Model):
+    __tablename__ = "agreement_history"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    student_id = db.Column(
+        db.String(20),
+        nullable=False
+    )
+
+    agreement_type = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    agreement_version = db.Column(
+        db.String(50),
+        nullable=True
+    )
+
+    accepted_at = db.Column(
+        db.DateTime,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+
+    status = db.Column(
+        db.String(30),
+        nullable=True,
+        default="Accepted",
+        server_default=text("'Accepted'")
+    )
+
+
+class DocumentArchive(db.Model):
+    __tablename__ = "document_archive"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    student_id = db.Column(
+        db.String(20),
+        nullable=False
+    )
+
+    document_type = db.Column(
+        db.String(50),
+        nullable=False
+    )
+
+    title = db.Column(
+        db.String(200),
+        nullable=False
+    )
+
+    filename = db.Column(
+        db.String(255),
+        nullable=True
+    )
+
+    description = db.Column(
+        db.Text,
+        nullable=True
+    )
+
+    uploaded_at = db.Column(
+        db.DateTime,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+
+    source = db.Column(
+        db.String(100),
+        nullable=True
+    )
+
+
+class SystemSetting(db.Model):
+    __tablename__ = "system_settings"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    setting_key = db.Column(
+        db.String(100),
+        unique=True,
+        nullable=False
+    )
+
+    setting_value = db.Column(
+        db.Text,
+        nullable=True
+    )
+
+    updated_at = db.Column(
+        db.DateTime,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
