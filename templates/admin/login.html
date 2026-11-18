@@ -89,7 +89,15 @@ Admin Login | ZASTI Clearance System
             </div>
 
 
-            <button
+
+<div style="display:flex;align-items:center;gap:8px;margin:4px 0 18px;">
+    <input type="checkbox" id="remember_me" name="remember_me"
+           style="width:16px;height:16px;margin:0;">
+    <label for="remember_me" style="margin:0;cursor:pointer;">
+        Remember me for 30 days
+    </label>
+</div>
+<button
                 type="submit"
                 class="auth-button"
             >
@@ -101,6 +109,14 @@ Admin Login | ZASTI Clearance System
             </button>
 
         </form>
+
+        <div style="text-align:center;margin:14px 0;">
+            <a href="{{ url_for('forgot_password', account_type='admin') }}"
+               style="text-decoration:none;font-weight:600;">
+                Forgot Password?
+            </a>
+        </div>
+
 
 
         <div class="auth-footer">

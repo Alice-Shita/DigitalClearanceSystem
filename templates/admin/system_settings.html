@@ -1713,6 +1713,40 @@
 
 
     <div class="settings-card">
+        <div class="settings-card-title">
+            <div>
+                <h3>Account Recovery Email</h3>
+                <p>
+                    Set the email address used to recover this administrator account.
+                </p>
+            </div>
+            <i class="bi bi-envelope-fill"></i>
+        </div>
+
+        <form method="POST"
+              action="{{ url_for('admin_update_recovery_email') }}"
+              class="settings-form">
+            <div class="settings-field">
+                <label for="admin_recovery_email">Recovery Email</label>
+                <input
+                    type="email"
+                    id="admin_recovery_email"
+                    name="email"
+                    value="{{ current_user.email if current_user is defined and current_user.email else '' }}"
+                    placeholder="admin@example.com"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="settings-save-button">
+                <i class="bi bi-envelope-check"></i>
+                Save Recovery Email
+            </button>
+        </form>
+    </div>
+
+    <div class="settings-card">
 
         <div class="settings-card-title">
 

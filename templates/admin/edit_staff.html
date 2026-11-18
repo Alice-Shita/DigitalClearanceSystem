@@ -119,6 +119,12 @@
                 required
             >
 
+            <label>Recovery Email</label>
+            <input type="email" name="email"
+                   value="{{ user.email if user and user.email else '' }}"
+                   placeholder="staff@example.com"
+                   autocomplete="email" required>
+
             <label>Department</label>
             <select name="department" required>
 

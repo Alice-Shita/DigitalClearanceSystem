@@ -1,5 +1,9 @@
 import re
 import os
+import smtplib
+import secrets
+import hashlib
+from email.message import EmailMessage
 
 from flask import (
     Flask,
@@ -49,7 +53,9 @@ from models import (
     ProgramFee,
     SystemSetting,
     DocumentArchive,
-    AgreementHistory
+    AgreementHistory,
+    PasswordResetToken,
+    PasswordResetAttempt
 )
 from config import SQLALCHEMY_DATABASE_URI
 from datetime import datetime, timedelta
@@ -77,8 +83,15 @@ def money_filter(value):
     except (TypeError, ValueError):
         return "K0.00"
 
-app.config["SECRET_KEY"] = (
-    "clearance-system-secret-key"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+if not app.config["SECRET_KEY"]:
+    raise RuntimeError("SECRET_KEY is missing. Configure it in the environment.")
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = (
+    os.environ.get("FLASK_ENV") == "production"
+    or os.environ.get("RENDER") == "true"
 )
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
@@ -1187,6 +1200,7 @@ def admin_login():
         ):
 
             session.clear()
+            session.permanent = (request.form.get("remember_me") == "on")
 
             session["user_id"] = user.id
             session["username"] = user.username
@@ -1256,6 +1270,7 @@ def student_login():
         ):
 
             session.clear()
+            session.permanent = (request.form.get("remember_me") == "on")
 
             session["user_id"] = user.id
             session["username"] = user.username
@@ -9184,7 +9199,7 @@ def confirm_library_book(book_id):
     active_count = LibraryBook.query.filter(
         LibraryBook.student_id == student_id,
         db.func.coalesce(LibraryBook.status, "") == "borrowed",
-        db.func.coalesce(LibraryBook.returned, 0) == 0
+        db.func.coalesce(LibraryBook.returned, False) == False
     ).count()
 
     if active_count >= 2:
@@ -9500,8 +9515,9 @@ def admin_staff():
             "department",
             ""
         ).strip()
+        email = (request.form.get("email") or "").strip().lower()
 
-        if not name or not username or not password or not department:
+        if not name or not username or not password or not department or not email:
 
             flash(
                 "All required staff fields must be completed.",
@@ -9511,6 +9527,18 @@ def admin_staff():
             return redirect(
                 url_for("admin_staff")
             )
+
+        if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+            flash("Please enter a valid staff recovery email address.", "error")
+            return redirect(url_for("admin_staff"))
+
+        email_in_use = (
+            User.query.filter(db.func.lower(User.email) == email).first()
+            or Student.query.filter(db.func.lower(Student.email) == email).first()
+        )
+        if email_in_use:
+            flash("That email address is already assigned to another account.", "error")
+            return redirect(url_for("admin_staff"))
 
         # Check username
 
@@ -9579,7 +9607,8 @@ def admin_staff():
             password=generate_password_hash(password),
             password_change_required=True,
             role="staff",
-            department=department
+            department=department,
+            email=email
         )
 
         db.session.add(user)
@@ -9842,8 +9871,9 @@ def admin_edit_staff(staff_id):
         username = (request.form.get("username") or "").strip()
         department = (request.form.get("department") or "").strip()
         password = (request.form.get("password") or "").strip()
+        email = (request.form.get("email") or "").strip().lower()
 
-        if not name or not username or not department:
+        if not name or not username or not department or not email:
             flash(
                 "Name, username and department are required.",
                 "error"
@@ -9851,6 +9881,22 @@ def admin_edit_staff(staff_id):
             return redirect(
                 url_for("admin_edit_staff", staff_id=staff_id)
             )
+
+        if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+            flash("Please enter a valid recovery email address.", "error")
+            return redirect(url_for("admin_edit_staff", staff_id=staff_id))
+
+        existing_email_user = User.query.filter(
+            db.func.lower(User.email) == email,
+            User.id != staff_member.user_id
+        ).first()
+        existing_email_student = Student.query.filter(
+            db.func.lower(Student.email) == email
+        ).first()
+
+        if existing_email_user or existing_email_student:
+            flash("That email address is already assigned to another account.", "error")
+            return redirect(url_for("admin_edit_staff", staff_id=staff_id))
 
         existing_user = User.query.filter(
             User.username == username,
@@ -9872,6 +9918,7 @@ def admin_edit_staff(staff_id):
         if user:
             user.username = username
             user.department = department
+            user.email = email
 
             if password:
                 from werkzeug.security import generate_password_hash
@@ -11857,6 +11904,46 @@ def admin_payment_review(payment_id):
 # ADMIN CHANGE PASSWORD
 # ==================================================
 
+
+
+@app.route("/admin/update-recovery-email", methods=["POST"])
+def admin_update_recovery_email():
+    if session.get("role") != "admin":
+        return redirect(url_for("admin_login"))
+
+    user_id = session.get("user_id")
+    user = User.query.filter_by(id=user_id, role="admin").first()
+
+    if not user:
+        session.clear()
+        return redirect(url_for("admin_login"))
+
+    email = (request.form.get("email") or "").strip().lower()
+
+    if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+        flash("Please enter a valid recovery email address.", "error")
+        return redirect(url_for("admin_system_settings"))
+
+    existing_user = User.query.filter(
+        db.func.lower(User.email) == email,
+        User.id != user.id
+    ).first()
+
+    existing_student = Student.query.filter(
+        db.func.lower(Student.email) == email
+    ).first()
+
+    if existing_user or existing_student:
+        flash("That email address is already assigned to another account.", "error")
+        return redirect(url_for("admin_system_settings"))
+
+    user.email = email
+    db.session.commit()
+
+    flash("Administrator recovery email saved successfully.", "success")
+    return redirect(url_for("admin_system_settings"))
+
+
 @app.route("/admin/change-password", methods=["POST"])
 def admin_change_password():
 
@@ -12223,6 +12310,7 @@ def admin_system_settings():
 
     return render_template(
         "admin/system_settings.html",
+        current_user=User.query.filter_by(id=session.get("user_id"), role="admin").first(),
         settings=settings,
         programme_fee_schools=programme_fee_schools,
         programme_fees=programme_fees
@@ -13566,6 +13654,7 @@ def new_staff_login():
         # --------------------------------------------------
 
         session.clear()
+        session.permanent = (request.form.get("remember_me") == "on")
 
         session["role"] = "staff"
         session["user_id"] = user.id
@@ -14279,7 +14368,7 @@ def new_staff_library_return_books():
                         LibraryBook.id == book_id,
                         LibraryBook.student_id == student_id,
                         db.func.coalesce(LibraryBook.status, "") == "borrowed",
-                        db.func.coalesce(LibraryBook.returned, 0) == 0
+                        db.func.coalesce(LibraryBook.returned, False) == False
                     ).first()
 
                     if not book:
@@ -14336,7 +14425,7 @@ def new_staff_library_return_books():
         )
         .where(
             db.func.coalesce(LibraryBook.status, "") == "borrowed",
-            db.func.coalesce(LibraryBook.returned, 0) == 0
+            db.func.coalesce(LibraryBook.returned, False) == False
         )
         .order_by(Student.name, LibraryBook.id.desc())
     ).mappings().all()
@@ -14420,7 +14509,7 @@ def new_staff_library_book_records():
 
     if status_filter == "borrowed":
         query = query.where(
-            db.func.coalesce(LibraryBook.returned, 0) == 0,
+            db.func.coalesce(LibraryBook.returned, False) == False,
             db.func.lower(
                 db.func.coalesce(LibraryBook.status, "borrowed")
             ) == "borrowed"
@@ -14428,7 +14517,7 @@ def new_staff_library_book_records():
 
     elif status_filter == "returned":
         query = query.where(
-            db.func.coalesce(LibraryBook.returned, 0) == 1,
+            db.func.coalesce(LibraryBook.returned, False) == True,
             db.func.lower(
                 db.func.coalesce(LibraryBook.status, "")
             ) != "declined"
@@ -14439,7 +14528,7 @@ def new_staff_library_book_records():
             db.func.lower(
                 db.func.coalesce(LibraryBook.status, "")
             ) == "pending",
-            db.func.coalesce(LibraryBook.returned, 0) == 0
+            db.func.coalesce(LibraryBook.returned, False) == False
         )
 
     elif status_filter == "declined":
@@ -14526,7 +14615,7 @@ def new_staff_library_assign_books():
                 active_count = LibraryBook.query.filter(
                     LibraryBook.student_id == student_id,
                     db.func.coalesce(LibraryBook.status, "") == "borrowed",
-                    db.func.coalesce(LibraryBook.returned, 0) == 0
+                    db.func.coalesce(LibraryBook.returned, False) == False
                 ).count()
 
                 pending_count = LibraryBook.query.filter(
@@ -14640,7 +14729,7 @@ def new_staff_library_assign_books():
             ),
             db.or_(
                 db.func.coalesce(LibraryBook.status, "") == "pending",
-                db.func.coalesce(LibraryBook.returned, 0) == 0
+                db.func.coalesce(LibraryBook.returned, False) == False
             )
         )
         .order_by(LibraryBook.id.desc())
@@ -14812,7 +14901,7 @@ def new_staff_library_pending():
             db.func.count(LibraryBook.id).label("active_books")
         )
         .join(LibraryBook, LibraryBook.student_id == Student.student_id)
-        .where(db.func.coalesce(LibraryBook.returned, 0) == 0)
+        .where(db.func.coalesce(LibraryBook.returned, False) == False)
         .group_by(Student.student_id, Student.name, Student.program)
         .order_by(Student.name)
     ).mappings().all()
@@ -14824,7 +14913,7 @@ def new_staff_library_pending():
             Student.program.label("student_program")
         )
         .join(Student, Student.student_id == LibraryBook.student_id)
-        .where(db.func.coalesce(LibraryBook.returned, 0) == 0)
+        .where(db.func.coalesce(LibraryBook.returned, False) == False)
         .order_by(Student.name, LibraryBook.id.desc())
     ).mappings().all()
 
@@ -14862,7 +14951,7 @@ def new_staff_library_cleared():
             ~db.exists(
                 db.select(LibraryBook.id).where(
                     LibraryBook.student_id == Student.student_id,
-                    db.func.coalesce(LibraryBook.returned, 0) == 0
+                    db.func.coalesce(LibraryBook.returned, False) == False
                 )
             )
         )
@@ -14910,7 +14999,7 @@ def new_staff_sports_announcements():
             Announcement.created_at
         )
         .where(
-            db.func.coalesce(Announcement.active, 1) == 1,
+            db.func.coalesce(Announcement.active, True) == True,
             db.func.lower(
                 db.func.trim(
                     db.func.coalesce(Announcement.audience, "")
@@ -24148,6 +24237,298 @@ def new_staff_ame_tool_records():
         records=tool_records,
         search=search
     )
+
+
+# ============================================================
+# PASSWORD RECOVERY — EMAIL VERIFICATION
+# ============================================================
+
+def send_password_recovery_email(recipient, reset_url):
+    """Send a password reset email using configured SMTP settings."""
+    host = (os.environ.get("SMTP_HOST") or "").strip()
+    port = int(os.environ.get("SMTP_PORT") or "587")
+    sender = (os.environ.get("SMTP_FROM_EMAIL") or "").strip()
+    username = (os.environ.get("SMTP_USERNAME") or "").strip()
+    password = os.environ.get("SMTP_PASSWORD") or ""
+    use_tls = (os.environ.get("SMTP_USE_TLS") or "true").strip().lower() in (
+        "1", "true", "yes", "on"
+    )
+
+    if not host or not sender:
+        return False
+
+    message = EmailMessage()
+    message["Subject"] = "ZASTI Digital Clearance — Password Reset"
+    message["From"] = sender
+    message["To"] = recipient
+    message.set_content(
+        "A password reset was requested for your ZASTI Digital Clearance account.\n\n"
+        "Use the link below to choose a new password. This link expires in 30 minutes "
+        "and can only be used once.\n\n"
+        f"{reset_url}\n\n"
+        "If you did not request this reset, you can ignore this email."
+    )
+
+    try:
+        if port == 465:
+            with smtplib.SMTP_SSL(host, port, timeout=20) as server:
+                if username:
+                    server.login(username, password)
+                server.send_message(message)
+        else:
+            with smtplib.SMTP(host, port, timeout=20) as server:
+                server.ehlo()
+                if use_tls:
+                    server.starttls()
+                    server.ehlo()
+                if username:
+                    server.login(username, password)
+                server.send_message(message)
+        return True
+    except Exception:
+        app.logger.exception("Password recovery email delivery failed.")
+        return False
+
+
+def _recovery_csrf_token(session_key):
+    token = session.get(session_key)
+    if not token:
+        token = secrets.token_urlsafe(32)
+        session[session_key] = token
+    return token
+
+
+def _valid_recovery_csrf(session_key):
+    submitted = request.form.get("csrf_token", "")
+    expected = session.get(session_key, "")
+    return bool(submitted and expected and secrets.compare_digest(submitted, expected))
+
+
+def _password_reset_request_allowed():
+    now = datetime.utcnow()
+    ip_address = request.remote_addr or "unknown"
+    ip_hash = hashlib.sha256(
+        (app.config["SECRET_KEY"] + "|" + ip_address).encode("utf-8")
+    ).hexdigest()
+    try:
+        cutoff = now - timedelta(minutes=15)
+        PasswordResetAttempt.query.filter(
+            PasswordResetAttempt.ip_hash == ip_hash,
+            PasswordResetAttempt.attempted_at < now - timedelta(days=1)
+        ).delete(synchronize_session=False)
+
+        count = PasswordResetAttempt.query.filter(
+            PasswordResetAttempt.ip_hash == ip_hash,
+            PasswordResetAttempt.attempted_at >= cutoff
+        ).count()
+
+        if count >= 5:
+            db.session.commit()
+            return False
+
+        db.session.add(PasswordResetAttempt(ip_hash=ip_hash, attempted_at=now))
+        db.session.commit()
+        return True
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Password recovery rate-limit check failed.")
+        return False
+
+
+@app.route("/forgot-password/<account_type>", methods=["GET", "POST"])
+def forgot_password(account_type):
+    account_type = (account_type or "").strip().lower()
+
+    settings_map = {
+        "admin": ("Administrator", "Administrator username", "Enter your administrator username", "admin_login"),
+        "staff": ("Staff", "Staff ID", "Enter your Staff ID", "new_staff_login"),
+        "student": ("Student", "Student ID", "Enter your Student ID", "student_login"),
+    }
+
+    settings = settings_map.get(account_type)
+    if not settings:
+        return redirect(url_for("student_login"))
+
+    account_title, identifier_label, identifier_placeholder, back_endpoint = settings
+
+    generic_message = (
+        "If the account details match and email delivery is available, "
+        "a password reset link will be sent to the registered email address."
+    )
+
+    if request.method == "GET":
+        return render_template(
+            "forgot_password.html",
+            account_type=account_type,
+            account_title=account_title,
+            identifier_label=identifier_label,
+            identifier_placeholder=identifier_placeholder,
+            back_url=url_for(back_endpoint),
+            csrf_token=_recovery_csrf_token("_forgot_password_csrf"),
+        )
+
+    if not _valid_recovery_csrf("_forgot_password_csrf"):
+        return "Invalid or expired form token. Reload the page and try again.", 400
+
+    if not _password_reset_request_allowed():
+        flash(
+            "If the account details match and email delivery is available, "
+            "a password reset link will be sent to the registered email address.",
+            "info"
+        )
+        return redirect(url_for("forgot_password", account_type=account_type))
+
+    identifier = (request.form.get("identifier") or "").strip()
+    email = (request.form.get("email") or "").strip().lower()
+    user = None
+
+    try:
+        if account_type == "student" and identifier and email:
+            student = Student.query.filter(
+                Student.student_id == identifier,
+                db.func.lower(Student.email) == email
+            ).first()
+            if student:
+                user = User.query.filter_by(
+                    role="student",
+                    student_id=student.student_id
+                ).first()
+
+        elif account_type == "staff" and identifier and email:
+            staff_member = Staff.query.filter_by(staff_id=identifier).first()
+            if staff_member and staff_member.user:
+                candidate = staff_member.user
+                if (
+                    str(candidate.role).strip().lower() == "staff"
+                    and (candidate.email or "").strip().lower() == email
+                ):
+                    user = candidate
+
+        elif account_type == "admin" and identifier and email:
+            user = User.query.filter(
+                db.func.lower(User.username) == identifier.lower(),
+                User.role == "admin",
+                db.func.lower(User.email) == email
+            ).first()
+
+        if user:
+            raw_token = secrets.token_urlsafe(32)
+            token_hash = hashlib.sha256(raw_token.encode("utf-8")).hexdigest()
+            now = datetime.utcnow()
+
+            PasswordResetToken.query.filter_by(
+                user_id=user.id,
+                used_at=None
+            ).update({"used_at": now}, synchronize_session=False)
+
+            reset_record = PasswordResetToken(
+                user_id=user.id,
+                token_hash=token_hash,
+                expires_at=now + timedelta(minutes=30)
+            )
+            db.session.add(reset_record)
+            db.session.commit()
+
+            reset_url = url_for(
+                "reset_password_token",
+                token=raw_token,
+                _external=True
+            )
+
+            if not send_password_recovery_email(email, reset_url):
+                reset_record.used_at = datetime.utcnow()
+                db.session.commit()
+
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Password recovery request could not be processed.")
+
+    flash(generic_message, "info")
+    return redirect(url_for("forgot_password", account_type=account_type))
+
+
+@app.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password_token(token):
+    token_hash = hashlib.sha256(
+        token.encode("utf-8")
+    ).hexdigest()
+
+    now = datetime.utcnow()
+
+    reset_record = PasswordResetToken.query.filter(
+        PasswordResetToken.token_hash == token_hash,
+        PasswordResetToken.used_at.is_(None),
+        PasswordResetToken.expires_at > now
+    ).first()
+
+    if not reset_record:
+        return render_template(
+            "reset_password_token.html",
+            valid_token=False
+        ), 400
+
+    if request.method == "POST":
+        if not _valid_recovery_csrf("_reset_password_csrf"):
+            return "Invalid or expired form token. Reload the reset link and try again.", 400
+
+        password = request.form.get("password") or ""
+        confirm_password = request.form.get("confirm_password") or ""
+
+        if len(password) < 8:
+            flash("Your new password must contain at least 8 characters.", "error")
+        elif password != confirm_password:
+            flash("The two passwords do not match.", "error")
+        else:
+            user = User.query.filter_by(
+                id=reset_record.user_id
+            ).first()
+
+            if not user:
+                reset_record.used_at = datetime.utcnow()
+                db.session.commit()
+                return render_template(
+                    "reset_password_token.html",
+                    valid_token=False
+                ), 400
+
+            user.password = generate_password_hash(password)
+            user.password_change_required = False
+            reset_record.used_at = datetime.utcnow()
+
+            # Invalidate every other outstanding reset link for this account.
+            PasswordResetToken.query.filter(
+                PasswordResetToken.user_id == user.id,
+                PasswordResetToken.id != reset_record.id,
+                PasswordResetToken.used_at.is_(None)
+            ).update(
+                {"used_at": datetime.utcnow()},
+                synchronize_session=False
+            )
+
+            role = (user.role or "").strip().lower()
+            db.session.commit()
+            session.clear()
+
+            if role == "admin":
+                login_url = url_for("admin_login")
+            elif role == "staff":
+                login_url = url_for("new_staff_login")
+            else:
+                login_url = url_for("student_login")
+
+            return render_template(
+                "reset_password_token.html",
+                valid_token=False,
+                completed=True,
+                login_url=login_url
+            )
+
+    return render_template(
+        "reset_password_token.html",
+        valid_token=True,
+        csrf_token=_recovery_csrf_token("_reset_password_csrf")
+    )
+
 
 if __name__ == "__main__":
     app.run(

@@ -21,3 +21,21 @@ __pycache__/
 .env
 .venv/
 venv/
+
+# Local development files
+backups/
+__pycache__/
+*.pyc
+*.bak
+*.bak_*
+*.before*
+*.backup*
+*.log
+*.db
+*.sqlite*
+.env
+.env.*
+.zasti_smtp.env
+uploads/
+ngrok-stable-linux-arm64/
+ngrok-stable-linux-arm64.zip
