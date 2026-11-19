@@ -189,7 +189,18 @@
             }
         }
 
-    </style>
+    
+/* STAFF-CLEARANCE-DESKTOP-SIDEBAR-OFFSET */
+@media screen and (min-width: 901px) {
+    .page {
+        margin-left: 260px !important;
+        width: calc(100% - 260px) !important;
+        box-sizing: border-box !important;
+        min-width: 0 !important;
+    }
+}
+
+</style>
 </head>
 
 <body>
@@ -249,8 +260,17 @@
 
                             <span class="export-status">
                                 <i class="fa-solid fa-circle-check"></i>
-                                Official Clearance Exported
+                                Document Generated
                             </span>
+                            {% set activity = activity_info.get(student.student_id, {}) %}
+                            <div class="export-details">
+                                <div><strong>Report opened:</strong>
+                                    {{ activity.get("opened_time") or "Not opened" }}
+                                </div>
+                                <div><strong>Print initiated:</strong>
+                                    {{ activity.get("print_time") or "Not initiated" }}
+                                </div>
+                            </div>
 
                             {% if export %}
                                 <div class="export-details">

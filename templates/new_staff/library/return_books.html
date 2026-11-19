@@ -769,6 +769,48 @@
 
         </div>
 
+        <div class="current-section">
+
+            <h3>Awaiting Student Confirmation</h3>
+
+            <p class="empty">
+                These assigned books are waiting for students to confirm.
+                They cannot be returned until confirmed.
+            </p>
+
+            {% for student in students %}
+                {% set pending_books = pending_student_books.get(
+                    student['student_id'],
+                    []
+                ) %}
+
+                {% if pending_books %}
+                    <div class="student-books">
+                        <strong>
+                            {{ student['name'] }} — {{ student['student_id'] }}
+                        </strong>
+
+                        <div class="book-list">
+                            {% for book in pending_books %}
+                                <span style="
+                                    display:inline-block;
+                                    padding:6px 10px;
+                                    border-radius:6px;
+                                    background:#fff7ed;
+                                    color:#9a3412;
+                                    border:1px solid #fed7aa;
+                                    font-size:12px;
+                                ">
+                                    {{ book['book_name'] }} — Awaiting confirmation
+                                </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+        </div>
+
     </div>
 
 </div>

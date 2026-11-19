@@ -545,6 +545,22 @@
 
     </div>
 
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0;">
+        <a href="{{ url_for('admin_edit_student', student_id=student.student_id) }}"
+           style="padding:10px 16px;background:#087f5b;color:white;border-radius:8px;text-decoration:none;font-weight:600;">
+            <i class="bi bi-pencil-square"></i> Edit Student
+        </a>
+
+        <form method="POST"
+              action="{{ url_for('admin_delete_student', student_id=student.student_id) }}"
+              onsubmit="return confirm('Permanently delete this student? Deletion will be blocked if institutional records are linked.');">
+            <button type="submit"
+                    style="padding:10px 16px;background:white;color:#c62828;border:1px solid #c62828;border-radius:8px;font-weight:600;">
+                <i class="bi bi-trash"></i> Delete Student
+            </button>
+        </form>
+    </div>
 </section>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -921,6 +937,10 @@
 
                         <div class="item-title">
                             {{ book.name }}
+                        </div>
+                        <div class="item-meta">
+                            Database status: {{ book.status or "Not recorded" }}
+                            | Returned flag: {{ book.returned }}
                         </div>
 
                         <div class="item-meta">

@@ -4750,7 +4750,7 @@ def hostel_clearance():
             status="Official Clearance Form Generated"
         )
         .order_by(
-            ClearanceHistory.generated_time.desc()
+            ClearanceHistory.id.desc()
         )
         .all()
     )
@@ -4762,11 +4762,66 @@ def hostel_clearance():
                 "generated_time": history.generated_time,
             }
 
+
+    activity_info = {}
+    activity_histories = (
+        ClearanceHistory.query
+        .filter(ClearanceHistory.status.in_([
+            "Official Clearance Report Opened",
+            "Official Clearance Report Print Initiated"
+        ]))
+        .order_by(ClearanceHistory.id.desc())
+        .all()
+    )
+
+    for item in activity_histories:
+        current = export_info.get(item.student_id)
+        if current and current["document_id"] == item.document_id:
+            activity = activity_info.setdefault(item.student_id, {
+                "opened_time": None,
+                "print_time": None
+            })
+            if item.status == "Official Clearance Report Opened" and not activity["opened_time"]:
+                activity["opened_time"] = item.generated_time
+            elif item.status == "Official Clearance Report Print Initiated" and not activity["print_time"]:
+                activity["print_time"] = item.generated_time
+
     return render_template(
         "new_staff/hostel/clearance.html",
         students=students,
-        export_info=export_info
+        export_info=export_info,
+        activity_info=activity_info
     )
+
+
+@app.route("/print-clearance/print-initiated")
+def clearance_print_initiated():
+    if session.get("role") != "staff" or not _hostel_staff_allowed():
+        return "", 403
+
+    sid = request.args.get("student_id", "").strip()
+    doc_id = request.args.get("document_id", "").strip()
+
+    if not sid or not doc_id:
+        return "", 400
+
+    record = ClearanceHistory.query.filter_by(
+        student_id=sid,
+        document_id=doc_id,
+        status="Official Clearance Form Generated"
+    ).first()
+
+    if not record:
+        return "", 404
+
+    db.session.add(ClearanceHistory(
+        student_id=sid,
+        document_id=doc_id,
+        generated_time=zambia_now().strftime("%d %B %Y | %I:%M %p"),
+        status="Official Clearance Report Print Initiated"
+    ))
+    db.session.commit()
+    return "", 204
 
 
 @app.route("/print-clearance")
@@ -4812,6 +4867,25 @@ def print_clearance():
         f"CLR-{s.student_id}-"
         f"{zambia_now().strftime('%Y%m%d%H%M%S')}"
     )
+
+    # Hostel staff reuse the latest generated document for this student.
+    existing_history = None
+    if role == "staff" and _hostel_staff_allowed():
+        existing_history = (
+            ClearanceHistory.query
+            .filter_by(
+                student_id=s.student_id,
+                status="Official Clearance Form Generated"
+            )
+            .order_by(ClearanceHistory.id.desc())
+            .first()
+        )
+
+        if existing_history:
+            document_id = existing_history.document_id
+            generated_time = (
+                existing_history.generated_time or generated_time
+            )
 
     # --------------------------------------------------
     # ============================================================
@@ -7188,15 +7262,26 @@ def print_clearance():
     # SAVE CLEARANCE HISTORY
     # --------------------------------------------------
 
-    history = ClearanceHistory(
-        student_id=s.student_id,
-        document_id=document_id,
-        generated_time=generated_time,
-        status="Official Clearance Form Generated"
-    )
+    # Create a generated record only when one does not already exist.
+    if not existing_history:
+        history = ClearanceHistory(
+            student_id=s.student_id,
+            document_id=document_id,
+            generated_time=generated_time,
+            status="Official Clearance Form Generated"
+        )
+        db.session.add(history)
+        db.session.commit()
 
-    db.session.add(history)
-    db.session.commit()
+    if role == "staff" and _hostel_staff_allowed():
+        db.session.add(ClearanceHistory(
+            student_id=s.student_id,
+            document_id=document_id,
+            generated_time=zambia_now().strftime("%d %B %Y | %I:%M %p"),
+            status="Official Clearance Report Opened"
+        ))
+        db.session.commit()
+
 
     # --------------------------------------------------
     # FINAL REPORT
@@ -7258,6 +7343,66 @@ def print_clearance():
             </script>
         </div>
     """
+
+    # Determine the student's vacated room for the report.
+    _accommodation_type = str(
+        getattr(s, "accommodation", "") or ""
+    ).strip().casefold()
+
+    if "day" in _accommodation_type:
+        _vacated_room_label = "Day Scholar"
+    else:
+        _last_vacated_assignment = (
+            AccommodationAssignment.query
+            .filter(
+                AccommodationAssignment.student_id == s.student_id,
+                db.func.lower(
+                    db.func.trim(AccommodationAssignment.status)
+                ) == "vacated"
+            )
+            .order_by(
+                AccommodationAssignment.vacated_at.desc(),
+                AccommodationAssignment.id.desc()
+            )
+            .first()
+        )
+
+        _vacated_room_label = "N/A"
+
+        if _last_vacated_assignment:
+            _vacated_room = HostelRoom.query.filter_by(
+                id=_last_vacated_assignment.room_id
+            ).first()
+
+            if _vacated_room:
+                _location_parts = []
+
+                _hostel_name = (
+                    _vacated_room.hostel.name
+                    if _vacated_room.hostel else ""
+                )
+                if _hostel_name:
+                    _location_parts.append(_hostel_name)
+
+                _block = _vacated_room.block
+                if _block:
+                    _group_type = str(
+                        _block.group_type or "block"
+                    ).strip().casefold()
+
+                    _group_label = (
+                        "Cube" if _group_type == "cube"
+                        else "Block"
+                    )
+                    _location_parts.append(
+                        f"{_group_label} {_block.name}"
+                    )
+
+                _location_parts.append(
+                    f"Room {_vacated_room.room_number}"
+                )
+
+                _vacated_room_label = ", ".join(_location_parts)
 
     report_html = f"""
     <!DOCTYPE html>
@@ -7503,8 +7648,8 @@ def print_clearance():
 
     <body>
 
-        {hostel_mobile_ui if hostel_staff_view else ""}
-        {hostel_sidebar_html if hostel_staff_view else ""}
+        
+        
 
 
     <div class="report">
@@ -7540,6 +7685,18 @@ def print_clearance():
 
             <strong>Year:</strong>
             {s.year or "N/A"}
+
+            <br>
+            <strong>Term:</strong>
+            {s.term or "N/A"}
+
+            <br>
+            <strong>Funding:</strong>
+            {s.funding or "N/A"}
+
+            <br>
+            <strong>Vacated Room:</strong>
+            {_vacated_room_label}
 
         </div>
 
@@ -7586,7 +7743,7 @@ def print_clearance():
     </div>
 
     <script>
-        window.print();
+        {("fetch('/print-clearance/print-initiated?student_id=" + str(s.student_id) + "&document_id=" + str(document_id) + "').finally(() => window.print());") if role == "staff" and _hostel_staff_allowed() else "window.print();"}
     </script>
 
     </body>
@@ -7595,148 +7752,6 @@ def print_clearance():
     """
 
     # --------------------------------------------------
-    # HOSTEL STAFF NAVIGATION
-    # --------------------------------------------------
-    if role == "staff" and _hostel_staff_allowed():
-
-        hostel_sidebar_html = render_template(
-            "new_staff/hostel/_sidebar.html"
-        )
-
-        hostel_mobile_header = """
-        <style>
-            .hostel-print-mobile-ui {
-                display: none;
-            }
-
-            @media (max-width: 900px) {
-
-                .hostel-print-mobile-ui {
-                    display: block;
-                }
-
-                .hostel-print-mobile-header {
-                    display: flex;
-                    position: sticky;
-                    top: 0;
-                    align-items: center;
-                    gap: 12px;
-                    padding: 13px 16px;
-                    background: white;
-                    border-bottom: 1px solid #e5e7eb;
-                    z-index: 1200;
-                    box-sizing: border-box;
-                }
-
-                .hostel-print-menu-button {
-                    width: 38px;
-                    height: 38px;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 8px;
-                    background: white;
-                    color: #1e293b;
-                    font-size: 18px;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-
-                .hostel-print-mobile-title {
-                    color: #166534;
-                    font-size: 16px;
-                    font-weight: 800;
-                }
-
-                .hostel-print-sidebar-wrap .sidebar {
-                    display: flex !important;
-                    z-index: 1100 !important;
-                }
-
-                .hostel-print-sidebar-wrap .sidebar-overlay {
-                    display: block;
-                }
-
-                .hostel-print-sidebar-wrap .sidebar-overlay.open {
-                    display: block;
-                }
-            }
-
-            @media (min-width: 901px) {
-
-                .hostel-print-sidebar-wrap .sidebar {
-                    display: none !important;
-                }
-
-                .hostel-print-mobile-header {
-                    display: none !important;
-                }
-            }
-
-            @media print {
-
-                .hostel-print-mobile-ui,
-                .hostel-print-sidebar-wrap {
-                    display: none !important;
-                }
-            }
-        </style>
-
-        <div class="hostel-print-mobile-ui">
-
-            <header class="hostel-print-mobile-header">
-
-                <button
-                    class="hostel-print-menu-button"
-                    onclick="toggleSidebar()"
-                    type="button"
-                    aria-label="Open menu"
-                >
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-
-                <div class="hostel-print-mobile-title">
-                    Hostel Department
-                </div>
-
-            </header>
-
-            <script>
-            function toggleSidebar() {
-
-                const sidebar =
-                    document.getElementById("sidebar");
-
-                if (!sidebar) {
-                    return;
-                }
-
-                sidebar.classList.toggle("open");
-
-                const overlay =
-                    document.getElementById("sidebarOverlay");
-
-                if (overlay) {
-                    overlay.classList.toggle("open");
-                }
-            }
-            </script>
-
-        </div>
-        """
-
-        sidebar_wrapper = """
-        <div class="hostel-print-sidebar-wrap">
-        """ + hostel_sidebar_html + """
-        </div>
-        """
-
-        report_html = report_html.replace(
-            "<body>",
-            "<body>" + hostel_mobile_header + sidebar_wrapper,
-            1
-        )
-
     return report_html
 
 
@@ -8580,43 +8595,7 @@ def student_department_history_page(department_slug=None, department=None):
     # Separate error handling ensures one table cannot block another source.
     try:
         if slug == "library":
-            records = LibraryBook.query.filter_by(student_id=sid).all()
-
-            for r in records:
-                returned = bool(getattr(r, "returned", False))
-                book_name = getattr(r, "name", "") or "Library book"
-
-                expected_action = "book returned" if returned else "book assigned"
-                audit_records = DepartmentHistory.query.filter_by(
-                    student_id=sid
-                ).all()
-
-                staff_name = next(
-                    (
-                        getattr(a, "performed_by", "")
-                        for a in reversed(audit_records)
-                        if normalize(getattr(a, "department", "")) == "library"
-                        and normalize(getattr(a, "action", "")) == normalize(expected_action)
-                        and book_name.lower() in str(
-                            getattr(a, "remarks", "") or ""
-                        ).lower()
-                        and getattr(a, "performed_by", "")
-                    ),
-                    "",
-                )
-
-                add_record(
-                    when=getattr(r, "returned_at", None)
-                         or getattr(r, "borrowed_at", None)
-                         or getattr(r, "created_at", None),
-                    status="Returned" if returned else "Borrowed",
-                    action="Book returned" if returned else "Book borrowed",
-                    item=book_name,
-                    remarks=getattr(r, "remarks", "") or
-                            ("Book: " + str(book_name)),
-                    performed_by=staff_name,
-                )
-
+            pass
         elif slug == "sports":
             records = SportsItem.query.filter_by(student_id=sid).all()
 
@@ -9244,6 +9223,20 @@ def decline_library_book(book_id):
 
     book.status = "declined"
     book.returned = 1
+
+    # Update the original assignment history, not create a new event.
+    assignment_records = DepartmentHistory.query.filter_by(
+        student_id=student_id,
+        department="library",
+        action="Book assigned"
+    ).order_by(DepartmentHistory.id.desc()).all()
+
+    for history in assignment_records:
+        if book.name.lower() in str(history.remarks or "").lower():
+            history.status = "Declined"
+            history.action = "Book declined"
+            break
+
     db.session.commit()
 
     flash(
@@ -11809,7 +11802,8 @@ def admin_payment_document(payment_id):
 
     if not os.path.isfile(filepath):
         return render_template(
-            "student/payment_document_unavailable.html"
+            "admin/payment_document_unavailable.html",
+            payment=payment
         ), 404
 
     return send_from_directory(
@@ -12732,7 +12726,7 @@ def admin_add_student():
             date_text, "%Y-%m-%d"
         ).date()
 
-        if date_of_birth > datetime.now().date():
+        if date_of_birth > zambia_now().date():
             raise ValueError("Date of birth cannot be in the future.")
 
         year = int(form_data.get("year", ""))
@@ -12824,6 +12818,85 @@ def admin_add_student():
     )
 
 
+
+@app.route("/admin/students/<student_id>/edit", methods=["GET", "POST"])
+def admin_edit_student(student_id):
+    if session.get("role") != "admin":
+        return redirect(url_for("admin_login"))
+
+    student = Student.query.filter_by(student_id=student_id).first()
+
+    if not student:
+        flash("Student record not found.", "error")
+        return redirect(url_for("admin_students"))
+
+    if request.method == "POST":
+        form = request.form
+
+        name = form.get("name", "").strip()
+        program = form.get("program", "").strip()
+        funding = form.get("funding", "").strip()
+        accommodation = form.get("accommodation", "").strip()
+
+        try:
+            if not name or not program:
+                raise ValueError("Name and programme are required.")
+
+            if len(name) > 150 or len(program) > 150:
+                raise ValueError("Name or programme is too long.")
+
+            if funding not in ("Self Sponsored", "CDF", "Bursary", "Other"):
+                raise ValueError("Please select a valid funding type.")
+
+            if accommodation not in ("Boarder", "Day Scholar"):
+                raise ValueError("Please select a valid accommodation type.")
+
+            date_text = form.get("date_of_birth", "").strip()
+            date_of_birth = datetime.strptime(date_text, "%Y-%m-%d").date()
+
+            if date_of_birth > zambia_now().date():
+                raise ValueError("Date of birth cannot be in the future.")
+
+            year = int(form.get("year", ""))
+            term = int(form.get("term", ""))
+
+            if year < 1 or term < 1:
+                raise ValueError("Year and term must be positive numbers.")
+
+            student.name = name
+            student.date_of_birth = date_of_birth
+            student.nationality = form.get("nationality", "").strip()
+            student.residential_address = form.get("residential_address", "").strip() or None
+            student.phone_number = form.get("phone_number", "").strip() or None
+            student.alternative_phone = form.get("alternative_phone", "").strip() or None
+            student.email = form.get("email", "").strip() or None
+            student.next_of_kin_name = form.get("next_of_kin_name", "").strip() or None
+            student.next_of_kin_relationship = form.get("next_of_kin_relationship", "").strip() or None
+            student.next_of_kin_phone = form.get("next_of_kin_phone", "").strip() or None
+            student.next_of_kin_alternative_phone = form.get("next_of_kin_alternative_phone", "").strip() or None
+            student.next_of_kin_address = form.get("next_of_kin_address", "").strip() or None
+            student.program = program
+            student.year = year
+            student.term = term
+            student.funding = funding
+            student.accommodation = accommodation
+
+            db.session.commit()
+            flash("Student details updated successfully.", "success")
+            return redirect(url_for("admin_student_view", student_id=student_id))
+
+        except ValueError as exc:
+            db.session.rollback()
+            flash(str(exc), "error")
+
+        except Exception as exc:
+            db.session.rollback()
+            print("Student update failed:", exc)
+            flash("Student details could not be saved. No changes were applied.", "error")
+
+    return render_template("admin/edit_student.html", student=student)
+
+
 @app.route("/admin/students")
 def admin_students():
 
@@ -12863,7 +12936,7 @@ def admin_students():
 # ADMIN STUDENT DETAILS
 # ==================================================
 
-@app.route("/admin/students/<student_id>")
+@app.route("/admin/students/<student_id>/records")
 def admin_student_details(student_id):
 
     if session.get("role") != "admin":
@@ -14424,11 +14497,45 @@ def new_staff_library_return_books():
             Student.student_id == LibraryBook.student_id
         )
         .where(
-            db.func.coalesce(LibraryBook.status, "") == "borrowed",
+            db.func.lower(
+                db.func.trim(db.func.coalesce(LibraryBook.status, ""))
+            ) == "borrowed",
             db.func.coalesce(LibraryBook.returned, False) == False
         )
         .order_by(Student.name, LibraryBook.id.desc())
     ).mappings().all()
+
+    pending_rows = db.session.execute(
+        db.select(
+            LibraryBook.id,
+            LibraryBook.student_id,
+            LibraryBook.name.label("book_name"),
+            Student.name.label("student_name"),
+            Student.program
+        )
+        .outerjoin(
+            Student,
+            Student.student_id == LibraryBook.student_id
+        )
+        .where(
+            db.func.lower(
+                db.func.trim(db.func.coalesce(LibraryBook.status, ""))
+            ) == "pending",
+            db.func.coalesce(LibraryBook.returned, False) == False
+        )
+        .order_by(Student.name, LibraryBook.id.desc())
+    ).mappings().all()
+
+    pending_student_books = {}
+
+    for book in pending_rows:
+        sid = book["student_id"]
+        pending_student_books.setdefault(sid, []).append({
+            "id": book["id"],
+            "book_name": book["book_name"],
+            "student_name": book["student_name"],
+            "program": book["program"]
+        })
 
     student_books = {}
 
@@ -14451,6 +14558,7 @@ def new_staff_library_return_books():
         "new_staff/library/return_books.html",
         students=students,
         student_books=student_books,
+        pending_student_books=pending_student_books,
         error=error,
         success=success
     )
@@ -16786,7 +16894,7 @@ def new_staff_communication_students():
     }
 
     return render_template(
-        "new_staff/mathematics_students.html",
+        "new_staff/communication/students.html",
         staff_name=session.get("staff_name"),
         department=session.get("department"),
         students=students,
@@ -17575,7 +17683,7 @@ def new_staff_hr_dashboard():
     # Past 7 Days Statistics
     # --------------------------------------------------------
 
-    seven_days_ago = datetime.now() - timedelta(days=7)
+    seven_days_ago = zambia_now() - timedelta(days=7)
 
     cases_reported_7d = DisciplinaryCase.query.filter(
         DisciplinaryCase.reported_at >= seven_days_ago
@@ -23068,7 +23176,7 @@ def new_staff_hr_case_details(case_id):
 
             case.student_response = response
             case.response_at = (
-                globals().get("zambia_now", datetime.now)()
+                zambia_now()
             )
 
             # Move a newly reported case into review once
@@ -23121,7 +23229,7 @@ def new_staff_hr_case_details(case_id):
             case.resolution = resolution
             case.remarks = remarks or None
             case.resolved_at = (
-                globals().get("zambia_now", datetime.now)()
+                zambia_now()
             )
             case.resolved_by = session.get("staff_name")
             case.status = "Resolved"
@@ -23346,7 +23454,7 @@ def new_staff_hr_sanctions():
 
         if not case.decision_date:
             case.decision_date = (
-                globals().get("zambia_now", datetime.now)()
+                zambia_now()
             )
 
         if not case.decided_by:
@@ -23586,7 +23694,7 @@ def new_staff_ame_dashboard():
 
     from datetime import datetime, timedelta
 
-    today = datetime.now().date()
+    today = zambia_now().date()
 
     ame_activity = []
 

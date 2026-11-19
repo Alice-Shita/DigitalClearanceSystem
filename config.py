@@ -1,4 +1,3 @@
-
 import os
 
 
@@ -7,34 +6,10 @@ BASE_DIR = os.path.abspath(
 )
 
 
-# Keep the local SQLite path for maintenance scripts.
 DATABASE_URL = os.path.join(
     BASE_DIR,
     "database.db"
 )
-
-
-# Use Render PostgreSQL when DATABASE_URL is configured.
-# Otherwise, use local SQLite.
-_raw_database_url = os.environ.get("DATABASE_URL", "").strip()
-
-if _raw_database_url:
-    if _raw_database_url.startswith("postgres://"):
-        _raw_database_url = _raw_database_url.replace(
-            "postgres://",
-            "postgresql+psycopg://",
-            1
-        )
-    elif _raw_database_url.startswith("postgresql://"):
-        _raw_database_url = _raw_database_url.replace(
-            "postgresql://",
-            "postgresql+psycopg://",
-            1
-        )
-
-    SQLALCHEMY_DATABASE_URI = _raw_database_url
-else:
-    SQLALCHEMY_DATABASE_URI = "sqlite:///" + DATABASE_URL
 
 
 UPLOAD_FOLDER = os.path.join(
@@ -53,3 +28,25 @@ DOCUMENTS_FOLDER = os.path.join(
     UPLOAD_FOLDER,
     "documents"
 )
+
+# SQLAlchemy database connection:
+# Render supplies DATABASE_URL through its environment.
+# Local development safely falls back to the original SQLite file.
+SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "").strip()
+
+if SQLALCHEMY_DATABASE_URI:
+    if SQLALCHEMY_DATABASE_URI.startswith("postgres://"):
+        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace(
+            "postgres://",
+            "postgresql+psycopg://",
+            1
+        )
+    elif SQLALCHEMY_DATABASE_URI.startswith("postgresql://"):
+        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace(
+            "postgresql://",
+            "postgresql+psycopg://",
+            1
+        )
+else:
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + DATABASE_URL
+
