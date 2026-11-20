@@ -7642,6 +7642,25 @@ def print_clearance():
 
         }}
 
+
+        @media print {{
+            .document {{
+                margin-bottom: 27px !important;
+            }}
+
+            .student-info {{
+                margin-bottom: 20px !important;
+            }}
+
+            th, td {{
+                padding: 11px !important;
+            }}
+
+            .footer {{
+                margin-top: 23px !important;
+                padding-top: 15px !important;
+            }}
+        }}
         </style>
 
     </head>
@@ -12834,6 +12853,7 @@ def admin_edit_student(student_id):
         form = request.form
 
         name = form.get("name", "").strip()
+        gender = form.get("gender", "").strip().title()
         program = form.get("program", "").strip()
         funding = form.get("funding", "").strip()
         accommodation = form.get("accommodation", "").strip()
@@ -12841,6 +12861,9 @@ def admin_edit_student(student_id):
         try:
             if not name or not program:
                 raise ValueError("Name and programme are required.")
+
+            if gender not in ("Male", "Female"):
+                raise ValueError("Please select Male or Female.")
 
             if len(name) > 150 or len(program) > 150:
                 raise ValueError("Name or programme is too long.")
@@ -12864,6 +12887,7 @@ def admin_edit_student(student_id):
                 raise ValueError("Year and term must be positive numbers.")
 
             student.name = name
+            student.gender = gender
             student.date_of_birth = date_of_birth
             student.nationality = form.get("nationality", "").strip()
             student.residential_address = form.get("residential_address", "").strip() or None
